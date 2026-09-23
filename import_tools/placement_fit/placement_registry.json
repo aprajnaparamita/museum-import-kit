@@ -1,0 +1,28 @@
+{
+  "_comment": "Persistent registry of every base's real dest_bbox in the shared museum world, checked on every future placement to prevent overlap across separate tool runs. Fixes a real documented incident (see tools/apply_biome_placement.py's own header comment): find_biome_placement.lua's old 'claimed' overlap table only knew about bases passed into that ONE run, so a run against the full 203-entry master manifest silently overwrote Fort Alcazar's and cutecurly's City's already-planned positions. This file is the single source of truth for 'is this rectangle already spoken for', independent of which script or run placed it. Seeded 2026-09-20 (round 25 fitting-algorithm work) from museum-playtest/museum_manifest.json's 3 currently-deployed bases. Every future call to find_placement.lua must both check this file for overlap AND append its own result to it before finishing.",
+  "placements": [
+    {
+      "display_name": "cutecurly's City",
+      "dest_bbox": { "x_min": 2250, "x_max": 3274, "z_min": 5500, "z_max": 6300 },
+      "placed": "pre-round-25"
+    },
+    {
+      "display_name": "Tactical Nuke 2023-09",
+      "dest_bbox": { "x_min": 7250, "x_max": 8274, "z_min": -1750, "z_max": -214 },
+      "placed": "pre-round-25"
+    },
+    {
+      "display_name": "Fort Alcazar 2024-04-22 (Th3_L1nk download)",
+      "dest_bbox": { "x_min": 4500, "x_max": 5524, "z_min": -1500, "z_max": 500 },
+      "placed": "pre-round-25"
+    },
+    {
+      "display_name": "Dark Souls Castle 2015-10-26",
+      "dest_bbox": { "x_min": -1000, "x_max": -40, "z_min": 8000, "z_max": 8944 },
+      "placed": "round-25e",
+      "above_sea_level_water_count": 593,
+      "real_chunk_match_pct": 78.87479316050745,
+      "note": "first base placed via the new find_placement.lua/dest_eval_worldmod fitting pipeline, chosen from 10 evaluated candidates as lowest above-sea-level water count"
+    }
+  ]
+}

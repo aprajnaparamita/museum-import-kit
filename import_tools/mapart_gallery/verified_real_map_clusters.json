@@ -1,0 +1,451 @@
+{
+  "_comment": "Permanent, hand-verified frame-to-map-id mappings for real captured map-art clusters where the automated pipeline (position/rotation-based solving, and the source WDL entity NBT itself) could NOT be trusted to reconstruct the correct arrangement. Each entry was solved by the owner in-game, by trial and error (removing/re-adding frames and testing which map belongs where), then captured here directly from the corrected live world. detect_ceiling_scrambles and any other automatic real-map reordering logic MUST check this file first and skip any cluster listed here entirely -- never overwrite a verified mapping with a computed guess. See HANDOFF.md's round 30 write-up for the full investigation: the raw World Downloader capture's entity NBT for at least one of these clusters (Fort Alcazar's ceiling grid) does NOT match the true correct arrangement (it's mirrored on one axis relative to reality) -- meaning even direct source-file verification isn't reliable for this class of bug, and these mappings are the only trustworthy record.\n\nRoot cause (2026-09-23, owner report across cutecurly/Fort/Tactical): the raw World Downloader capture's entity NBT for multi-map walls is MIRRORED ON ONE AXIS relative to reality -- vertically (Y) correct but HORIZONTALLY (X or Z, the wall's left-right) flipped. It is NOT an import bug: the importer places each map at its real decoded position with its real decoded id; the SOURCE positions themselves are mirrored. Therefore this cannot be fixed in the import -- only post-hoc, by swapping the mirrored columns back (the mappings below) or by edge-coherence solving (solve_grid_jigsaw.py).",
+  "clusters": [
+    {
+      "base": "Fort Alcazar 2024-04-22 (Th3_L1nk download)",
+      "location": "ceiling 3x3 grid",
+      "id_prefix": "imported_Fort_Alcazar_2024_04_22__Th3_L1nk_download_",
+      "verified_at": "2026-09-22",
+      "positions": [
+        {
+          "x": 4847,
+          "y": 5,
+          "z": -726,
+          "id": 1
+        },
+        {
+          "x": 4847,
+          "y": 5,
+          "z": -725,
+          "id": 5
+        },
+        {
+          "x": 4847,
+          "y": 5,
+          "z": -724,
+          "id": 7
+        },
+        {
+          "x": 4848,
+          "y": 5,
+          "z": -726,
+          "id": 6
+        },
+        {
+          "x": 4849,
+          "y": 5,
+          "z": -726,
+          "id": 2
+        },
+        {
+          "x": 4848,
+          "y": 5,
+          "z": -725,
+          "id": 0
+        },
+        {
+          "x": 4849,
+          "y": 5,
+          "z": -725,
+          "id": 3
+        },
+        {
+          "x": 4848,
+          "y": 5,
+          "z": -724,
+          "id": 4
+        },
+        {
+          "x": 4849,
+          "y": 5,
+          "z": -724,
+          "id": 8
+        }
+      ]
+    },
+    {
+      "base": "cutecurly's City",
+      "location": "5x5 mapart wall, front face (z=5960, param2=4)",
+      "id_prefix": "imported_cutecurly_s_City",
+      "verified_at": "2026-09-22",
+      "note": "Same bug signature as Fort Alcazar's ceiling grid: raw capture mirrors the horizontal (x, along_axis) span with the center column fixed -- col x=2673<->2677 swapped, x=2674<->2676 swapped, x=2675 (middle) unchanged. Row (y) axis was already correct in the raw capture.",
+      "positions": [
+        {
+          "x": 2673,
+          "y": 42,
+          "z": 5960,
+          "id": 8
+        },
+        {
+          "x": 2673,
+          "y": 41,
+          "z": 5960,
+          "id": 9
+        },
+        {
+          "x": 2673,
+          "y": 40,
+          "z": 5960,
+          "id": 10
+        },
+        {
+          "x": 2673,
+          "y": 39,
+          "z": 5960,
+          "id": 11
+        },
+        {
+          "x": 2673,
+          "y": 38,
+          "z": 5960,
+          "id": 12
+        },
+        {
+          "x": 2674,
+          "y": 42,
+          "z": 5960,
+          "id": 18
+        },
+        {
+          "x": 2674,
+          "y": 41,
+          "z": 5960,
+          "id": 21
+        },
+        {
+          "x": 2674,
+          "y": 40,
+          "z": 5960,
+          "id": 22
+        },
+        {
+          "x": 2674,
+          "y": 39,
+          "z": 5960,
+          "id": 19
+        },
+        {
+          "x": 2674,
+          "y": 38,
+          "z": 5960,
+          "id": 20
+        },
+        {
+          "x": 2675,
+          "y": 42,
+          "z": 5960,
+          "id": 32
+        },
+        {
+          "x": 2675,
+          "y": 41,
+          "z": 5960,
+          "id": 30
+        },
+        {
+          "x": 2675,
+          "y": 40,
+          "z": 5960,
+          "id": 31
+        },
+        {
+          "x": 2675,
+          "y": 39,
+          "z": 5960,
+          "id": 29
+        },
+        {
+          "x": 2675,
+          "y": 38,
+          "z": 5960,
+          "id": 28
+        },
+        {
+          "x": 2676,
+          "y": 42,
+          "z": 5960,
+          "id": 23
+        },
+        {
+          "x": 2676,
+          "y": 41,
+          "z": 5960,
+          "id": 27
+        },
+        {
+          "x": 2676,
+          "y": 40,
+          "z": 5960,
+          "id": 26
+        },
+        {
+          "x": 2676,
+          "y": 39,
+          "z": 5960,
+          "id": 25
+        },
+        {
+          "x": 2676,
+          "y": 38,
+          "z": 5960,
+          "id": 24
+        },
+        {
+          "x": 2677,
+          "y": 42,
+          "z": 5960,
+          "id": 13
+        },
+        {
+          "x": 2677,
+          "y": 41,
+          "z": 5960,
+          "id": 14
+        },
+        {
+          "x": 2677,
+          "y": 40,
+          "z": 5960,
+          "id": 15
+        },
+        {
+          "x": 2677,
+          "y": 39,
+          "z": 5960,
+          "id": 16
+        },
+        {
+          "x": 2677,
+          "y": 38,
+          "z": 5960,
+          "id": 17
+        }
+      ]
+    },
+    {
+      "base": "cutecurly's City",
+      "location": "5x5 mapart wall, back/duplicate face (z=5962, param2=5) -- mirrors the front face left-right, per round 25's original finding that this gallery is double-sided",
+      "id_prefix": "imported_cutecurly_s_City",
+      "verified_at": "2026-09-22",
+      "note": "Derived (not independently solved by the owner): front face's mapping with x=2673<->2677 and x=2674<->2676 swapped (mirrored), x=2675 unchanged, since a viewer walking around to the back sees left/right reversed. Owner had emptied this face for diagnosis clarity; restored by request.",
+      "positions": [
+        {
+          "x": 2673,
+          "y": 42,
+          "z": 5962,
+          "id": 13
+        },
+        {
+          "x": 2673,
+          "y": 41,
+          "z": 5962,
+          "id": 14
+        },
+        {
+          "x": 2673,
+          "y": 40,
+          "z": 5962,
+          "id": 15
+        },
+        {
+          "x": 2673,
+          "y": 39,
+          "z": 5962,
+          "id": 16
+        },
+        {
+          "x": 2673,
+          "y": 38,
+          "z": 5962,
+          "id": 17
+        },
+        {
+          "x": 2674,
+          "y": 42,
+          "z": 5962,
+          "id": 23
+        },
+        {
+          "x": 2674,
+          "y": 41,
+          "z": 5962,
+          "id": 27
+        },
+        {
+          "x": 2674,
+          "y": 40,
+          "z": 5962,
+          "id": 26
+        },
+        {
+          "x": 2674,
+          "y": 39,
+          "z": 5962,
+          "id": 25
+        },
+        {
+          "x": 2674,
+          "y": 38,
+          "z": 5962,
+          "id": 24
+        },
+        {
+          "x": 2675,
+          "y": 42,
+          "z": 5962,
+          "id": 32
+        },
+        {
+          "x": 2675,
+          "y": 41,
+          "z": 5962,
+          "id": 30
+        },
+        {
+          "x": 2675,
+          "y": 40,
+          "z": 5962,
+          "id": 31
+        },
+        {
+          "x": 2675,
+          "y": 39,
+          "z": 5962,
+          "id": 29
+        },
+        {
+          "x": 2675,
+          "y": 38,
+          "z": 5962,
+          "id": 28
+        },
+        {
+          "x": 2676,
+          "y": 42,
+          "z": 5962,
+          "id": 18
+        },
+        {
+          "x": 2676,
+          "y": 41,
+          "z": 5962,
+          "id": 21
+        },
+        {
+          "x": 2676,
+          "y": 40,
+          "z": 5962,
+          "id": 22
+        },
+        {
+          "x": 2676,
+          "y": 39,
+          "z": 5962,
+          "id": 19
+        },
+        {
+          "x": 2676,
+          "y": 38,
+          "z": 5962,
+          "id": 20
+        },
+        {
+          "x": 2677,
+          "y": 42,
+          "z": 5962,
+          "id": 8
+        },
+        {
+          "x": 2677,
+          "y": 41,
+          "z": 5962,
+          "id": 9
+        },
+        {
+          "x": 2677,
+          "y": 40,
+          "z": 5962,
+          "id": 10
+        },
+        {
+          "x": 2677,
+          "y": 39,
+          "z": 5962,
+          "id": 11
+        },
+        {
+          "x": 2677,
+          "y": 38,
+          "z": 5962,
+          "id": 12
+        }
+      ]
+    }
+  ],
+  "column_swaps": [
+    {
+      "base": "Tactical Nuke 2023-09",
+      "location": "2x3 wall mapart (x=7762, y=2..4, z=-778 vs z=-777)",
+      "note": "swap the two columns: maps at z=-778 move to z=-777 and vice versa, preserving Y order. ids to be resolved via edge-coherence or in-game.",
+      "axis": "z",
+      "pairs": [
+        {
+          "a": {
+            "x": 7762,
+            "y": 2,
+            "z": -778
+          },
+          "b": {
+            "x": 7762,
+            "y": 2,
+            "z": -777
+          }
+        },
+        {
+          "a": {
+            "x": 7762,
+            "y": 3,
+            "z": -778
+          },
+          "b": {
+            "x": 7762,
+            "y": 3,
+            "z": -777
+          }
+        },
+        {
+          "a": {
+            "x": 7762,
+            "y": 4,
+            "z": -778
+          },
+          "b": {
+            "x": 7762,
+            "y": 4,
+            "z": -777
+          }
+        }
+      ]
+    },
+    {
+      "base": "Tactical Nuke 2023-09",
+      "location": "3-wide mapart centered x=7762 (left/right columns x=7760 <-> x=7763)",
+      "note": "center column correct; outer left/right columns are swapped (7760 <-> 7763), Y order preserved. Report truncated -- confirm the exact width/columns and ids before applying.",
+      "axis": "x",
+      "pairs": [
+        {
+          "a": {
+            "x": 7760,
+            "y": 3,
+            "z": 773
+          },
+          "b": {
+            "x": 7763,
+            "y": 3,
+            "z": 773
+          }
+        }
+      ]
+    }
+  ]
+}

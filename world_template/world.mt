@@ -1,0 +1,13 @@
+gameid = mineclonia
+world_name = 2b2t Museum
+backend = sqlite3
+player_backend = sqlite3
+auth_backend = sqlite3
+mod_storage_backend = sqlite3
+creative_mode = true
+enable_damage = false
+server_announce = false
+static_spawnpoint = (0, 150, 0)
+load_mod_spawnimport = true
+load_mod_museumwarp = true
+load_mod_fullimport = true

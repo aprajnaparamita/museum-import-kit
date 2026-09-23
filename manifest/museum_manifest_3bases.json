@@ -1,0 +1,74 @@
+[
+  {
+    "display_name": "cutecurly's City",
+    "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2025/cutecurly's City/region",
+    "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2025/cutecurly's City",
+    "dimension_type": "overworld",
+    "dest_anchor_x": 0,
+    "dest_anchor_z": 0,
+    "dest_y_offset": 0,
+    "origin_x": -2386224,
+    "origin_z": 460272,
+    "dest_bbox": {
+      "x_min": 0,
+      "x_max": 1024,
+      "z_min": 0,
+      "z_max": 800
+    },
+    "chunk_bounds": {
+      "x_min": -149139,
+      "x_max": -149076,
+      "z_min": 28767,
+      "z_max": 28816
+    },
+    "sampled_block_count": 0
+  },
+  {
+    "display_name": "Tactical Nuke 2023-09",
+    "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/l23w35 Tactical Nuke 2023-09-02_2247 remap2 (_2309 merge)/region",
+    "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/l23w35 Tactical Nuke 2023-09-02_2247 remap2 (_2309 merge)",
+    "dimension_type": "overworld",
+    "dest_anchor_x": 0,
+    "dest_anchor_z": 900,
+    "dest_y_offset": 0,
+    "origin_x": 31232,
+    "origin_z": 4096,
+    "dest_bbox": {
+      "x_min": 0,
+      "x_max": 1024,
+      "z_min": 900,
+      "z_max": 2436
+    },
+    "chunk_bounds": {
+      "x_min": 1952,
+      "x_max": 2015,
+      "z_min": 256,
+      "z_max": 351
+    },
+    "sampled_block_count": 0
+  },
+  {
+    "display_name": "Fort Alcazar 2024-04-22 (Th3_L1nk download)",
+    "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2024/Fort Alcazar 2024-04-22 (Th3_L1nk download)/region",
+    "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2024/Fort Alcazar 2024-04-22 (Th3_L1nk download)",
+    "dimension_type": "overworld",
+    "dest_anchor_x": 1100,
+    "dest_anchor_z": 0,
+    "dest_y_offset": 0,
+    "origin_x": 137760,
+    "origin_z": 1833696,
+    "dest_bbox": {
+      "x_min": 1100,
+      "x_max": 2124,
+      "z_min": 0,
+      "z_max": 2000
+    },
+    "chunk_bounds": {
+      "x_min": 8610,
+      "x_max": 8673,
+      "z_min": 114606,
+      "z_max": 114730
+    },
+    "sampled_block_count": 0
+  }
+]

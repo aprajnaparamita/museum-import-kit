@@ -1,0 +1,20 @@
+# Add these to the world's map_meta.txt BEFORE [end_of_params].
+# Anything after that marker is ignored by the engine.
+#
+# mg_name = singlenode
+#   No native terrain generation. Bases are self-contained captures; native
+#   terrain would only be deleted again.
+#
+# mcl_singlenode_mapgen = false
+#   Choosing singlenode ENABLES Mineclonia's own Lua levelgen by default
+#   (mcl_init/init.lua:71). Leaving it on generated terrain under every base
+#   and made pre-generation ~23x slower (178.7s vs 7.6s per base-sized
+#   volume, measured).
+#
+# mapgen_limit = 31007
+#   Leave at the default. Setting it to 0 stops mapgen overwriting imports
+#   but ALSO stops the server ever sending those blocks to a client
+#   (src/server/clientiface.cpp only sends blocks where isGenerated()).
+mg_name = singlenode
+mcl_singlenode_mapgen = false
+mapgen_limit = 31007

@@ -34,6 +34,18 @@ field.DIRS = DIRS
 
 function field.key(x, z) return x .. "," .. z end
 
+-- An edge is only slope-constrained when BOTH endpoints matter for
+-- walking. `aquatic` (optional set, keys whose solved height is below
+-- the sea) marks columns where the terrain continues as water: land
+-- dropping into the sea is a sea cliff (you fall/swim), the sea floor
+-- can be as steep as it likes. Constraining those edges too made the
+-- merge drag whole coastlines down to the sea floor and demanded
+-- impossible ramps (runaway widening on the ocean base).
+local function edge_ok(a, b, aquatic)
+	if not aquatic then return true end
+	return not (aquatic[a] or aquatic[b])
+end
+
 local function parse_key(k)
 	local x, z = k:match("^(-?%d+),(-?%d+)$")
 	return tonumber(x), tonumber(z)
@@ -95,11 +107,15 @@ end
 -- converge in a few dozen sweeps instead of thousands: the slow global
 -- ramp modes are pre-solved here.
 --
+-- opts.aquatic: set of keys whose edges are NOT slope-constrained (see
+-- edge_ok above).
+--
 -- Returns L, U maps ("x,z" -> number). L > U marks a locally infeasible
 -- pinch (the pins demand more than the slope cap allows) -- the caller's
 -- violations()/widening loop deals with it.
-function field.bounds(free, fixed, step)
-	step = step or 1.0
+function field.bounds(free, fixed, opts)
+	local step = (opts and opts.step) or 1.0
+	local aquatic = opts and opts.aquatic
 	local L, U = {}, {}
 	for key in pairs(free) do
 		L[key] = -math.huge
@@ -122,7 +138,7 @@ function field.bounds(free, fixed, step)
 		local x, z = parse_key(key)
 		for _, d in ipairs(DIRS) do
 			local nkey = field.key(x + d[1], z + d[2])
-			if L[nkey] then
+			if L[nkey] and edge_ok(key, nkey, aquatic) then
 				local changed = false
 				if L[key] - step > L[nkey] then
 					L[nkey] = L[key] - step
@@ -149,21 +165,29 @@ end
 --          beta (default 0.15 -- per-sweep pull toward the natural s),
 --          omega (default 0.8 -- damped update, kills the period-2 cycle
 --                 a full step has around taut ramps),
---          iters (default 60 -- cleanup sweeps after the bounds init)
+--          iters (default 120 -- cleanup ceiling after the bounds init),
+--          aquatic (optional set -- see edge_ok; edges into water are
+--                 not slope-constrained)
 -- Returns "x,z" -> height for every key in free|fixed.
 --
 -- Pipeline: pre-solve the global ramp shape with field.bounds() (exact),
 -- then run cheap local sweeps of "pull a little toward s, clamp into the
--- slope band" to remove jumps in the natural surface. Earlier versions
--- skipped the bounds pre-solve and relied on the sweeps alone; they
--- converged to smooth-but-slightly-OVER-the-cap harmonics that were
--- stable fixed points (unit tests caught it: slopes hovered ~5% over).
+-- slope band" to remove jumps in the natural surface, early-exiting as
+-- soon as every constrained edge is within the cap (or the sweeps stop
+-- improving things -- natural cliffs settle at small residual steps that
+-- only more global smoothing would eat, and that is not worth minutes of
+-- server time; violations() classifies those as natural relief anyway).
+-- Earlier versions skipped the bounds pre-solve and relied on the sweeps
+-- alone; they converged to smooth-but-slightly-OVER-the-cap harmonics
+-- that were stable fixed points (unit tests caught it: slopes hovered
+-- ~5% over).
 function field.solve(free, fixed, opts)
 	local step = (opts and opts.step) or 1.0
 	local beta = (opts and opts.beta) or 0.15
 	local omega = (opts and opts.omega) or 0.8
 	local iters = (opts and opts.iters) or 120
-	local L, U = field.bounds(free, fixed, step)
+	local aquatic = opts and opts.aquatic
+	local L, U = field.bounds(free, fixed, { step = step, aquatic = aquatic })
 	local h = {}
 	for key, v in pairs(fixed) do h[key] = v end
 	for key, s in pairs(free) do
@@ -173,35 +197,55 @@ function field.solve(free, fixed, opts)
 		h[key] = v
 	end
 
-	for _ = 1, iters do
-		for key, s in pairs(free) do
-			local x, z = parse_key(key)
-			local v = h[key] + beta * (s - h[key])
-			local n, lo, hi = 0, math.huge, -math.huge
-			for _, d in ipairs(DIRS) do
-				local hv = h[field.key(x + d[1], z + d[2])]
-				if hv then
-					n = n + 1
-					if hv < lo then lo = hv end
-					if hv > hi then hi = hv end
+	local done = 0
+	local prev_worst = math.huge
+	while done < iters do
+		local batch = math.min(10, iters - done)
+		for _ = 1, batch do
+			for key, s in pairs(free) do
+				local x, z = parse_key(key)
+				local v = h[key] + beta * (s - h[key])
+				local n, lo, hi = 0, math.huge, -math.huge
+				for _, d in ipairs(DIRS) do
+					local nkey = field.key(x + d[1], z + d[2])
+					local hv = h[nkey]
+					if hv and edge_ok(key, nkey, aquatic) then
+						n = n + 1
+						if hv < lo then lo = hv end
+						if hv > hi then hi = hv end
+					end
 				end
-			end
-			if n > 0 then
-				-- slope band intersected with the pin-implied bounds;
-				-- empty when the neighbourhood is locally infeasible
-				-- (land in the middle and let violations() report it)
-				local lower, upper = hi - step, lo + step
-				if L[key] > lower then lower = L[key] end
-				if U[key] < upper then upper = U[key] end
-				if lower > upper then
-					lower = (lower + upper) / 2
-					upper = lower
+				if n > 0 then
+					local lower, upper = hi - step, lo + step
+					if L[key] > lower then lower = L[key] end
+					if U[key] < upper then upper = U[key] end
+					if lower > upper then
+						lower = (lower + upper) / 2
+						upper = lower
+					end
+					if v < lower then v = lower elseif v > upper then v = upper end
+					v = h[key] + omega * (v - h[key])
 				end
-				if v < lower then v = lower elseif v > upper then v = upper end
-				v = h[key] + omega * (v - h[key])
+				h[key] = v
 			end
-			h[key] = v
 		end
+		done = done + batch
+		-- early exit: all constrained edges within the cap, or no real
+		-- progress any more (natural-cliff stall)
+		local worst = 0
+		for key in pairs(free) do
+			local x, z = parse_key(key)
+			for _, d in ipairs(DIRS) do
+				local nkey = field.key(x + d[1], z + d[2])
+				if h[nkey] and key < nkey and edge_ok(key, nkey, aquatic) then
+					local diff = math.abs(h[key] - h[nkey])
+					if diff > worst then worst = diff end
+				end
+			end
+		end
+		if worst <= step + 1e-6 then break end
+		if prev_worst - worst < 1e-4 then break end
+		prev_worst = worst
 	end
 	return h
 end
@@ -225,22 +269,29 @@ end
 --     where the column budget allows, which is all "move up/down more
 --     easily" can mean without destroying natural terrain.
 --
--- kinds (optional): { soft = {key=true}, guard = {key=true} } --
+-- kinds (optional): { soft = {key=true}, guard = {key=true},
+--                     aquatic = {key=true} } --
 -- `fixed` columns not in soft are hard pins (world-download seam
 -- targets), `guard` columns are fixed values OUTSIDE the write domain
--- (untouched natural terrain, never written).
+-- (untouched natural terrain, never written), `aquatic` columns continue
+-- as water (below the sea) and their edges are natural sea relief.
 function field.violations(free, fixed, h, step, kinds)
 	step = step or 1.0
 	local eps = 1e-6
 	local soft = (kinds and kinds.soft) or {}
 	local guard = (kinds and kinds.guard) or {}
+	local aquatic = (kinds and kinds.aquatic) or {}
 	local function kind(k)
+		if aquatic[k] then return "W" end -- water column: no walking there
 		if free[k] then return "F" end
 		if guard[k] then return "G" end
 		if soft[k] then return "S" end
 		return "H"
 	end
 	local function is_fixable(a, b)
+		-- anything touching water is sea cliff / sea floor relief: real
+		-- coastlines do that, and the player swims it
+		if a == "W" or b == "W" then return false end
 		-- free vs any pin: the merge ramp, widen for room
 		if (a == "F" and b ~= "F") or (b == "F" and a ~= "F") then return true end
 		-- a seam pin against untouched terrain: grow the ramp outward

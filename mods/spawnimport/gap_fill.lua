@@ -570,9 +570,20 @@ function gap_fill.build_plan(job, real, entries, opts)
 			if fixed[skey] then free[skey] = nil end
 		end
 
+		-- Two-pass solve: the first pass decides which columns continue as
+		-- water (merged height below sea); the second pass caps only the
+		-- walking (land-to-land) slopes -- land dropping into the sea is a
+		-- sea cliff and the sea floor may be as steep as it likes. Capping
+		-- the water edges too dragged whole coastlines down to the sea
+		-- floor and demanded impossible ramps (runaway widening).
 		h = gap_field.solve(free, fixed, { step = step })
+		local aquatic = {}
+		for skey, v in pairs(h) do
+			if v < WATER_LEVEL then aquatic[skey] = true end
+		end
+		h = gap_field.solve(free, fixed, { step = step, aquatic = aquatic })
 		fixable, structural, worst = gap_field.violations(free, fixed, h, step,
-			{ soft = soft, guard = guard })
+			{ soft = soft, guard = guard, aquatic = aquatic })
 		hard_final, soft_final, guard_final = hard, soft, guard
 		if fixable == 0 or rounds > gap_fill.MAX_EXTRA_RINGS then break end
 
@@ -803,22 +814,31 @@ end
 -- Audit: verify the merge actually came out right
 -- ---------------------------------------------------------------------
 
--- Re-reads every written column and checks the four things a player
--- would notice:
+-- Re-reads every written column and checks the things a player would
+-- notice:
 --   1. seam columns match the capture's ground EXACTLY (no step at the
 --      chunk border);
---   2. every slope inside the merged domain is walkable (<= step + 0.5,
---      the 0.5 being integer rounding);
---   3. no water sits above sea level (the "raised water" bug);
---   4. no floating non-vegetation left above the merged surfaces.
--- Logs a summary and returns ok.
+--   2. every slope the MERGE introduced on land is walkable (<= step +
+--      0.5, the 0.5 being integer rounding). Slopes between untouched
+--      columns are natural relief and reported separately -- the merge
+--      must not be blamed for (or destroy) a cliff that was already
+--      there. Land-to-water steps are sea cliffs and sea floor relief,
+--      not counted at all.
+--   3. no water sits above sea level (the "raised water" bug -- a water
+--      column's own water stops AT sea level, so any liquid higher up is
+--      either the bug or a leftover);
+--   4. no floating non-vegetation above the merged surfaces.
+-- Returns ok = the three bug classes are clean (natural relief and
+-- floating-junk counts are informational).
 function gap_fill.audit(job, plan)
 	local t0 = core.get_us_time()
 	local seam_bad, seam_bad_worst = 0, 0
 	local slope_bad, slope_worst = 0, 0
+	local relief_bad, relief_worst = 0, 0
 	local raised_water = 0
 	local floating_junk = 0
 	local surface = {} -- "sx,sz" -> measured surface (for the slope pass)
+	local moved = {}   -- "sx,sz" -> the merge changed this column's height
 	local sea = plan.sea
 
 	for key, chunk in pairs(plan.chunks) do
@@ -837,6 +857,7 @@ function gap_fill.audit(job, plan)
 				local x = xmin + lx
 				local sx, sz = chunk.cx * C + lx, chunk.cz * C + lz
 				local skey = sx .. "," .. sz
+				local col = chunk.col[lx * C + lz + 1]
 				local tops, top = {}, nil
 				local top_count = 0
 				for y = ymax, ymin, -1 do
@@ -852,6 +873,9 @@ function gap_fill.audit(job, plan)
 				end
 				local S = surface_from_tops(tops) or top
 				surface[skey] = S
+				if col.S and col.B and math.abs(col.B - col.S) > 0.5 then
+					moved[skey] = true
+				end
 
 				-- seam exactness against the capture's ground
 				local target = plan.hard[skey]
@@ -863,14 +887,19 @@ function gap_fill.audit(job, plan)
 					end
 				end
 
-				-- water above sea level and floating junk above the surface
+				-- water above sea level and true floating junk above the
+				-- surface (a non-vegetation block with nothing solid
+				-- right below it)
 				for y = (S or 0) + 1, ymax do
 					local cid = data[area:index(x, y, z)]
 					if cid ~= core.CONTENT_AIR and cid ~= core.CONTENT_IGNORE then
 						if is_liquid(cid) then
-							raised_water = raised_water + 1
+							if y > sea then raised_water = raised_water + 1 end
 						elseif not is_veg(cid) then
-							floating_junk = floating_junk + 1
+							local below = data[area:index(x, y - 1, z)]
+							if below == core.CONTENT_AIR or below == core.CONTENT_IGNORE or is_liquid(below) then
+								floating_junk = floating_junk + 1
+							end
 						end
 					end
 				end
@@ -885,22 +914,27 @@ function gap_fill.audit(job, plan)
 		for _, d in ipairs(gap_field.DIRS) do
 			local nkey = (sx + d[1]) .. "," .. (sz + d[2])
 			local Sn = surface[nkey]
-			if Sn and skey < nkey then
+			if Sn and skey < nkey and S >= sea and Sn >= sea then
 				local diff = math.abs(S - Sn)
 				if diff > allowed then
-					slope_bad = slope_bad + 1
-					if diff > slope_worst then slope_worst = diff end
+					if moved[skey] or moved[nkey] then
+						slope_bad = slope_bad + 1
+						if diff > slope_worst then slope_worst = diff end
+					else
+						relief_bad = relief_bad + 1
+						if diff > relief_worst then relief_worst = diff end
+					end
 				end
 			end
 		end
 	end
 
-	local ok = seam_bad == 0 and slope_bad == 0 and raised_water == 0
+	local ok = seam_bad == 0 and raised_water == 0 and slope_bad == 0
 	core.log("action", string.format(
-		"[gap-fill] audit %s: seam mismatches %d (worst %.1f), un-walkable slopes %d (worst %.1f, cap %.1f), "
-		.. "raised water blocks %d, floating junk blocks %d -- %.2fs",
+		"[gap-fill] audit %s: seam mismatches %d (worst %.1f), merge slopes over cap %d (worst %.1f, cap %.1f), "
+		.. "natural relief steps %d (worst %.1f), raised water blocks %d, floating junk blocks %d -- %.2fs",
 		job.name, seam_bad, seam_bad_worst, slope_bad, slope_worst, allowed,
-		raised_water, floating_junk, (core.get_us_time() - t0) / 1e6))
+		relief_bad, relief_worst, raised_water, floating_junk, (core.get_us_time() - t0) / 1e6))
 	if not ok then
 		core.log("warning", "[gap-fill] audit FAILED for " .. tostring(job.name))
 	end

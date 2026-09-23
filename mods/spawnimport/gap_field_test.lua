@@ -203,6 +203,26 @@ do
 		string.format("h5=%.2f h55=%.2f", h[field.key(5, 0)], h[field.key(55, 0)]))
 end
 
+print("=== land dropping into water is sea relief, not a violation ===")
+do
+	-- A coast: land column at 25 right next to a water column pinned at
+	-- -5 (the base's sea floor). That step is a sea cliff -- real
+	-- coastlines do that and the player swims it -- so with the column
+	-- classified aquatic it must NOT trigger widening.
+	local free = { [field.key(1, 0)] = 25 }
+	local fixed = { [field.key(0, 0)] = 25, [field.key(2, 0)] = -5 }
+	local aquatic = { [field.key(2, 0)] = true }
+	local h = field.solve(free, fixed, { aquatic = aquatic })
+	check("land column stays at land height (not dragged under)", h[field.key(1, 0)] > 20,
+		string.format("%.1f", h[field.key(1, 0)]))
+	local nf, ns = field.violations(free, fixed, h, nil, { aquatic = aquatic })
+	check("no fixable violation across the waterline", nf == 0, tostring(nf))
+	check("counted as (aquatic) structural relief", ns >= 1, tostring(ns))
+	-- and without the classification it IS a violation (sanity)
+	local nf2 = field.violations(free, fixed, h)
+	check("sanity: same edge counts without aquatic", nf2 >= 1, tostring(nf2))
+end
+
 print("=== frontier reports the columns outside the domain ===")
 do
 	local free = { [field.key(1, 1)] = 0 }

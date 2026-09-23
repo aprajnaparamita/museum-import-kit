@@ -162,7 +162,7 @@ function field.solve(free, fixed, opts)
 	local step = (opts and opts.step) or 1.0
 	local beta = (opts and opts.beta) or 0.15
 	local omega = (opts and opts.omega) or 0.8
-	local iters = (opts and opts.iters) or 60
+	local iters = (opts and opts.iters) or 120
 	local L, U = field.bounds(free, fixed, step)
 	local h = {}
 	for key, v in pairs(fixed) do h[key] = v end
@@ -208,13 +208,47 @@ end
 
 -- Slope check over every edge between solved columns. Returns
 --   n_fixable, n_structural, worst
--- where "fixable" edges involve at least one free column (widening the
--- domain can give them room) and "structural" edges are fixed-to-fixed
--- (e.g. two world-download seam columns whose own terrain has a cliff --
--- matched exactly for continuity, deliberately not smoothed away).
-function field.violations(free, fixed, h, step)
+--
+-- "fixable" violations are ones the merge introduced and widening can
+-- still absorb: any edge between a solved (free) column and a PINNED one
+-- (a seam target, an outer "stay put" pin, or a guard on untouched
+-- terrain) and hard-pin/guard pairs (the ramp can grow outward past a
+-- seam pin). Those are exactly the seam-ramp-too-steep cases.
+--
+-- "structural" violations are deliberately left alone:
+--   * cliffs that already exist in the capture between two seam pins
+--     (matched exactly for continuity, never smoothed away),
+--   * natural relief of the generated terrain itself (free-free, or
+--     outer-pin-to-guard) -- that cliff was there before the merge, the
+--     merge must not widen away real terrain to erase it. The cleanup
+--     sweeps in solve() still terrace such cliffs down to small steps
+--     where the column budget allows, which is all "move up/down more
+--     easily" can mean without destroying natural terrain.
+--
+-- kinds (optional): { soft = {key=true}, guard = {key=true} } --
+-- `fixed` columns not in soft are hard pins (world-download seam
+-- targets), `guard` columns are fixed values OUTSIDE the write domain
+-- (untouched natural terrain, never written).
+function field.violations(free, fixed, h, step, kinds)
 	step = step or 1.0
 	local eps = 1e-6
+	local soft = (kinds and kinds.soft) or {}
+	local guard = (kinds and kinds.guard) or {}
+	local function kind(k)
+		if free[k] then return "F" end
+		if guard[k] then return "G" end
+		if soft[k] then return "S" end
+		return "H"
+	end
+	local function is_fixable(a, b)
+		-- free vs any pin: the merge ramp, widen for room
+		if (a == "F" and b ~= "F") or (b == "F" and a ~= "F") then return true end
+		-- a seam pin against untouched terrain: grow the ramp outward
+		if (a == "H" and (b == "S" or b == "G")) or (b == "H" and (a == "S" or a == "G")) then
+			return true
+		end
+		return false
+	end
 	local n_fixable, n_structural, worst = 0, 0, 0
 	local seen = {}
 	for key in pairs(h) do
@@ -228,7 +262,7 @@ function field.violations(free, fixed, h, step)
 					local diff = math.abs(h[key] - hv)
 					if diff > step + eps then
 						if diff > worst then worst = diff end
-						if free[key] or free[nkey] then
+						if is_fixable(kind(key), kind(nkey)) then
 							n_fixable = n_fixable + 1
 						else
 							n_structural = n_structural + 1

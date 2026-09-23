@@ -1,31 +1,60 @@
--- Gap-fill (round 28 prototype -> round 30 local blend -> round 31
--- "natural Mineclonia generation at blended heights").
+-- gap_fill.lua -- "merge chunk" gap-fill: bridge each base's captured
+-- (world-download) chunks into the surrounding Mineclonia-generated
+-- terrain so the border is invisible to a player.
 --
--- Round 30 sculpted synthetic stone/dirt/grass at an averaged height for
--- the single-chunk ring around the world download. Round 31 (owner's
--- "Approach A") keeps the ring chunk's NATURAL Mineclonia terrain and only
--- adjusts its surface height toward the world download, so the ring keeps
--- real blocks, biome colours, water and (mostly) trees instead of becoming
--- uniform synthetic fill.
+-- Loaded as a factory: init.lua does
+--     local gap_fill = dofile(modpath .. "/gap_fill.lua")(gap_field)
+-- so the pure solver (gap_field.lua) is injected and unit-testable.
 --
--- Per ring chunk, per column:
---   1. read the natural solid surface S (the top walkable, non-leaf,
---      non-log, non-liquid block -- ground for land, the ocean floor for
---      water);
---   2. blend S toward the world-download chunk's own solid surface at any
---      edge that borders it (average, "meet half-way"), and relax the
---      interior;
---   3. clear everything above the blended surface (drops trees/plants/
---      floating terrain), then:
---        * below sea level -> water column (floor at B, water to sea
---          level),
---        * at/above sea level -> land (natural surface block at B, dirt/
---          stone under it);
---   4. re-tint the surface grass with the world-download biome at the
---      edges.
+-- The algorithm, per ring chunk (a chunk whose 8-neighbourhood touches a
+-- captured chunk; everything further out stays real generated terrain):
 --
--- Still confined to the single 16x16 chunk, still only the "touched" ring.
+--   1. READ the natural generated column surface S of every column to be
+--      written (and of the chunks one ring further out, for widening).
+--      S is the topmost NATURAL TERRAIN block (Mineclonia whitelist --
+--      not village roofs or rail platforms) with floating masses
+--      rejected (a run <= 2 blocks thick over a >= 3 gap is an island /
+--      stilted floor / platform, not ground).
+--
+--   2. MERGE the height field jointly over ALL ring chunks at once (the
+--      old per-chunk blend left steps where two ring chunks met):
+--        * columns bordering a captured chunk are PINNED to that
+--          chunk's terrain height (footprint `terrain_cols` -- the
+--          ground the base sits on, NOT its roofs) -- the seam is
+--          EXACT, zero step, water continues level into water;
+--        * columns bordering untouched generated terrain are pinned to
+--          their own S -- invisible there by construction;
+--        * the rest is solved by gap_field: no slope over 1 block per
+--          column (a player can walk/jump up and down anywhere), as
+--          close to each column's own natural height as possible;
+--        * if the height difference doesn't fit in the ring, the domain
+--          widens into more natural chunks (bounded) to give the ramp
+--          room ("merge chunk"), instead of leaving a cliff.
+--
+--   3. WRITE each column as a merge of both sides:
+--        * land column (merged height >= water level): the natural
+--          surface skin + trees/plants SHIFT with the height change (real
+--          material and vegetation preserved); surface water and any
+--          floating junk above the surface are replaced by AIR (this is
+--          the fix for generated water being dragged up with a raised
+--          chunk), nothing else;
+--        * water column (merged height < water level): open water floor
+--          at the merged height up to water level, air above;
+--        * below: natural sub/deep material, Mineclonia bedrock and void
+--          at the real levels;
+--        * the seam edge's grass is re-tinted with the world-download
+--          biome (footprint `biome`).
+--
+--   4. AUDIT (gap_fill.audit, run at the end of every import): re-read
+--      the written columns and verify -- seam heights match the capture
+--      exactly, every slope within the domain is walkable, no water sits
+--      above sea level, no floating junk left above the merged surface.
+--
+-- Inputs: the source footprint JSON (import_tools/placement_fit/
+-- source_footprint.lua output -- terrain_cols/cols/solid_cols/biome per
+-- captured chunk) and the generated map itself.
 
+local function factory(gap_field)
 local gap_fill = {}
 
 local C = 16
@@ -55,27 +84,144 @@ local MC_TO_MCL_BIOME = {
 	["minecraft:swamp"] = "Swampland",
 }
 
--- Water surface level (dest space), from the v7 mapgen's `water_level`
--- setting (persisted in map_meta.txt). This is the ACTUAL ocean surface --
--- Mineclonia's v7 mapgen fills water at and below this Y, and it is NOT
--- the mcl_levelgen preset's `sea_level` (63), which is the air block one
--- above the water and does not track where v7 actually fills water. Using
--- the preset value left the blend's water 2 blocks low (round 31).
+-- The real v7 ocean surface from the mapgen setting (persisted in
+-- map_meta.txt). NOT the mcl_levelgen preset's `sea_level` (63), which is
+-- the air block above the water and does not track where v7 actually
+-- fills water (using it left all water 2 blocks low -- round 31).
 local WATER_LEVEL = tonumber(core.get_mapgen_setting("water_level")) or 1
 
--- Bedrock level (dest space), from Mineclonia's own mcl_vars. In v7 mode
--- this is -128..-124 (rough, 5 layers); the gap-fill column should end at
--- this same depth (bedrock + void below), NOT run solid stone all the way
--- to GAP_Y_MIN -- the owner noticed the fill extending ~60 blocks below
--- the real bedrock.
+-- Mineclonia's real bedrock band (mcl_vars: -128..-124 in v7). The gap
+-- column ends here with bedrock + void below -- it must not run solid
+-- stone ~60 blocks under the real floor.
 local BEDROCK_MIN = (mcl_vars and mcl_vars.mg_bedrock_overworld_min) or -128
 local BEDROCK_MAX = (mcl_vars and mcl_vars.mg_bedrock_overworld_max) or (BEDROCK_MIN + 4)
 
--- Loads a source_footprint.lua JSON and returns
---   { ["cx_cz"] = { height=, cols=, solid_cols=, biome= } }
--- for every REAL chunk. nil on any open/parse failure. Backward-compatible
--- with older footprints (no solid_cols/biome): solid_cols falls back to
--- cols, biome to nil.
+-- Y range matching the pregen pass (PREGEN_Y_MIN/MAX in init.lua).
+local GAP_Y_MIN = -130
+local GAP_Y_MAX = 319
+
+-- Natural terrain materials (Mineclonia names -- verified against
+-- mcl_core/mcl_deepslate/... registrations). The surface scan only
+-- accepts these as "ground": Mineclonia's mapgen decorates with villages,
+-- witch huts and tsm_railcorridors platforms, and a roof over a gap must
+-- never count as the terrain surface. Excluded on purpose: cobble,
+-- stonebrick, planks, bricks, glass, obsidian (all man-made favourites),
+-- snow LAYERS (cover, not ground), everything liquid/vegetation.
+local TERRAIN_NAMES = {
+	["mcl_core:dirt_with_grass"] = true, ["mcl_core:dirt_with_grass_snow"] = true,
+	["mcl_core:dirt_with_dry_grass"] = true, ["mcl_core:dirt_with_dry_grass_snow"] = true,
+	["mcl_core:dirt"] = true, ["mcl_core:coarse_dirt"] = true,
+	["mcl_core:podzol"] = true, ["mcl_core:mycelium"] = true,
+	["mcl_lush_caves:moss"] = true, ["mcl_mud:mud"] = true,
+	["mcl_core:sand"] = true, ["mcl_core:redsand"] = true,
+	["mcl_core:gravel"] = true, ["mcl_core:clay"] = true,
+	["mcl_core:sandstone"] = true, ["mcl_core:sandstonesmooth"] = true,
+	["mcl_core:redsandstone"] = true, ["mcl_core:redsandstonesmooth"] = true,
+	["mcl_core:stone"] = true, ["mcl_core:andesite"] = true,
+	["mcl_core:granite"] = true, ["mcl_core:diorite"] = true,
+	["mcl_deepslate:deepslate"] = true, ["mcl_deepslate:tuff"] = true,
+	["mcl_amethyst:calcite"] = true, ["mcl_core:snowblock"] = true,
+	["mcl_core:ice"] = true, ["mcl_core:packed_ice"] = true,
+	["mcl_core:blue_ice"] = true, ["mcl_nether:netherrack"] = true,
+	["mcl_nether:soul_sand"] = true, ["mcl_blackstone:soul_soil"] = true,
+	["mcl_blackstone:basalt"] = true, ["mcl_blackstone:basalt_smooth"] = true,
+	["mcl_blackstone:blackstone"] = true,
+	["mcl_crimson:crimson_nylium"] = true, ["mcl_crimson:warped_nylium"] = true,
+	["mcl_end:end_stone"] = true,
+}
+
+local function is_terrain_name(name)
+	if TERRAIN_NAMES[name] then return true end
+	if name:match("^mcl_core:stone_with_") then return true end -- ores
+	if name:match("^mcl_deepslate:deepslate_with_") then return true end
+	return false
+end
+
+-- Vegetation: the only thing allowed to ride along above the shifted
+-- surface (trees, plants, vines, snow layers...). Liquids and floating
+-- junk (islands, platforms, dropped structures) do NOT ride along -- they
+-- become air.
+local VEG_GROUPS = { leaves = true, tree = true, attached_node = true,
+	plant = true, snow = true, grass = true, flora = true, flower = true }
+
+-- Classification caches (content id -> flag) -- the scan runs over
+-- tens of millions of nodes, name/group lookups must not repeat.
+local terrain_cache, veg_cache, liquid_cache, name_cache = {}, {}, {}, {}
+
+local function cid_name(cid)
+	local n = name_cache[cid]
+	if n == nil then
+		n = core.get_name_from_content_id(cid) or ""
+		name_cache[cid] = n
+	end
+	return n
+end
+
+local function is_terrain(cid)
+	local v = terrain_cache[cid]
+	if v == nil then
+		v = is_terrain_name(cid_name(cid))
+		terrain_cache[cid] = v
+	end
+	return v
+end
+
+local function is_veg(cid)
+	local v = veg_cache[cid]
+	if v == nil then
+		local name = cid_name(cid)
+		v = false
+		for group in pairs(VEG_GROUPS) do
+			if core.get_item_group(name, group) > 0 then v = true break end
+		end
+		veg_cache[cid] = v
+	end
+	return v
+end
+
+local function is_liquid(cid)
+	local v = liquid_cache[cid]
+	if v == nil then
+		v = core.get_item_group(cid_name(cid), "liquid") > 0
+		liquid_cache[cid] = v
+	end
+	return v
+end
+
+-- Floating-mass rejection, same rule as the footprint side (see
+-- source_footprint.lua's terrain_surface_y): the top terrain run counts
+-- as ground only if it is thicker than FLOAT_MAX_THICK or sits on terrain
+-- (gap below < FLOAT_MIN_GAP). tops is a descending list of the topmost
+-- terrain y values (up to 4).
+local FLOAT_MAX_THICK = 2
+local FLOAT_MIN_GAP = 3
+
+local function surface_from_tops(tops)
+	local t1 = tops[1]
+	if not t1 then return nil end
+	local thickness = 1
+	if tops[2] == t1 - 1 then
+		thickness = 2
+		if tops[3] == t1 - 2 then thickness = 3 end
+	end
+	local below = tops[thickness + 1]
+	local run_bottom = t1 - thickness + 1
+	local gap = below and (run_bottom - below - 1) or math.huge
+	if thickness <= FLOAT_MAX_THICK and gap >= FLOAT_MIN_GAP then
+		return below -- the run under the gap is the real ground
+	end
+	return t1
+end
+
+-- ---------------------------------------------------------------------
+-- Footprint loading
+-- ---------------------------------------------------------------------
+
+-- Reads a source_footprint.lua JSON and returns
+--   { ["cx_cz"] = { height=, cols=, solid_cols=, terrain_cols=, biome= } }
+-- for every REAL (captured) chunk, or nil on any failure. Backward-
+-- compatible with older footprints: terrain_cols falls back to
+-- solid_cols, then cols, then the per-chunk height.
 function gap_fill.load_real_heights(footprint_path)
 	local f = io.open(footprint_path, "r")
 	if not f then return nil end
@@ -86,30 +232,30 @@ function gap_fill.load_real_heights(footprint_path)
 	local real = {}
 	for _, c in ipairs(data.chunks) do
 		if c.cx and c.cz and c.height then
-			local cols, solid = c.cols, c.solid_cols
+			local cols = c.cols
 			if type(cols) ~= "table" or #cols ~= 256 then
 				cols = {}
 				for i = 1, 256 do cols[i] = c.height end
 			end
-			if type(solid) ~= "table" or #solid ~= 256 then
-				solid = cols
-			end
+			local solid = c.solid_cols
+			if type(solid) ~= "table" or #solid ~= 256 then solid = cols end
+			local terrain = c.terrain_cols
+			if type(terrain) ~= "table" or #terrain ~= 256 then terrain = solid end
 			real[c.cx .. "_" .. c.cz] = {
 				height = c.height, cols = cols, solid_cols = solid,
-				biome = c.biome,
+				terrain_cols = terrain, biome = c.biome,
 			}
 		end
 	end
 	return real
 end
 
--- For each ring (touched) gap chunk, extract the directly-adjacent world-
--- download chunk's solid-surface edge columns and biome. Returns
--- { cx=, cz=, west=, east=, north=, south=, west_biome=, ... } where each
--- direction is a 16-entry SOURCE-space solid-height table (or nil), and
--- each *_biome is the neighbour's biome name (or nil).
-function gap_fill.compute_gap_heights(chunk_bounds, real)
-	local gaps = {}
+-- The single-chunk ring: every chunk whose 8-neighbourhood touches a
+-- captured chunk (and that isn't captured itself). Everything further out
+-- stays real generated terrain -- filling wider areas destroys far too
+-- much of it (see HANDOVER.md). Returns { {cx=, cz=}, ... }.
+function gap_fill.ring_chunks(chunk_bounds, real)
+	local ring = {}
 	for cx = chunk_bounds.x_min, chunk_bounds.x_max do
 		for cz = chunk_bounds.z_min, chunk_bounds.z_max do
 			if not real[cx .. "_" .. cz] then
@@ -121,58 +267,161 @@ function gap_fill.compute_gap_heights(chunk_bounds, real)
 					if touched then break end
 				end
 				if touched then
-					local entry = { cx = cx, cz = cz }
-					local w = real[(cx - 1) .. "_" .. cz]
-					if w then
-						entry.west = {}
-						for lz = 0, C - 1 do entry.west[lz + 1] = w.solid_cols[(C - 1) * C + lz + 1] end
-						entry.west_biome = w.biome
-					end
-					local e = real[(cx + 1) .. "_" .. cz]
-					if e then
-						entry.east = {}
-						for lz = 0, C - 1 do entry.east[lz + 1] = e.solid_cols[0 * C + lz + 1] end
-						entry.east_biome = e.biome
-					end
-					local n = real[cx .. "_" .. (cz - 1)]
-					if n then
-						entry.north = {}
-						for lx = 0, C - 1 do entry.north[lx + 1] = n.solid_cols[lx * C + (C - 1) + 1] end
-						entry.north_biome = n.biome
-					end
-					local s = real[cx .. "_" .. (cz + 1)]
-					if s then
-						entry.south = {}
-						for lx = 0, C - 1 do entry.south[lx + 1] = s.solid_cols[lx * C + 0 + 1] end
-						entry.south_biome = s.biome
-					end
-					gaps[#gaps + 1] = entry
+					ring[#ring + 1] = { cx = cx, cz = cz }
 				end
 			end
 		end
 	end
-	return gaps
+	return ring
 end
 
--- Y-range matching the pregen pass (PREGEN_Y_MIN/MAX).
-local GAP_Y_MIN = -130
-local GAP_Y_MAX = 319
+-- Widening margin: how many extra rings of natural chunks may join the
+-- merge domain when a ramp doesn't fit. Also the pregen margin init.lua
+-- must reserve around the base for gap-fill to be able to widen at all.
+gap_fill.MAX_EXTRA_RINGS = 3
 
--- Is this content id "solid terrain ground" (walkable, not a leaf, log,
--- liquid or attached plant)? Name lookups are cached.
-local ground_cache = {}
-local function is_ground(cid)
-	local cached = ground_cache[cid]
-	if cached ~= nil then return cached end
-	local name = core.get_name_from_content_id(cid)
-	local def = core.registered_nodes[name]
-	local ok = def and def.walkable
-		and core.get_item_group(name, "leaves") == 0
-		and core.get_item_group(name, "tree") == 0
-		and core.get_item_group(name, "liquid") == 0
-		and core.get_item_group(name, "attached_node") == 0
-	ground_cache[cid] = ok
-	return ok
+-- ---------------------------------------------------------------------
+-- Plan: natural column scan + merged height field
+-- ---------------------------------------------------------------------
+
+-- Scan one chunk's natural columns (reads the map -- must run AFTER
+-- pre-generation and BEFORE any gap chunk is written). Returns
+--   { [local idx (lx*16+lz)] = { S=, mat=, T= } }
+-- where S is the natural terrain surface (dest y), mat its content id,
+-- T the topmost non-air y (trees/vegetation ceiling). Cached per plan.
+local function scan_chunk_columns(job, cx, cz)
+	local base_x = job.anchor_x + (cx * C - job.origin_x)
+	local base_z = job.anchor_z + (cz * C - job.origin_z)
+	local ymin, ymax = GAP_Y_MIN + job.dest_y_offset, GAP_Y_MAX + job.dest_y_offset
+
+	local vm = core.get_voxel_manip()
+	local emin, emax = vm:read_from_map({ x = base_x, y = ymin, z = base_z },
+		{ x = base_x + C - 1, y = ymax, z = base_z + C - 1 })
+	local area = VoxelArea:new({ MinEdge = emin, MaxEdge = emax })
+	local data = vm:get_data()
+	vm:close()
+
+	local cols = {}
+	for lz = 0, C - 1 do
+		for lx = 0, C - 1 do
+			local x, z = base_x + lx, base_z + lz
+			local tops, top = {}, nil
+			local top_count = 0
+			for y = ymax, ymin, -1 do
+				local cid = data[area:index(x, y, z)]
+				if cid ~= core.CONTENT_AIR and cid ~= core.CONTENT_IGNORE then
+					if not top then top = y end
+					if is_terrain(cid) then
+						top_count = top_count + 1
+						if top_count <= 4 then tops[top_count] = y end
+						if top_count >= 4 then break end
+					end
+				end
+			end
+			local S = surface_from_tops(tops)
+			local mat = S and data[area:index(x, S, z)] or nil
+			cols[lx * C + lz + 1] = { S = S, mat = mat, T = top }
+		end
+	end
+	return cols
+end
+
+-- Per captured chunk edge, smooth the 16-column terrain line once: one
+-- misdetected column in the capture must not leave a one-column spike in
+-- a seam the ring has to match exactly. Fills r.edge[side] = smoothed
+-- line (side 1..4 = west/east/north/south edge), consumed by
+-- seam_target() below.
+local function smooth_edge_lines(real)
+	for _, r in pairs(real) do
+		r.edge = {}
+		for side = 1, 4 do
+			local line = {}
+			for i = 1, C do
+				local idx = (side == 1 and (0 * C + i - 1))       -- west edge, lx=0
+					or (side == 2 and ((C - 1) * C + i - 1))      -- east edge, lx=15
+					or (side == 3 and ((i - 1) * C + 0))          -- north edge, lz=0
+					or ((i - 1) * C + (C - 1))                    -- south edge, lz=15
+				line[i] = r.terrain_cols[idx + 1]
+			end
+			gap_field.smooth_line(line, 2)
+			r.edge[side] = line
+		end
+	end
+end
+
+-- A captured chunk's terrain height at local (lx, lz), from the smoothed
+-- edge line when the column is on an edge (every seam column is), the raw
+-- per-column map otherwise.
+local function seam_target(r, lx, lz)
+	if lx == 0 then return r.edge[1][lz + 1]
+	elseif lx == C - 1 then return r.edge[2][lz + 1]
+	elseif lz == 0 then return r.edge[3][lx + 1]
+	elseif lz == C - 1 then return r.edge[4][lx + 1] end
+	return r.terrain_cols[lx * C + lz + 1]
+end
+
+-- Seam targets from the footprint: for each column to write, the
+-- adjacent captured chunk's TERRAIN height (the ground the base sits on)
+-- in dest space. 4-neighbour (edge) adjacency always applies; diagonal
+-- (corner) adjacency only where no edge constraint and no outer-boundary
+-- pin exists (a corner contact point must not override the "stay put"
+-- pin that keeps the merge invisible against untouched terrain -- edge
+-- seams win over corners, corners win over nothing). If several
+-- constraints meet on one column at the same priority the mean wins.
+-- Returns { ["sx,sz"] = target } (keys are SOURCE block coords --
+-- adjacency is what matters, and the ring/captured chunk grid is
+-- source-aligned).
+local function seam_constraints(job, real, chunk_set, dy, soft)
+	local hard, hard_src = {}, {}
+	for key in pairs(chunk_set) do
+		local cx, cz = key:match("^(.-)_(.-)$")
+		cx, cz = tonumber(cx), tonumber(cz)
+		for lz = 0, C - 1 do
+			for lx = 0, C - 1 do
+				local sx, sz = cx * C + lx, cz * C + lz
+				local skey = sx .. "," .. sz
+				-- orthogonal neighbours first
+				for _, d in ipairs(gap_field.DIRS) do
+					local nx, nz = sx + d[1], sz + d[2]
+					local ncx, ncz = math.floor(nx / C), math.floor(nz / C)
+					local r = real[ncx .. "_" .. ncz]
+					if r and not chunk_set[ncx .. "_" .. ncz] then
+						local target = seam_target(r, nx - ncx * C, nz - ncz * C) + dy
+						local cur = hard_src[skey]
+						if cur == nil then
+							hard_src[skey] = { target }
+						else
+							cur[#cur + 1] = target
+						end
+					end
+				end
+				-- then diagonals (corner contact), only where the column
+				-- has neither an edge constraint nor an outer-boundary pin
+				if hard_src[skey] == nil and not soft[skey] then
+					for _, d in ipairs({ { 1, 1 }, { 1, -1 }, { -1, 1 }, { -1, -1 } }) do
+						local nx, nz = sx + d[1], sz + d[2]
+						local ncx, ncz = math.floor(nx / C), math.floor(nz / C)
+						local r = real[ncx .. "_" .. ncz]
+						if r and not chunk_set[ncx .. "_" .. ncz] then
+							hard_src[skey] = { seam_target(r, nx - ncx * C, nz - ncz * C) + dy }
+						end
+					end
+				end
+			end
+		end
+	end
+	for skey, list in pairs(hard_src) do
+		local sum = 0
+		for _, v in ipairs(list) do sum = sum + v end
+		hard[skey] = sum / #list
+	end
+	return hard
+end
+
+local function count_keys(t)
+	local n = 0
+	for _ in pairs(t) do n = n + 1 end
+	return n
 end
 
 local function biome_palette(mc_biome)
@@ -183,41 +432,251 @@ local function biome_palette(mc_biome)
 	return def._mcl_palette_index
 end
 
--- Natural surface material classification for the fill: returns
--- surface_cid, sub_cid (the block just under the surface), deep_cid.
-local function surface_material(cid)
-	local name = core.get_name_from_content_id(cid)
-	if name == "mcl_core:sand" or name == "mcl_core:redsand" or name == "mcl_core:gravel" then
-		return cid, cid, core.get_content_id("mcl_core:stone")
-	elseif name == "mcl_core:dirt" or name == "mcl_core:coarse_dirt"
-		or name == "mcl_core:dirt_with_grass" or name == "mcl_core:podzol"
-		or name == "mcl_core:mycelium" then
-		return cid, core.get_content_id("mcl_core:dirt"), core.get_content_id("mcl_core:stone")
-	elseif name == "mcl_core:stone" or name == "mcl_core:andesite"
-		or name == "mcl_core:granite" or name == "mcl_core:diorite" then
-		return cid, cid, cid
+-- Seam biome tint: a written column next to a captured chunk gets that
+-- chunk's biome palette index for its surface grass param2.
+local function add_seam_tints(real, plan)
+	local tint_of = {}
+	for _, r in pairs(real) do
+		if tint_of[r.biome] == nil then
+			tint_of[r.biome] = biome_palette(r.biome) or false
+		end
 	end
-	-- default: grass/dirt/stone
-	return core.get_content_id("mcl_core:dirt_with_grass"),
-		core.get_content_id("mcl_core:dirt"),
-		core.get_content_id("mcl_core:stone")
+	for key, chunk in pairs(plan.chunks) do
+		for lz = 0, C - 1 do
+			for lx = 0, C - 1 do
+				local sx, sz = chunk.cx * C + lx, chunk.cz * C + lz
+				for _, d in ipairs(gap_field.DIRS) do
+					local nkey = math.floor((sx + d[1]) / C) .. "_" .. math.floor((sz + d[2]) / C)
+					local r = real[nkey]
+					if r and not plan.chunks[nkey] then
+						local t = tint_of[r.biome]
+						if t then
+							chunk.col[lx * C + lz + 1].tint = t
+						end
+						break
+					end
+				end
+			end
+		end
+	end
 end
 
--- Sculpts one ring chunk: keep the natural terrain, adjust its surface
--- height toward the adjacent world-download, add water below sea level, and
--- re-tint the surface biome at the edges. Confined to this 16x16 chunk.
-function gap_fill.place_gap_chunk(job, entry, content_id_for)
-	local base_x = job.anchor_x + (entry.cx * C - job.origin_x)
-	local base_z = job.anchor_z + (entry.cz * C - job.origin_z)
+-- Builds the full merge plan. Must run after pre-generation (reads the
+-- generated map) and before any gap chunk is written. opts:
+--   step        -- max slope in blocks per column (default 1.0, or the
+--                  spawnimport_gap_max_step setting)
+--   avoid       -- list of {x_min=,x_max=,z_min=,z_max=} dest-block
+--                  bboxes widening must not enter (other bases)
+function gap_fill.build_plan(job, real, entries, opts)
+	opts = opts or {}
+	local dy = job.dest_y_offset
+	local step = opts.step or tonumber(core.settings:get("spawnimport_gap_max_step")) or 1.0
+	local t0 = core.get_us_time()
+
+	smooth_edge_lines(real)
+
+	local scan_cache = {}
+	local function cols_for(cx, cz)
+		local key = cx .. "_" .. cz
+		local c = scan_cache[key]
+		if c == nil then
+			c = scan_chunk_columns(job, cx, cz)
+			scan_cache[key] = c
+		end
+		return c
+	end
+
+	-- domain = chunks we may write; grows with widening rounds
+	local domain = {}
+	for _, e in ipairs(entries) do domain[e.cx .. "_" .. e.cz] = { cx = e.cx, cz = e.cz } end
+
+	local function is_foreign(cx, cz)
+		local base_x = job.anchor_x + (cx * C - job.origin_x)
+		local base_z = job.anchor_z + (cz * C - job.origin_z)
+		for _, bb in ipairs(opts.avoid or {}) do
+			if base_x <= bb.x_max and base_x + C - 1 >= bb.x_min
+				and base_z <= bb.z_max and base_z + C - 1 >= bb.z_min then
+				return true
+			end
+		end
+		return false
+	end
+
+	local h, free, fixed, fixable, structural, worst = nil, nil, nil, nil, nil, nil
+	local hard_final, soft_final, guard_final = {}, {}, {}
+	local rounds = 0
+	while true do
+		rounds = rounds + 1
+		-- assemble the column maps for the current domain
+		free = {}
+		for key in pairs(domain) do
+			local cx, cz = domain[key].cx, domain[key].cz
+			local cols = cols_for(cx, cz)
+			-- a column with no terrain at all (all-air/void column) still
+			-- joins the solve at its chunk's mean surface -- skipping it
+			-- would leave the pre-generated leftovers in place
+			local sum, n = 0, 0
+			for i = 1, C * C do
+				local col = cols[i]
+				if col.S then sum = sum + col.S n = n + 1 end
+			end
+			local fallback = n > 0 and (sum / n) or (GAP_Y_MIN + job.dest_y_offset)
+			for lz = 0, C - 1 do
+				for lx = 0, C - 1 do
+					local sx, sz = cx * C + lx, cz * C + lz
+					local col = cols[lx * C + lz + 1]
+					if not col.S then col.S = fallback end
+					free[sx .. "," .. sz] = col.S
+				end
+			end
+		end
+		-- spikes (misdetected floating leftovers) off before solving
+		free = gap_field.median3(free)
+		-- Domain-boundary columns bordering untouched terrain are pinned
+		-- to their own natural height (the merge must be invisible there),
+		-- and the untouched neighbour columns enter the solve as GUARDS
+		-- (fixed at their own heights, never written) so that any step
+		-- introduced against untouched terrain is seen by violations()
+		-- and can trigger widening instead of going unnoticed.
+		local soft, guard = {}, {}
+		for skey in pairs(free) do
+			local sx, sz = skey:match("^(%-?%d+),(%-?%d+)$")
+			sx, sz = tonumber(sx), tonumber(sz)
+			for _, d in ipairs(gap_field.DIRS) do
+				local nx, nz = sx + d[1], sz + d[2]
+				local gcx, gcz = math.floor(nx / C), math.floor(nz / C)
+				local gkey = gcx .. "_" .. gcz
+				if not domain[gkey] and not real[gkey] then
+					soft[skey] = free[skey]
+					local gcols = cols_for(gcx, gcz)
+					local gcol = gcols[(nx - gcx * C) * C + (nz - gcz * C) + 1]
+					if gcol and gcol.S then
+						guard[nx .. "," .. nz] = gcol.S
+					end
+				end
+			end
+		end
+		-- captured-chunk seam columns: pinned to the capture's terrain
+		-- (overrides an outer pin -- the seam is the point of the merge;
+		-- a step it causes against untouched terrain is fixable by
+		-- widening and reported as such)
+		local hard = seam_constraints(job, real, domain, dy, soft)
+		for skey in pairs(hard) do soft[skey] = nil end
+		fixed = {}
+		for skey, v in pairs(soft) do fixed[skey] = v end
+		for skey, v in pairs(hard) do fixed[skey] = v end
+		for skey, v in pairs(guard) do fixed[skey] = v end
+		for skey in pairs(free) do
+			if fixed[skey] then free[skey] = nil end
+		end
+
+		h = gap_field.solve(free, fixed, { step = step })
+		fixable, structural, worst = gap_field.violations(free, fixed, h, step,
+			{ soft = soft, guard = guard })
+		hard_final, soft_final, guard_final = hard, soft, guard
+		if fixable == 0 or rounds > gap_fill.MAX_EXTRA_RINGS then break end
+
+		-- widen: pull in the natural chunks just outside the domain so
+		-- the ramp gets room; never captured chunks, never other bases
+		local grow = {}
+		for key in pairs(domain) do
+			local cx, cz = domain[key].cx, domain[key].cz
+			for _, d in ipairs({ { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
+					{ 1, 1 }, { 1, -1 }, { -1, 1 }, { -1, -1 } }) do
+				local nx, nz = cx + d[1], cz + d[2]
+				local nkey = nx .. "_" .. nz
+				if not domain[nkey] and not real[nkey] and not grow[nkey]
+					and not is_foreign(nx, nz) then
+					grow[nkey] = { cx = nx, cz = nz }
+				end
+			end
+		end
+		if not next(grow) then break end
+		for key, v in pairs(grow) do domain[key] = v end
+	end
+
+	-- per-chunk apply data
+	local plan = {
+		step = step,
+		sea = WATER_LEVEL,
+		chunk_order = {},
+		chunks = {},
+		hard = {},
+		n_fixable = fixable,
+		n_structural = structural,
+		worst_slope = worst,
+		rounds = rounds,
+	}
+	local hard_all = hard_final
+	for key in pairs(domain) do
+		local cx, cz = domain[key].cx, domain[key].cz
+		local cols = cols_for(cx, cz)
+		local base_x = job.anchor_x + (cx * C - job.origin_x)
+		local base_z = job.anchor_z + (cz * C - job.origin_z)
+		local chunk = { cx = cx, cz = cz, base_x = base_x, base_z = base_z, col = {} }
+		for lz = 0, C - 1 do
+			for lx = 0, C - 1 do
+				local sx, sz = cx * C + lx, cz * C + lz
+				local skey = sx .. "," .. sz
+				local src = cols[lx * C + lz + 1]
+				local B = h[skey]
+				if B then B = math.floor(B + 0.5) end
+				chunk.col[lx * C + lz + 1] = {
+					S = src.S, mat = src.mat, T = src.T, B = B,
+					seam = hard_all[skey] and true or false,
+				}
+				if hard_all[skey] then
+					plan.hard[skey] = math.floor(hard_all[skey] + 0.5)
+				end
+			end
+		end
+		plan.chunks[key] = chunk
+		plan.chunk_order[#plan.chunk_order + 1] = key
+	end
+	table.sort(plan.chunk_order)
+	-- edge biome tint per column (captured neighbour's biome)
+	add_seam_tints(real, plan)
+
+	core.log("action", string.format(
+		"[gap-fill] merge plan: %d chunks (%d solve round(s)), %d seam columns, "
+		.. "slope cap %.2f, unresolvable slopes %d (structural %d, worst %.2f), %.2fs",
+		#plan.chunk_order, rounds, count_keys(plan.hard), step,
+		plan.n_fixable or 0, plan.n_structural or 0, plan.worst_slope or 0,
+		(core.get_us_time() - t0) / 1e6))
+	return plan
+end
+
+-- Sub/deep materials for the fill below the shifted surface skin.
+local function material_for(cid)
+	local c_stone = core.get_content_id("mcl_core:stone")
+	local name = cid and cid_name(cid) or ""
+	if name == "mcl_core:sand" or name == "mcl_core:redsand" or name == "mcl_core:gravel" then
+		return cid, cid, c_stone
+	elseif name == "mcl_core:dirt" or name == "mcl_core:coarse_dirt"
+		or name == "mcl_core:podzol" or name == "mcl_core:mycelium"
+		or name == "mcl_lush_caves:moss" or name == "mcl_mud:mud" then
+		return cid, core.get_content_id("mcl_core:dirt"), c_stone
+	elseif name == "mcl_core:dirt_with_grass" or name:match("dirt_with_") then
+		return cid, core.get_content_id("mcl_core:dirt"), c_stone
+	end
+	return cid or c_stone, cid or c_stone, c_stone
+end
+
+-- ---------------------------------------------------------------------
+-- Apply: write one merge chunk
+-- ---------------------------------------------------------------------
+
+function gap_fill.place_gap_chunk(job, plan, entry, content_id_for)
+	local chunk = plan.chunks[entry.cx .. "_" .. entry.cz]
+	if not chunk then return end
+	local base_x, base_z = chunk.base_x, chunk.base_z
 	local xmin, xmax = base_x, base_x + C - 1
 	local zmin, zmax = base_z, base_z + C - 1
 	local ymin, ymax = GAP_Y_MIN + job.dest_y_offset, GAP_Y_MAX + job.dest_y_offset
-	local dy = job.dest_y_offset
-	local sea = WATER_LEVEL
+	local sea = plan.sea
 
 	local c_air = core.CONTENT_AIR
 	local c_ignore = core.CONTENT_IGNORE
-	local c_stone = core.get_content_id("mcl_core:stone")
 	local c_water = core.get_content_id("mcl_core:water_source")
 	local c_bedrock = core.get_content_id("mcl_core:bedrock")
 	local c_void = core.get_content_id("mcl_core:void")
@@ -228,172 +687,108 @@ function gap_fill.place_gap_chunk(job, entry, content_id_for)
 	local data = vm:get_data()
 	local p2data = vm:get_param2_data()
 
-	-- 1. natural solid surface S + its material, per column.
-	local S = {}
-	local S_mat = {}
-	local T = {} -- highest natural block per column (tree/plant top)
-	for lz = 0, C - 1 do
-		for lx = 0, C - 1 do
-			local x = xmin + lx
-			local z = zmin + lz
-			local ground, ground_cid = nil, nil
-			local top = nil
-			for y = ymax, ymin, -1 do
-				local cid = data[area:index(x, y, z)]
-				if cid ~= c_air and cid ~= c_ignore then
-					if not top then top = y end
-					if is_ground(cid) then
-						ground, ground_cid = y, cid
-						break
-					end
-				end
-			end
-			S[lx * C + lz + 1] = ground or ymin
-			S_mat[lx * C + lz + 1] = ground_cid
-			T[lx * C + lz + 1] = top or (ground or ymin)
-		end
-	end
-
-	-- 2. blend S -> B (dest space). Edge columns bordering a world-download
-	-- chunk are pinned to the average of S and the neighbour's solid
-	-- surface; everything else stays S; then relax the interior.
-	local g = {}
-	local function gi(lx, lz) return lz * C + lx + 1 end
-	local function edge_val(lx, lz)
-		local sv = S[lx * C + lz + 1]
-		if lx == 0 and entry.west then
-			return math.floor((sv + entry.west[lz + 1] + dy) / 2 + 0.5)
-		elseif lx == C - 1 and entry.east then
-			return math.floor((sv + entry.east[lz + 1] + dy) / 2 + 0.5)
-		elseif lz == 0 and entry.north then
-			return math.floor((sv + entry.north[lx + 1] + dy) / 2 + 0.5)
-		elseif lz == C - 1 and entry.south then
-			return math.floor((sv + entry.south[lx + 1] + dy) / 2 + 0.5)
-		end
-		return sv
-	end
-	for lz = 0, C - 1 do
-		for lx = 0, C - 1 do
-			local on_edge = (lx == 0 or lx == C - 1 or lz == 0 or lz == C - 1)
-			if on_edge then
-				g[gi(lx, lz)] = edge_val(lx, lz)
-			else
-				g[gi(lx, lz)] = S[lx * C + lz + 1]
-			end
-		end
-	end
-	for _ = 1, 30 do
-		for lz = 1, C - 2 do
-			for lx = 1, C - 2 do
-				local i = gi(lx, lz)
-				g[i] = 0.25 * (g[gi(lx - 1, lz)] + g[gi(lx + 1, lz)] + g[gi(lx, lz - 1)] + g[gi(lx, lz + 1)])
-			end
-		end
-	end
-
-	-- 3. apply. For each column: clear above B, then land or water.
-	-- Precompute the edge biome tint per column (from the world-download
-	-- neighbour, if any).
-	local tint = {}
-	for lz = 0, C - 1 do
-		for lx = 0, C - 1 do
-			local t = nil
-			if lx == 0 and entry.west then t = biome_palette(entry.west_biome)
-			elseif lx == C - 1 and entry.east then t = biome_palette(entry.east_biome)
-			elseif lz == 0 and entry.north then t = biome_palette(entry.north_biome)
-			elseif lz == C - 1 and entry.south then t = biome_palette(entry.south_biome) end
-			tint[lx * C + lz + 1] = t
-		end
-	end
-
 	for lz = 0, C - 1 do
 		local z = zmin + lz
 		for lx = 0, C - 1 do
 			local x = xmin + lx
-			-- B must be a whole number: the relaxation leaves floats, and a
-			-- float B made the fill loop's y non-integer, which area:index
-			-- truncates -- shifting the surface and the bedrock boundary by
-			-- one block (the owner noticed bedrock one block off and fill
-			-- extending below it).
-			local B = math.floor(g[gi(lx, lz)] + 0.5)
-			local S_col = S[lx * C + lz + 1]
-			local T_col = T[lx * C + lz + 1]
-			local surf, sub, deep = surface_material(S_mat[lx * C + lz + 1] or c_stone)
-
-			if B < sea then
-				-- Water column: open water. Clear above the floor, fill a
-				-- synthetic floor, then water up to sea level.
-				for y = B + 1, ymax do
-					local idx = area:index(x, y, z)
-					data[idx] = c_air
-					p2data[idx] = 0
-				end
-				for y = B, ymin, -1 do
-					local idx = area:index(x, y, z)
-					local cid
-					if y > BEDROCK_MAX then
-						if y == B then cid = surf
-						elseif y >= B - 3 then cid = sub
-						else cid = deep end
-					elseif y >= BEDROCK_MIN then
-						cid = c_bedrock
-					else
-						cid = c_void
+			local col = chunk.col[lx * C + lz + 1]
+			local B = col.B
+			if B then
+				local S_col, T_col = col.S, col.T
+				local surf, sub, deep = material_for(col.mat)
+				if B < sea then
+					-- Water column: open water -- floor at B up to sea
+					-- level, air above. Generated leftovers (trees,
+					-- floating junk) cleared, never carried up.
+					for y = ymin, ymax do
+						local idx = area:index(x, y, z)
+						data[idx] = c_air
+						p2data[idx] = 0
 					end
-					data[idx] = cid
-					p2data[idx] = 0
-				end
-				for y = B + 1, sea do
-					local idx = area:index(x, y, z)
-					data[idx] = c_water
-					p2data[idx] = 0
-				end
-			else
-				-- Land column: SHIFT the natural surface stack + trees by
-				-- (B - S) so the natural material (grass/sand/dirt) and any
-				-- trees/plants are preserved -- not replaced with a flat
-				-- synthetic grass column (owner report: chunks came back
-				-- flat grass with no trees).
-				local movable = {}
-				for y = S_col - 3, T_col do
-					if y >= ymin and y <= ymax then
-						movable[y - S_col] = data[area:index(x, y, z)]
+					for y = B, ymin, -1 do
+						local idx = area:index(x, y, z)
+						local cid
+						if y > BEDROCK_MAX then
+							if y == B then cid = surf
+							elseif y >= B - 3 then cid = sub
+							else cid = deep end
+						elseif y >= BEDROCK_MIN then
+							cid = c_bedrock
+						else
+							cid = c_void
+						end
+						data[idx] = cid
+						p2data[idx] = 0
 					end
-				end
-				for y = ymin, ymax do
-					local idx = area:index(x, y, z)
-					data[idx] = c_air
-					p2data[idx] = 0
-				end
-				for off, cid in pairs(movable) do
-					local ny = B + off
-					if ny >= ymin and ny <= ymax then
-						local idx = area:index(x, ny, z)
+					for y = B + 1, sea do
+						local idx = area:index(x, y, z)
+						data[idx] = c_water
+						p2data[idx] = 0
+					end
+				else
+					-- Land column: shift the natural surface skin and the
+					-- vegetation on it by (B - S) -- real material and
+					-- trees preserved. Everything else above the surface
+					-- (surface water, floating islands/junk) becomes AIR:
+					-- generated water must NOT ride up with a raised
+					-- chunk, and floating masses must not move terrain.
+					local movable = {}
+					if S_col then
+						for y = S_col - 3, S_col do
+							if y >= ymin and y <= ymax then
+								local idx = area:index(x, y, z)
+								local cid, p2 = data[idx], p2data[idx]
+								if cid ~= c_air and cid ~= c_ignore and not is_liquid(cid) then
+									movable[y - S_col] = { cid, p2 }
+								end
+							end
+						end
+						for y = S_col + 1, (T_col or S_col) do
+							if y >= ymin and y <= ymax then
+								local idx = area:index(x, y, z)
+								local cid, p2 = data[idx], p2data[idx]
+								if cid ~= c_air and cid ~= c_ignore and is_veg(cid) then
+									movable[y - S_col] = { cid, p2 }
+								end
+							end
+						end
+					end
+					for y = ymin, ymax do
+						local idx = area:index(x, y, z)
+						data[idx] = c_air
+						p2data[idx] = 0
+					end
+					for off, block in pairs(movable) do
+						local ny = B + off
+						if ny >= ymin and ny <= ymax then
+							local idx = area:index(x, ny, z)
+							data[idx] = block[1]
+							p2data[idx] = block[2]
+						end
+					end
+					-- fill sub/deep stone, bedrock and void below
+					for y = B - 4, ymin, -1 do
+						local idx = area:index(x, y, z)
+						local cid
+						if y > BEDROCK_MAX then
+							cid = deep
+						elseif y >= BEDROCK_MIN then
+							cid = c_bedrock
+						else
+							cid = c_void
+						end
 						data[idx] = cid
 						p2data[idx] = 0
 					end
 				end
-				-- fill stone/bedrock/void below the shifted surface stack
-				for y = B - 4, ymin, -1 do
-					local idx = area:index(x, y, z)
-					local cid
-					if y > BEDROCK_MAX then
-						cid = deep
-					elseif y >= BEDROCK_MIN then
-						cid = c_bedrock
-					else
-						cid = c_void
-					end
-					data[idx] = cid
-					p2data[idx] = 0
-				end
-			end
 
-			-- biome tint: re-colour the surface grass with the world-
-			-- download biome at this edge, if it is a biomecolor node
-			local t = tint[lx * C + lz + 1]
-			if t and core.get_item_group(core.get_name_from_content_id(surf), "biomecolor") > 0 then
-				p2data[area:index(x, B, z)] = t
+				-- seam biome tint on the surface (biomecolor nodes only)
+				if col.tint then
+					local name = cid_name(surf)
+					if core.get_item_group(name, "biomecolor") > 0 then
+						p2data[area:index(x, B, z)] = col.tint
+					end
+				end
 			end
 		end
 	end
@@ -404,4 +799,115 @@ function gap_fill.place_gap_chunk(job, entry, content_id_for)
 	vm:close()
 end
 
+-- ---------------------------------------------------------------------
+-- Audit: verify the merge actually came out right
+-- ---------------------------------------------------------------------
+
+-- Re-reads every written column and checks the four things a player
+-- would notice:
+--   1. seam columns match the capture's ground EXACTLY (no step at the
+--      chunk border);
+--   2. every slope inside the merged domain is walkable (<= step + 0.5,
+--      the 0.5 being integer rounding);
+--   3. no water sits above sea level (the "raised water" bug);
+--   4. no floating non-vegetation left above the merged surfaces.
+-- Logs a summary and returns ok.
+function gap_fill.audit(job, plan)
+	local t0 = core.get_us_time()
+	local seam_bad, seam_bad_worst = 0, 0
+	local slope_bad, slope_worst = 0, 0
+	local raised_water = 0
+	local floating_junk = 0
+	local surface = {} -- "sx,sz" -> measured surface (for the slope pass)
+	local sea = plan.sea
+
+	for key, chunk in pairs(plan.chunks) do
+		local xmin, xmax = chunk.base_x, chunk.base_x + C - 1
+		local zmin, zmax = chunk.base_z, chunk.base_z + C - 1
+		local ymin, ymax = GAP_Y_MIN + job.dest_y_offset, GAP_Y_MAX + job.dest_y_offset
+		local vm = core.get_voxel_manip()
+		local emin, emax = vm:read_from_map({ x = xmin, y = ymin, z = zmin }, { x = xmax, y = ymax, z = zmax })
+		local area = VoxelArea:new({ MinEdge = emin, MaxEdge = emax })
+		local data = vm:get_data()
+		vm:close()
+
+		for lz = 0, C - 1 do
+			local z = zmin + lz
+			for lx = 0, C - 1 do
+				local x = xmin + lx
+				local sx, sz = chunk.cx * C + lx, chunk.cz * C + lz
+				local skey = sx .. "," .. sz
+				local tops, top = {}, nil
+				local top_count = 0
+				for y = ymax, ymin, -1 do
+					local cid = data[area:index(x, y, z)]
+					if cid ~= core.CONTENT_AIR and cid ~= core.CONTENT_IGNORE then
+						if not top then top = y end
+						if is_terrain(cid) then
+							top_count = top_count + 1
+							if top_count <= 4 then tops[top_count] = y end
+							if top_count >= 4 then break end
+						end
+					end
+				end
+				local S = surface_from_tops(tops) or top
+				surface[skey] = S
+
+				-- seam exactness against the capture's ground
+				local target = plan.hard[skey]
+				if target and S then
+					local diff = math.abs(S - target)
+					if diff > 0.5 then
+						seam_bad = seam_bad + 1
+						if diff > seam_bad_worst then seam_bad_worst = diff end
+					end
+				end
+
+				-- water above sea level and floating junk above the surface
+				for y = (S or 0) + 1, ymax do
+					local cid = data[area:index(x, y, z)]
+					if cid ~= core.CONTENT_AIR and cid ~= core.CONTENT_IGNORE then
+						if is_liquid(cid) then
+							raised_water = raised_water + 1
+						elseif not is_veg(cid) then
+							floating_junk = floating_junk + 1
+						end
+					end
+				end
+			end
+		end
+	end
+
+	local allowed = (plan.step or 1) + 0.5
+	for skey, S in pairs(surface) do
+		local sx, sz = skey:match("^(%-?%d+),(%-?%d+)$")
+		sx, sz = tonumber(sx), tonumber(sz)
+		for _, d in ipairs(gap_field.DIRS) do
+			local nkey = (sx + d[1]) .. "," .. (sz + d[2])
+			local Sn = surface[nkey]
+			if Sn and skey < nkey then
+				local diff = math.abs(S - Sn)
+				if diff > allowed then
+					slope_bad = slope_bad + 1
+					if diff > slope_worst then slope_worst = diff end
+				end
+			end
+		end
+	end
+
+	local ok = seam_bad == 0 and slope_bad == 0 and raised_water == 0
+	core.log("action", string.format(
+		"[gap-fill] audit %s: seam mismatches %d (worst %.1f), un-walkable slopes %d (worst %.1f, cap %.1f), "
+		.. "raised water blocks %d, floating junk blocks %d -- %.2fs",
+		job.name, seam_bad, seam_bad_worst, slope_bad, slope_worst, allowed,
+		raised_water, floating_junk, (core.get_us_time() - t0) / 1e6))
+	if not ok then
+		core.log("warning", "[gap-fill] audit FAILED for " .. tostring(job.name))
+	end
+	return ok
+end
+
 return gap_fill
+end
+
+return factory

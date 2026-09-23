@@ -856,6 +856,250 @@ check("every chunk kept content in >=14/16 of its z-columns (no half-chunk erasu
 	min_zcols >= 14, string.format("min=%d/16 (%s)", min_zcols, worst))
 
 -- -----------------------------------------------------------------
+-- Test 6: gap-fill "merge chunk" end to end (synthetic terrain)
+-- -----------------------------------------------------------------
+-- Drives the REAL gap_fill.lua/gap_field.lua through the mock engine with
+-- synthetic generated terrain and a synthetic capture footprint, and
+-- asserts the merge behaviours the owner asked for by name:
+--   * seam columns line up with the capture's ground EXACTLY (the old
+--     "meet half-way" blend left half the difference as a cliff at the
+--     chunk border);
+--   * every merged slope is walkable (<= 1 block/column);
+--   * generated WATER in a raised column is replaced by AIR (it must not
+--     ride up with the chunk);
+--   * floating masses (islands/platforms) do NOT count as ground and do
+--     not survive above the merged surface;
+--   * trees/vegetation DO ride along with the shifted surface;
+--   * gap_fill.audit passes.
+print("")
+print("=== Test 6: gap-fill merge chunk end to end ===")
+
+mock_registered_nodes["mcl_core:water_source"] = { groups = { liquid = 1 } }
+mock_registered_nodes["mcl_core:jungletree"] = { groups = { tree = 1 } }
+mock_registered_nodes["mcl_core:jungleleaves"] = { groups = { leaves = 1 } }
+
+local GAP_X, GAP_Z = 30000, 30000 -- far from every earlier test base
+local NAT_TOP = 10                 -- synthetic generated ground level
+local TARGET = 20                  -- the capture's ground level (dy = 0)
+local CHUNK_SET = {}
+for _, c in ipairs(CHUNKS) do CHUNK_SET[c.cx .. "," .. c.cz] = true end
+local TERRAIN_TEST = {
+	["mcl_core:stone"] = true, ["mcl_core:dirt"] = true,
+	["mcl_core:dirt_with_grass"] = true, ["mcl_core:sand"] = true,
+}
+
+-- Synthetic generated terrain around the whole test area: stone below,
+-- dirt, grass at NAT_TOP. Two deliberate features:
+--   * a WATER POOL (sand floor + water to y=NAT_TOP) in the chunk under
+--     (MIN_CX, MIN_CZ+1) -- raised to TARGET, its water must become air;
+--   * a FLOATING ISLAND (2 blocks of stone at y=55..56) over the chunk
+--     under (MIN_CX+2, MIN_CZ+1) -- must not count as ground, must not
+--     survive;
+--   * a TREE (trunk + leaves) in the chunk under (MIN_CX+1, MIN_CZ+1) --
+--     must ride along with the shifted surface.
+local function seed_column(x, z, top, surf, sub)
+	for y = -20, top do
+		local name
+		if y == top then name = surf
+		elseif y >= top - 2 then name = sub
+		else name = "mcl_core:stone" end
+		fake_map[x .. "," .. y .. "," .. z] = content_id_of[name] or core.get_content_id(name)
+	end
+end
+local function gap_dest(cx, cz)
+	return GAP_X + (cx * 16 - ORIGIN_X), GAP_Z + (cz * 16 - ORIGIN_Z)
+end
+for cz = MIN_CZ - 3, MIN_CZ + 3 do
+	for cx = MIN_CX - 3, MAX_CX + 3 do
+		local bx, bz = gap_dest(cx, cz)
+		for lz = 0, 15 do
+			for lx = 0, 15 do
+				seed_column(bx + lx, bz + lz, NAT_TOP, "mcl_core:dirt_with_grass", "mcl_core:dirt")
+			end
+		end
+	end
+end
+do
+	local bx, bz = gap_dest(MIN_CX, MIN_CZ + 1)
+	for lz = 0, 7 do
+		for lx = 0, 7 do
+			local x, z = bx + lx, bz + lz
+			seed_column(x, z, 7, "mcl_core:sand", "mcl_core:sand")
+			for y = 8, NAT_TOP do
+				fake_map[x .. "," .. y .. "," .. z] = core.get_content_id("mcl_core:water_source")
+			end
+		end
+	end
+end
+do
+	local bx, bz = gap_dest(MIN_CX + 2, MIN_CZ + 1)
+	for lz = 0, 3 do
+		for lx = 0, 3 do
+			local x, z = bx + lx, bz + lz
+			fake_map[x .. ",55," .. z] = core.get_content_id("mcl_core:stone")
+			fake_map[x .. ",56," .. z] = core.get_content_id("mcl_core:stone")
+		end
+	end
+end
+local TREE_TRUNK_X, TREE_TRUNK_Z
+do
+	local bx, bz = gap_dest(MIN_CX + 1, MIN_CZ + 1)
+	TREE_TRUNK_X, TREE_TRUNK_Z = bx + 5, bz + 5
+	fake_map[TREE_TRUNK_X .. ",11," .. TREE_TRUNK_Z] = core.get_content_id("mcl_core:jungletree")
+	fake_map[TREE_TRUNK_X .. ",12," .. TREE_TRUNK_Z] = core.get_content_id("mcl_core:jungletree")
+	fake_map[TREE_TRUNK_X .. ",13," .. TREE_TRUNK_Z] = core.get_content_id("mcl_core:jungletree")
+	fake_map[(TREE_TRUNK_X + 1) .. ",12," .. TREE_TRUNK_Z] = core.get_content_id("mcl_core:jungleleaves")
+	fake_map[(TREE_TRUNK_X + 1) .. ",13," .. TREE_TRUNK_Z] = core.get_content_id("mcl_core:jungleleaves")
+end
+
+-- Synthetic footprint: every captured chunk is flat ground at TARGET.
+local fp_path = os.tmpname()
+do
+	local chunks = {}
+	for _, c in ipairs(CHUNKS) do
+		local cols = {}
+		for i = 1, 256 do cols[i] = TARGET end
+		chunks[#chunks + 1] = {
+			cx = c.cx, cz = c.cz, height = TARGET, is_water = false,
+			biome = "minecraft:plains",
+			cols = cols, solid_cols = cols, terrain_cols = cols,
+		}
+	end
+	local f = io.open(fp_path, "w")
+	f:write(simple_json_encode({ chunks = chunks }))
+	f:close()
+end
+
+local gap_manifest = {
+	{
+		display_name = "gaptest",
+		source_region_dir = REGION_DIR,
+		source_base_folder = WORLD_FOLDER,
+		dimension_type = "overworld",
+		dest_anchor_x = GAP_X,
+		dest_anchor_z = GAP_Z,
+		dest_y_offset = 0,
+		origin_x = ORIGIN_X,
+		origin_z = ORIGIN_Z,
+		dest_bbox = { x_min = GAP_X, x_max = GAP_X + EXT_W, z_min = GAP_Z, z_max = GAP_Z + EXT_D },
+		chunk_bounds = {
+			x_min = MIN_CX - 1, x_max = MAX_CX + 1,
+			z_min = MIN_CZ - 1, z_max = MIN_CZ + 1,
+		},
+		footprint_path = fp_path,
+	},
+}
+local gap_manifest_path = os.tmpname()
+do
+	local f = io.open(gap_manifest_path, "w")
+	f:write(simple_json_encode(gap_manifest))
+	f:close()
+end
+
+local ok_gap, msg_gap = run_museumimport_command("start " .. gap_manifest_path .. " 5")
+check("gaptest import accepted", ok_gap == true, tostring(msg_gap))
+run_job_to_completion(120)
+local gap_msgs = chat_messages["tester"] or {}
+local gap_finished = false
+for _, m in ipairs(gap_msgs) do
+	if m:match("^%[spawnimport%] gaptest: done%.") then gap_finished = true end
+end
+check("gaptest job reported done", gap_finished)
+
+-- Measure the merged surfaces and scan for the bug classes. Scope: the
+-- chunk_bounds area MINUS the captured chunks themselves (the placed
+-- base has its own water/stone/towers -- only the merge chunks count).
+local W0x = GAP_X + ((MIN_CX - 1) * 16 - ORIGIN_X)
+local W0z = GAP_Z + ((MIN_CZ - 1) * 16 - ORIGIN_Z)
+local W1x = GAP_X + ((MAX_CX + 1) * 16 + 15 - ORIGIN_X)
+local W1z = GAP_Z + ((MIN_CZ + 1) * 16 + 15 - ORIGIN_Z)
+local surface, water_found, island_found, tree_found = {}, 0, 0, 0
+for key, cid in pairs(fake_map) do
+	local x, y, z = key:match("^(%-?%d+),(%-?%d+),(%-?%d+)$")
+	x, y, z = tonumber(x), tonumber(y), tonumber(z)
+	if x and x >= W0x and x <= W1x and z >= W0z and z <= W1z then
+		local cx = math.floor((x - GAP_X + ORIGIN_X) / 16)
+		local cz = math.floor((z - GAP_Z + ORIGIN_Z) / 16)
+		if not CHUNK_SET[cx .. "," .. cz] then
+			local name = content_name_of[cid]
+			if name == "mcl_core:water_source" then water_found = water_found + 1 end
+			if name == "mcl_core:stone" and y > 40 then island_found = island_found + 1 end
+			if (name == "mcl_core:jungletree" or name == "mcl_core:jungleleaves") and y > NAT_TOP then
+				tree_found = tree_found + 1
+			end
+			if TERRAIN_TEST[name] then
+				local skey = x .. "," .. z
+				if not surface[skey] or y > surface[skey] then surface[skey] = y end
+			end
+		end
+	end
+end
+check("no generated water survived the merge (raised water -> air)", water_found == 0,
+	tostring(water_found))
+check("floating island is gone (and never counted as ground)", island_found == 0,
+	tostring(island_found))
+check("tree rode along with the shifted surface", tree_found >= 5, tostring(tree_found))
+
+-- Seam exactness: every merged column orthogonally adjacent to a
+-- captured chunk must sit at exactly TARGET.
+local seam_bad, seam_n = 0, 0
+for skey, s in pairs(surface) do
+	local x, z = skey:match("^(%-?%d+),(%-?%d+)$")
+	x, z = tonumber(x), tonumber(z)
+	local lx, lz = (x - GAP_X) % 16, (z - GAP_Z) % 16
+	-- is this column on the edge of its chunk facing a captured chunk?
+	local cx = math.floor((x - GAP_X + ORIGIN_X) / 16)
+	local cz = math.floor((z - GAP_Z + ORIGIN_Z) / 16)
+	local faced = false
+	if lz == 0 and CHUNK_SET[cx .. "," .. (cz - 1)] then faced = true end
+	if lz == 15 and CHUNK_SET[cx .. "," .. (cz + 1)] then faced = true end
+	if lx == 0 and CHUNK_SET[(cx - 1) .. "," .. cz] then faced = true end
+	if lx == 15 and CHUNK_SET[(cx + 1) .. "," .. cz] then faced = true end
+	if faced then
+		seam_n = seam_n + 1
+		if s ~= TARGET then seam_bad = seam_bad + 1 end
+	end
+end
+check("seam columns match the capture's ground exactly", seam_bad == 0 and seam_n > 0,
+	string.format("%d/%d wrong", seam_bad, seam_n))
+
+-- Walkability: every adjacent merged-surface pair within the written
+-- area is at most 1 block apart (integer rounding included).
+local slope_bad, slope_worst = 0, 0
+for skey, s in pairs(surface) do
+	local x, z = skey:match("^(%-?%d+),(%-?%d+)$")
+	x, z = tonumber(x), tonumber(z)
+	for _, d in ipairs({ { 1, 0 }, { 0, 1 } }) do
+		local nkey = (x + d[1]) .. "," .. (z + d[2])
+		local ns = surface[nkey]
+		if ns then
+			local diff = math.abs(s - ns)
+			if diff > 1 then
+				slope_bad = slope_bad + 1
+				if diff > slope_worst then slope_worst = diff end
+			end
+		end
+	end
+end
+check("merged slopes are walkable (<= 1 block/column)", slope_bad == 0,
+	string.format("%d bad, worst %.0f", slope_bad, slope_worst))
+
+-- The built-in audit must agree (its numbers go to the log).
+local audit_line, audit_failed = nil, false
+for _, m in ipairs(log_messages) do
+	if m.msg:match("%[gap%-fill%] audit gaptest:") then audit_line = m.msg end
+	if m.msg:match("audit FAILED") then audit_failed = true end
+end
+check("gap_fill.audit ran", audit_line ~= nil)
+check("gap_fill.audit reported zero seam mismatches and zero raised water",
+	audit_line and audit_line:match("seam mismatches 0") and audit_line:match("raised water blocks 0"),
+	tostring(audit_line))
+check("gap_fill.audit did not fail", not audit_failed)
+
+os.remove(fp_path)
+os.remove(gap_manifest_path)
+
+-- -----------------------------------------------------------------
 
 print("")
 if failures == 0 then

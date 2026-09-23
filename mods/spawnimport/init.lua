@@ -281,7 +281,8 @@ local ITEM_FRAME_FACING_TO_WALLMOUNTED = {
 }
 
 local registry = dofile(modpath .. "/registry.lua") -- inside the mod's own dir, sandboxed dofile is fine
-local gap_fill = dofile(modpath .. "/gap_fill.lua") -- round 30 per-column blend, see that file's own header
+local gap_field = dofile(modpath .. "/gap_field.lua") -- pure merge height-field solver (gap_field_test.lua covers it)
+local gap_fill = dofile(modpath .. "/gap_fill.lua")(gap_field) -- "merge chunk" gap-fill, see that file's own header
 
 -- core.get_mod_storage() is scoped per-calling-modname, so a different mod
 -- (museumwarp) can't read this one's storage directly -- publish the
@@ -301,6 +302,14 @@ core.register_privilege("worldplace", {
 })
 
 local STEP_BUDGET_US = (tonumber(core.settings:get("spawnimport_step_budget_ms")) or 40) * 1000
+-- Debug: run ONLY the gap-fill merge (skip placing the captured chunks).
+-- Lets merge tuning iterate in minutes instead of a full ~17-minute
+-- import: pregen + ring solve + write only.
+local GAP_ONLY = (core.settings:get("spawnimport_gap_only") or "") == "true"
+-- Last finished job's gap-fill plan + job params, so /worldplace gapaudit
+-- can re-run the merge audit on demand (declared here, not near
+-- active_job, because Job:finish -- far above -- writes it).
+local last_gap = nil
 local PROGRESS_EVERY_PCT = 5
 
 -- Y range pre-generated before placing a base (see new_job's pregen notes
@@ -609,27 +618,40 @@ local function new_job(p)
 			core.log("error", "[spawnimport] could not read region header: " .. fpath)
 		end
 	end
-	-- Round 28 prototype: gap-fill. Optional -- only runs when the caller
+	-- Gap-fill ("merge chunk"): optional -- only runs when the caller
 	-- (the museum batch driver, see museum_manifest.json's footprint_path
-	-- field) provides a pre-computed real-chunk-heights footprint
+	-- field) provides a pre-computed per-chunk footprint
 	-- (import_tools/placement_fit/source_footprint.lua's output). Missing
-	-- footprint = no gap-fill for this base, not a failure -- this is a
-	-- prototype capability, real imports must keep working without it.
+	-- footprint = no gap-fill for this base, not a failure -- real imports
+	-- must keep working without it. The ring of chunks to fill is decided
+	-- here (cheap, footprint-only); the merge FIELD is solved later, after
+	-- pre-generation, when the generated map can be read (gap_fill.
+	-- build_plan from Job:step on the first gap chunk).
 	self.gap_fill_chunks = nil
+	self.gap_real = nil
+	self.gap_plan = nil
+	self.gap_avoid = {}
 	if p.footprint_path and self.chunk_bounds then
 		local real = gap_fill.load_real_heights(p.footprint_path)
 		if real then
 			local t0 = core.get_us_time()
-			self.gap_fill_chunks = gap_fill.compute_gap_heights(self.chunk_bounds, real)
+			self.gap_real = real
+			self.gap_fill_chunks = gap_fill.ring_chunks(self.chunk_bounds, real)
 			local elapsed_s = (core.get_us_time() - t0) / 1e6
 			core.log("action", string.format(
-				"[spawnimport] gap-fill: prepared %d gap chunks in %.2fs (%s)",
+				"[spawnimport] gap-fill: %d merge (ring) chunks in %.2fs (%s)",
 				#self.gap_fill_chunks, elapsed_s, self.name))
 			for _, g in ipairs(self.gap_fill_chunks) do
-				self.cursor_list[#self.cursor_list + 1] = {
-					is_gap = true, cx = g.cx, cz = g.cz,
-					west = g.west, east = g.east, north = g.north, south = g.south,
-				}
+				self.cursor_list[#self.cursor_list + 1] = { is_gap = true, cx = g.cx, cz = g.cz }
+			end
+			-- Widening (gap_fill.build_plan) may pull natural chunks just
+			-- outside this base into the merge domain; it must never pull
+			-- ANOTHER base's chunks -- give it every other base's placed
+			-- footprint as a no-go area.
+			for _, e in ipairs(registry.list()) do
+				if e.name ~= self.name and e.bbox then
+					self.gap_avoid[#self.gap_avoid + 1] = e.bbox
+				end
 			end
 		else
 			core.log("warning", "[spawnimport] gap-fill: could not load footprint " .. tostring(p.footprint_path)
@@ -686,8 +708,21 @@ local function new_job(p)
 	-- gap chunks instead of leaving them to this, fixing the actual root
 	-- cause rather than live-patching the symptom after each rebuild.
 	self.pregen_state = "pending"
-	self.pregen_min = { x = p.dest_bbox.x_min, y = PREGEN_Y_MIN + self.dest_y_offset, z = p.dest_bbox.z_min }
-	self.pregen_max = { x = p.dest_bbox.x_max, y = PREGEN_Y_MAX + self.dest_y_offset, z = p.dest_bbox.z_max }
+	-- Gap-fill widening needs generated terrain a few chunks BEYOND the
+	-- base's own dest_bbox (the merge domain can grow up to
+	-- gap_fill.MAX_EXTRA_RINGS rings into natural chunks); VoxelManip
+	-- writes into never-generated blocks are regenerated over and never
+	-- sent to clients, so the pregen range must cover it.
+	local gap_margin = self.gap_fill_chunks
+		and ((1 + gap_fill.MAX_EXTRA_RINGS) * 16) or 0
+	self.pregen_min = {
+		x = p.dest_bbox.x_min - gap_margin, y = PREGEN_Y_MIN + self.dest_y_offset,
+		z = p.dest_bbox.z_min - gap_margin,
+	}
+	self.pregen_max = {
+		x = p.dest_bbox.x_max + gap_margin, y = PREGEN_Y_MAX + self.dest_y_offset,
+		z = p.dest_bbox.z_max + gap_margin,
+	}
 
 	self.current_region_path = nil
 	self.current_region_data = nil
@@ -1501,8 +1536,16 @@ function Job:finish()
 
 	if self.gap_fill_chunks then
 		core.log("action", string.format(
-			"[spawnimport] %s: gap-fill placed %d/%d gap chunks (round 31 natural surface blend)",
+			"[spawnimport] %s: gap-fill placed %d merge chunk(s) (ring %d + widened)",
 			self.name, self.gap_chunks_placed or 0, #self.gap_fill_chunks))
+	end
+
+	-- Gap-fill audit: verify the merge came out right (seam exactness,
+	-- walkable slopes, no raised water, no floating junk). Kept so
+	-- /worldplace gapaudit can re-run it on demand.
+	if self.gap_plan then
+		last_gap = { job = self, plan = self.gap_plan }
+		gap_fill.audit(self, self.gap_plan)
 	end
 
 	if self.frames_placed and self.frames_placed > 0 then
@@ -1591,8 +1634,35 @@ function Job:step()
 		local entry = self.cursor_list[self.cursor_index]
 		self.cursor_index = self.cursor_index + 1
 
+		-- Debug mode (spawnimport_gap_only = true): skip real chunk
+		-- placement entirely and only run the gap-fill merge -- a fast
+		-- iteration loop for merge tuning (pregen + ring chunks only).
+		if GAP_ONLY and not entry.is_gap then
+			goto continue
+		end
+
 		if entry.is_gap then
-			local ok, err = pcall(gap_fill.place_gap_chunk, self, entry, content_id_for)
+			if not self.gap_plan then
+				-- First gap chunk: every captured chunk is placed by now
+				-- (gap entries run last), so the merge field can be solved
+				-- against the real generated map. Widened chunks (when a
+				-- ramp needs more room than the ring has) join the cursor
+				-- here -- nothing else writes them.
+				self.gap_plan = gap_fill.build_plan(self, self.gap_real, self.gap_fill_chunks,
+					{ avoid = self.gap_avoid })
+				local queued = {}
+				for _, e in ipairs(self.gap_fill_chunks) do queued[e.cx .. "_" .. e.cz] = true end
+				for _, key in ipairs(self.gap_plan.chunk_order) do
+					if not queued[key] then
+						local cx, cz = key:match("^(.-)_(.-)$")
+						self.cursor_list[#self.cursor_list + 1] = {
+							is_gap = true, cx = tonumber(cx), cz = tonumber(cz),
+						}
+						self.cursor_total = self.cursor_total + 1
+					end
+				end
+			end
+			local ok, err = pcall(gap_fill.place_gap_chunk, self, self.gap_plan, entry, content_id_for)
 			if ok then
 				self.gap_chunks_placed = (self.gap_chunks_placed or 0) + 1
 			else
@@ -1688,6 +1758,15 @@ local function handle_cancel()
 	return true, string.format(
 		"[spawnimport] cancelled '%s' after %d blocks (not added to the registry since it's incomplete)",
 		j.name, j.placed_blocks)
+end
+
+local function handle_gapaudit()
+	if not last_gap or not last_gap.plan then
+		return true, "[spawnimport] nothing to audit yet -- run an import with a footprint first"
+	end
+	local ok = gap_fill.audit(last_gap.job, last_gap.plan)
+	return true, "[spawnimport] gap-fill audit for '" .. tostring(last_gap.job.name) .. "': "
+		.. (ok and "PASS" or "FAIL") .. " (per-check numbers in the server log)"
 end
 
 -- opts (optional, used by the museum batch driver -- see museumimport.lua):
@@ -1804,7 +1883,8 @@ local function start_job(player_name, world_folder, x, z, name, dimension_path_o
 end
 
 core.register_chatcommand("worldplace", {
-	params = "<world_folder> <x> <z> [name] [dimension_path] | list | status | cancel | force <world_folder> <x> <z> [name] [dimension_path]",
+	params = "<world_folder> <x> <z> [name] [dimension_path] | list | status | cancel | gapaudit"
+		.. " | force <world_folder> <x> <z> [name] [dimension_path]",
 	description = "Bulk-import a WorldTools Minecraft world capture into this world "
 		.. "(mapped through the spawnmasons pipeline). See server_mod/spawnimport/README.md.",
 	privs = { worldplace = true },
@@ -1817,6 +1897,7 @@ core.register_chatcommand("worldplace", {
 		if tokens[1] == "list" then return handle_list() end
 		if tokens[1] == "status" then return handle_status() end
 		if tokens[1] == "cancel" then return handle_cancel() end
+		if tokens[1] == "gapaudit" then return handle_gapaudit() end
 
 		local force = false
 		local idx = 1

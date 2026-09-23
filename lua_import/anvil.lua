@@ -9,9 +9,10 @@
 --     `anvil.decompress`/`anvil.list_dir` auto-wire to core.decompress /
 --     core.get_dir_list below;
 --   * standalone under plain `lua5.1` or `luajit`, where a test harness
---     sets anvil.decompress/anvil.list_dir itself (see test_harness.lua,
---     which uses real libz via LuaJIT FFI so the standalone tests
---     exercise real decompression, not a fake stub).
+--     sets anvil.decompress/anvil.list_dir itself (see
+--     mods/spawnimport/test_harness.lua, which uses real libz via
+--     lua_import/gzip.lua's LuaJIT FFI so the standalone tests exercise
+--     real decompression, not a fake stub).
 -- `anvil.read_file` defaults to plain io.open either way -- Luanti has no
 -- sandboxed API for reading an arbitrary absolute path (this project's
 -- source data lives outside any world/mod directory), so the server mod

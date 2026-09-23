@@ -21,7 +21,10 @@ set -euo pipefail
 
 STAGING="/Users/dara/dev/museum-playtest"
 DEPLOYED="/Users/dara/Library/Application Support/minetest/worlds/2b2t Museum TEST"
-LUANTI_BIN="$HOME/dev/museum-testrig/bin/luanti"
+# The upgraded 5.17.0 binary (same one mapart_gallery/auto_gallery_fill.py
+# uses) -- the old museum-testrig/bin/luanti is the 5.16.1 build and must
+# not be used for rebuilds anymore.
+LUANTI_BIN="$HOME/dev/luanti/bin/luanti"
 LUANTI_CONF="$HOME/dev/museum-testrig/conf/playtest.conf"
 KIT="/Volumes/Dara/dev/museum-import-kit"
 LOGDIR="/tmp"

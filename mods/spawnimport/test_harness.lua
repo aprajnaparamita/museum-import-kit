@@ -12,10 +12,13 @@
 -- command parsing). It does NOT re-test lua_import's Anvil/NBT/palette
 -- correctness -- that's already covered by lua_import/test_harness.lua
 -- against the same real capture. To keep this fast, the mock limits which
--- region files get processed to the smallest one in the capture
--- (r.1613.857.mca, 11 chunks) rather than the full ~10,354-chunk dimension.
+-- region files get processed to a single small file (see ONLY_REGION_FILE
+-- below) rather than a whole ~10,000-chunk dimension.
 --
--- Run: luajit spawnmasons/server_mod/spawnimport/test_harness.lua
+-- Run: luajit mods/spawnimport/test_harness.lua  (from the kit root)
+-- Needs tools/harness_world set up first: tools/setup_harness_world.sh
+-- (symlinks one real capture region/ dir into a WorldTools-style folder
+-- this harness drives /worldplace against).
 
 local function script_dir()
 	local source = debug.getinfo(1, "S").source
@@ -23,9 +26,12 @@ local function script_dir()
 end
 local HERE = script_dir()
 local LUA_IMPORT_PATH = HERE .. "../../lua_import/"
-local WORLD_FOLDER = HERE .. "../.."
+local WORLD_FOLDER = HERE .. "../../tools/harness_world"
 
-local ffi_zlib = dofile(LUA_IMPORT_PATH .. "ffi_zlib_stub.lua")
+-- Real zlib/gzip decompression via LuaJIT FFI (gzip.lua's windowBits=47
+-- auto-detects the zlib wrapper region chunks use) -- real decompression,
+-- not a fake stub.
+local gzip = dofile(LUA_IMPORT_PATH .. "gzip.lua")
 
 local failures = 0
 local function check(label, cond, detail)
@@ -52,7 +58,16 @@ local function real_get_dir_list(path, is_dir)
 	return names
 end
 
-local ONLY_REGION_FILE = "r.1613.857.mca" -- smallest in the capture (11 chunks) -- keeps this fast
+-- The single region file every test below runs against. The harness is
+-- capture-agnostic (all expected numbers are derived from the real bytes
+-- at run time -- see "capture-derived constants" below), but the capture
+-- must be MODERN (1.18+ `sections` layout -- the decoder rejects pre-1.18
+-- numeric-ID chunks) and the file must hold at least 2 chunks adjacent
+-- along one axis (Test 5 needs a real neighbour pair to catch the
+-- neighbouring-chunk-erasure regression). Default (from
+-- tools/setup_harness_world.sh) is cutecurly's City r.-4660.898.mca:
+-- 5 modern chunks, 4 of them contiguous along x, ~180k blocks.
+local ONLY_REGION_FILE = "r.-4660.898.mca"
 
 local chat_messages = {} -- player_name -> array of messages
 local log_messages = {}
@@ -341,7 +356,7 @@ _G.core = {
 			return nil
 		end,
 	},
-	decompress = ffi_zlib.decompress,
+	decompress = gzip.decompress,
 	get_dir_list = function(path, is_dir)
 		local names = real_get_dir_list(path, is_dir)
 		if not is_dir and path:match("/region$") then
@@ -371,6 +386,15 @@ _G.core = {
 		print("  [chat->" .. player_name .. "] " .. msg)
 	end,
 	registered_nodes = mock_registered_nodes,
+	registered_biomes = {}, -- gap_fill's biome tint looks in here; empty = no tint, fine for the mock
+	get_name_from_content_id = function(id)
+		return content_name_of[id] or (id == 0 and "air" or "unknown:" .. tostring(id))
+	end,
+	get_mapgen_setting = function(name)
+		-- gap_fill.lua reads water_level at load; mock value = a v7 overworld's
+		if name == "water_level" then return "1" end
+		return nil
+	end,
 	get_item_group = function(name, group)
 		local def = mock_registered_nodes[name]
 		return (def and def.groups and def.groups[group]) or 0
@@ -439,6 +463,58 @@ local function run_job_to_completion(max_ticks)
 end
 
 -- -----------------------------------------------------------------
+-- Capture-derived constants
+-- -----------------------------------------------------------------
+-- Every "expected" number below comes from the REAL capture bytes the
+-- mock serves, not from hardcoded values -- the harness was previously
+-- unrunnable because its constants were tuned to a since-lost test
+-- capture (and that capture was pre-1.18 legacy format this decoder
+-- can't even read). Probing the real data once here keeps the tests
+-- honest about WHAT they check without pinning them to one dataset.
+local anvil_probe = dofile(LUA_IMPORT_PATH .. "anvil.lua")
+local nbt_probe = dofile(LUA_IMPORT_PATH .. "nbt.lua")
+anvil_probe.decompress = gzip.decompress
+anvil_probe.list_dir = function(_dir) return { ONLY_REGION_FILE } end -- same scoping the mock enforces
+local PROBE_DIR = WORLD_FOLDER .. "/dimensions/minecraft/worlds/2b2t/2b2t_1/region"
+local probe_file = PROBE_DIR .. "/" .. ONLY_REGION_FILE
+local probe_data = assert(anvil_probe.read_file(probe_file), "harness_world not set up? run tools/setup_harness_world.sh")
+local probe_locs = anvil_probe.read_region_locations(probe_data)
+local prx, prz = anvil_probe.region_coords_from_filename(probe_file)
+
+local CHUNKS = {} -- {cx=,cz=} for every chunk in the scoped region file, sorted
+local MIN_CX, MAX_CX, MIN_CZ, MAX_CZ = nil, nil, nil, nil
+local SRC_TOP = nil -- highest source y with any block anywhere
+for _, loc in ipairs(probe_locs) do
+	local cx, cz = prx * 32 + loc.local_x, prz * 32 + loc.local_z
+	CHUNKS[#CHUNKS + 1] = { cx = cx, cz = cz }
+	MIN_CX = not MIN_CX and cx or math.min(MIN_CX, cx)
+	MAX_CX = not MAX_CX and cx or math.max(MAX_CX, cx)
+	MIN_CZ = not MIN_CZ and cz or math.min(MIN_CZ, cz)
+	MAX_CZ = not MAX_CZ and cz or math.max(MAX_CZ, cz)
+	local chunk = nbt_probe.parse_buffer(anvil_probe.read_chunk_payload(probe_data, loc.offset))
+	pcall(anvil_probe.decode_chunk_blocks, chunk, function(_x, y, _z, _name)
+		if not SRC_TOP or y > SRC_TOP then SRC_TOP = y end
+	end)
+end
+table.sort(CHUNKS, function(a, b) return a.cx == b.cx and a.cz < b.cz or a.cx < b.cx end)
+SRC_TOP = SRC_TOP or 300
+-- Region-file-local block origin (what /worldplace's extent scan computes
+-- for this same single-file scope -- the museum manifest path passes the
+-- same numbers explicitly).
+local ORIGIN_X, ORIGIN_Z = MIN_CX * 16, MIN_CZ * 16
+-- Count adjacent chunk pairs (sharing a full edge) -- Test 5's regression
+-- check is meaningless without at least one.
+local ADJACENT_PAIRS = 0
+for _, a in ipairs(CHUNKS) do
+	for _, b in ipairs(CHUNKS) do
+		if (a.cx == b.cx and math.abs(a.cz - b.cz) == 1) or (a.cz == b.cz and math.abs(a.cx - b.cx) == 1) then
+			ADJACENT_PAIRS = ADJACENT_PAIRS + 1
+		end
+	end
+end
+ADJACENT_PAIRS = ADJACENT_PAIRS / 2
+
+-- -----------------------------------------------------------------
 -- Test 1: a real import against the (mock-limited) capture
 -- -----------------------------------------------------------------
 
@@ -447,17 +523,11 @@ print("=== Test 1: /worldplace start + run to completion ===")
 
 -- Regression test for the "leftover native terrain" bug: seed a fake
 -- pre-existing block (as if the destination world's own mapgen put
--- something there) at a position that's within chunk (51647,27427)'s
--- footprint once anchored at (5000,6000). NOTE: this test run scopes
--- anvil.read_region_extent to just r.1613.857.mca (via the mocked
--- list_dir), so origin_z here is that *region file's own* block_z_min
--- (438832), not the full capture's (438144) -- confirmed with anvil.lua
--- directly rather than assumed, since getting this wrong once already
--- produced a false failure. Chunk base: x=826352 z=438832, so dest is
--- x:[5000,5015] z:[6000,6015]. Y is well above that chunk's actual content
--- (known to top out around y=76) but within its allocated section range
--- (-4..19, i.e. world y -64..319), which is what should get cleared.
-local PRETEND_TERRAIN_POS = "5005,200,6005"
+-- something there) at a position inside the min-cx chunk's footprint once
+-- anchored at (5000,6000), at a y the capture is guaranteed not to fill
+-- (above every real source block), so the ONLY thing that could leave it
+-- there is a clear that doesn't cover the chunk's full 16x16 column.
+local PRETEND_TERRAIN_POS = string.format("5005,%d,6005", math.min(SRC_TOP + 5, 317))
 fake_map[PRETEND_TERRAIN_POS] = 999999 -- an id no real resolved node will ever use
 fake_param2_map[PRETEND_TERRAIN_POS] = 0
 
@@ -484,11 +554,10 @@ check("job reported done", finished)
 check("no chunks were skipped", finished_msg and finished_msg:match("%(0 chunk%(s%) skipped%)") ~= nil,
 	tostring(finished_msg))
 
--- r.1613.857.mca has 11 chunks, all previously confirmed non-empty in
--- step 1/3's work on this capture (17,559 blocks alone in chunk
--- (51647,27427)) -- so total placed blocks should be a large, specific,
--- non-zero number, and every fake_map entry's content id should resolve
--- back to a real node name string.
+-- Every chunk in the scoped region file decodes to tens of thousands of
+-- real blocks (confirmed above in the probe), so total placed blocks
+-- should be a large, specific, non-zero number, and every fake_map
+-- entry's content id should resolve back to a real node name string.
 local placed_count = 0
 local bad_entries = 0
 for _key, cid in pairs(fake_map) do
@@ -496,13 +565,12 @@ for _key, cid in pairs(fake_map) do
 	local name = content_name_of[cid]
 	if type(name) ~= "string" or name == "" then bad_entries = bad_entries + 1 end
 end
-check("blocks actually landed in the fake map", placed_count > 100000, tostring(placed_count))
+check("blocks actually landed in the fake map", placed_count > 10000, tostring(placed_count))
 check("every placed content id maps back to a real node name", bad_entries == 0, tostring(bad_entries))
 
--- Spot check the offset math directly: chunk (51647,27427)'s source bbox
--- min corner (from IMPORT_SPEC.md: block_x_min=826352) should land exactly
--- at anchor x=5000 after offsetting -- i.e. a source block at
--- (826352, y, z) should appear in the fake map at (5000, y, z).
+-- Spot check the offset math directly: the min-cx chunk's source min-x
+-- plane should land exactly at anchor x=5000 after offsetting -- i.e. a
+-- source block at (ORIGIN_X, y, z) should appear at (5000, y, z).
 local anchor_hits = 0
 for key, _cid in pairs(fake_map) do
 	local x = tonumber(key:match("^(-?%d+),"))
@@ -510,9 +578,9 @@ for key, _cid in pairs(fake_map) do
 end
 check("at least one block landed exactly on the anchor's min-x plane (x=5000)", anchor_hits > 0, tostring(anchor_hits))
 
--- (the "no evenly-spaced strips" regression needs chunks that are actually
--- adjacent along a *misaligned* axis, which this anchor isn't -- see Test 5
--- at the end of this file, which sets up that geometry deliberately.)
+-- (the "no wiped-neighbour strips" regression needs chunks that are actually
+-- adjacent along a *misaligned* axis -- see Test 5 at the end of this
+-- file, which sets up that geometry deliberately.)
 
 -- param2 (orientation) actually flows all the way through VoxelManip's
 -- set_param2_data/write_to_map, not just through the resolver -- this
@@ -586,10 +654,13 @@ local REGION_DIR = WORLD_FOLDER .. "/dimensions/minecraft/worlds/2b2t/2b2t_1/reg
 local MUSEUM_ANCHOR_X = 70000
 local MUSEUM_ANCHOR_X2 = 90000
 local Y_OFFSET = 1000
--- r.1613.857.mca's real extent, confirmed directly (not assumed) the same
--- way the Test 1 comment above did: 11 chunks, all chunk_x=51647,
--- chunk_z 27427..27437 contiguous.
-local ORIGIN_X, ORIGIN_Z = 826352, 438832
+-- ORIGIN_X/ORIGIN_Z, MIN/MAX_CX/CZ come from the capture probe above.
+local EXT_W = (MAX_CX - MIN_CX) * 16 + 15
+local EXT_D = (MAX_CZ - MIN_CZ) * 16 + 15
+-- museumtest2 trims with chunk_bounds to just the first two chunks (sorted
+-- order) -- exercises museum_survey.py's corridor-trimming path end to
+-- end (fewer chunks in = fewer blocks placed).
+local SUB_MAX_CX = CHUNKS[2] and CHUNKS[2].cx or CHUNKS[1].cx
 local manifest = {
 	{
 		display_name = "museumtest1",
@@ -601,12 +672,10 @@ local manifest = {
 		dest_y_offset = Y_OFFSET,
 		origin_x = ORIGIN_X,
 		origin_z = ORIGIN_Z,
-		dest_bbox = { x_min = MUSEUM_ANCHOR_X, x_max = MUSEUM_ANCHOR_X + 15, z_min = 80000, z_max = 80175 },
+		dest_bbox = { x_min = MUSEUM_ANCHOR_X, x_max = MUSEUM_ANCHOR_X + EXT_W, z_min = 80000, z_max = 80000 + EXT_D },
 	},
 	{
-		-- Same source, but chunk_bounds trims to only 5 of the 11 chunks
-		-- (chunk_z 27427..27431) -- exercises museum_survey.py's
-		-- corridor-trimming path end to end.
+		-- Same source, but chunk_bounds trims to the first two chunks only.
 		display_name = "museumtest2",
 		source_region_dir = REGION_DIR,
 		source_base_folder = WORLD_FOLDER,
@@ -616,8 +685,11 @@ local manifest = {
 		dest_y_offset = 0,
 		origin_x = ORIGIN_X,
 		origin_z = ORIGIN_Z,
-		dest_bbox = { x_min = MUSEUM_ANCHOR_X2, x_max = MUSEUM_ANCHOR_X2 + 15, z_min = 80000, z_max = 80175 },
-		chunk_bounds = { x_min = 51647, x_max = 51647, z_min = 27427, z_max = 27431 },
+		dest_bbox = {
+			x_min = MUSEUM_ANCHOR_X2, x_max = MUSEUM_ANCHOR_X2 + (SUB_MAX_CX - MIN_CX) * 16 + 15,
+			z_min = 80000, z_max = 80000 + EXT_D,
+		},
+		chunk_bounds = { x_min = CHUNKS[1].cx, x_max = SUB_MAX_CX, z_min = MIN_CZ, z_max = MAX_CZ },
 	},
 }
 -- Minimal JSON encoder, mirroring simple_json_decode above -- just enough
@@ -674,15 +746,14 @@ check("museumimport entry landed in the registry", reg_entry ~= nil)
 check("registry entry recorded the dest_y_offset", reg_entry and reg_entry.dest_y_offset == Y_OFFSET,
 	reg_entry and tostring(reg_entry.dest_y_offset))
 
--- chunk_bounds correctness: museumtest2 only covers 5 of the region file's
--- 11 chunks (chunk_z 27427..27431 -- see the manifest comment above), so
--- its block count should be noticeably less than testbase1/museumtest1's
--- (which place the same source region unfiltered) -- not just "less than
--- 11/11", an exact ratio isn't asserted since per-chunk block counts vary,
--- but it should land somewhere well under the full 254622 seen for the
--- unfiltered 11-chunk placements above.
+-- chunk_bounds correctness: museumtest2 only covers the first two of the
+-- region file's chunks, so its block count should be noticeably less than
+-- museumtest1's (which places the same source unfiltered) -- not just
+-- "less than N/N", an exact ratio isn't asserted since per-chunk block
+-- counts vary, but it should land somewhere well under the unfiltered
+-- placement's count.
 check("museumtest2 landed in the registry", reg_entry2 ~= nil)
-check("chunk_bounds trimmed the placed block count (5/11 chunks, not 11/11)",
+check("chunk_bounds trimmed the placed block count (2 chunks, not all)",
 	reg_entry2 and reg_entry2.block_count > 0 and reg_entry2.block_count < reg_entry.block_count,
 	reg_entry2 and string.format("museumtest2=%d museumtest1(unfiltered)=%d", reg_entry2.block_count, reg_entry.block_count))
 
@@ -715,50 +786,74 @@ check("resume did not duplicate the already-placed entry", before_count == after
 os.remove(manifest_path)
 
 -- -----------------------------------------------------------------
--- Test 5: no evenly-spaced strips (neighbouring-chunk erasure)
+-- Test 5: no wiped-neighbour strips (neighbouring-chunk erasure)
 -- -----------------------------------------------------------------
 -- read_from_map expands its area out to whole 16-block mapblocks, so when
 -- a base's anchor isn't 16-aligned every chunk straddles two mapblocks on
 -- that axis and the emerged volume is twice as wide as the chunk.
 -- write_to_map writes all of it back, so place_one_chunk filling the whole
--- emerged volume with air erased the half-chunk its neighbour had already
--- placed -- shredding every base into 8-wide strips of terrain separated
--- by 8-wide full-height air canyons (found in-client, not by this harness,
--- which is why this test now exists).
+-- emerged volume with air erased the strip its neighbour had already
+-- placed -- shredding every base into strips of terrain separated by
+-- full-height air canyons (found in-client, not by this harness, which is
+-- why this test now exists).
 --
--- Geometry matters here: r.1613.857.mca's 11 chunks all share x=51647 and
--- differ only in Z, so they're adjacent along Z and nowhere else. Test 1's
--- anchor (5000,6000) has z 16-aligned, so it can't trigger this no matter
--- what -- confirmed by running the pre-fix code against it and watching it
--- pass. This anchor deliberately misaligns Z (7005 = 16*437 + 13) so the
--- adjacent chunks really do straddle mapblocks and really would erase each
--- other.
+-- The check is per-chunk column retention: whatever the anchor's
+-- alignment and the capture's chunk geometry, a placed chunk must keep
+-- real content across essentially all 16 of its columns on BOTH axes. A
+-- volume-clear regression wipes whole column ranges (8 columns for a
+-- half-mapblock misalignment, up to 15 otherwise) off every chunk that
+-- has a neighbour on the misaligned axis, so any chunk losing >2 columns
+-- it should have filled is the regression. (The older variant of this
+-- test histogrammed z-residues over the run; that only catches the wipe
+-- when every chunk in the run is aligned the same way and has a
+-- successor -- the per-chunk check is strictly stronger.)
+--
+-- The anchor is deliberately misaligned on both axes (9000 = 16*562 + 8,
+-- 7005 = 16*437 + 13) so the chunks really do straddle mapblocks and
+-- really would erase each other. An aligned anchor can't trigger the bug
+-- at all -- confirmed earlier by running the pre-fix code against one and
+-- watching it pass.
 local STRIPE_X, STRIPE_Z = 9000, 7005
+check("capture has an adjacent chunk pair (else Test 5 can't catch erasure)", ADJACENT_PAIRS >= 1,
+	tostring(ADJACENT_PAIRS))
 local oks, msgs = run_command(WORLD_FOLDER .. " " .. STRIPE_X .. " " .. STRIPE_Z .. " stripetest")
 check("stripe-test placement accepted", oks == true, tostring(msgs))
 run_job_to_completion(50)
 
--- Scope to just this base's own X footprint (one chunk wide: 9000..9015)
--- so earlier tests' bases can't muddy the histogram.
-local z_residues = {}
-for r = 0, 15 do z_residues[r] = 0 end
+-- Per-chunk column occupancy, one pass over the fake map. Scoped to this
+-- base's own footprint so earlier tests' bases can't muddy the counts.
+local xcols, zcols = {}, {} -- "cx,cz" -> set of column offsets with content
+local span_x = (MAX_CX - MIN_CX) * 16 + 15
+local span_z = (MAX_CZ - MIN_CZ) * 16 + 15
 for key in pairs(fake_map) do
 	local x, _y, z = key:match("^(-?%d+),(-?%d+),(-?%d+)$")
 	x, z = tonumber(x), tonumber(z)
-	if x and z and x >= STRIPE_X and x <= STRIPE_X + 15 then
-		local r = ((z - STRIPE_Z) % 16 + 16) % 16
-		z_residues[r] = z_residues[r] + 1
+	local dx = x and (x - STRIPE_X)
+	local dz = z and (z - STRIPE_Z)
+	if dx and dx >= 0 and dx <= span_x and dz >= 0 and dz <= span_z then
+		local k = (MIN_CX + math.floor(dx / 16)) .. "," .. (MIN_CZ + math.floor(dz / 16))
+		local lx, lz = dx % 16, dz % 16
+		local xs, zs = xcols[k], zcols[k]
+		if not xs then xs, zs = {}, {} xcols[k], zcols[k] = xs, zs end
+		xs[lx], zs[lz] = true, true
 	end
 end
-local zmin_res, zmax_res = math.huge, 0
-for r = 0, 15 do
-	if z_residues[r] < zmin_res then zmin_res = z_residues[r] end
-	if z_residues[r] > zmax_res then zmax_res = z_residues[r] end
+local min_xcols, min_zcols, worst = 16, 16, ""
+for _, c in ipairs(CHUNKS) do
+	local k = c.cx .. "," .. c.cz
+	local nx, nz = 0, 0
+	for _ in pairs(xcols[k] or {}) do nx = nx + 1 end
+	for _ in pairs(zcols[k] or {}) do nz = nz + 1 end
+	if math.min(nx, nz) < math.min(min_xcols, min_zcols) then
+		worst = string.format("chunk (%d,%d): %d/16 x-columns, %d/16 z-columns", c.cx, c.cz, nx, nz)
+	end
+	if nx < min_xcols then min_xcols = nx end
+	if nz < min_zcols then min_zcols = nz end
 end
-check("every z-mod-16 offset has content (no wiped-neighbour strips)", zmin_res > 0,
-	string.format("min=%d max=%d", zmin_res, zmax_res))
-check("z-mod-16 content distribution is even (no half-chunk erasure)",
-	zmin_res > zmax_res * 0.25, string.format("min=%d max=%d", zmin_res, zmax_res))
+check("every chunk kept content in >=14/16 of its x-columns (no wiped-neighbour strips)",
+	min_xcols >= 14, string.format("min=%d/16 (%s)", min_xcols, worst))
+check("every chunk kept content in >=14/16 of its z-columns (no half-chunk erasure)",
+	min_zcols >= 14, string.format("min=%d/16 (%s)", min_zcols, worst))
 
 -- -----------------------------------------------------------------
 

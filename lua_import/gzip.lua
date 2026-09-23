@@ -29,6 +29,10 @@ if not ok then
 	error("gzip.lua requires LuaJIT (for the ffi library)")
 end
 
+-- Guarded: this file may be dofile'd several times in one process (the
+-- standalone harness loads it directly AND lua_import/mapdata.lua loads
+-- it again), and ffi.cdef refuses to redefine a type twice.
+if not pcall(ffi.typeof, "z_stream") then
 ffi.cdef [[
 typedef struct z_stream_s {
 	const uint8_t  *next_in;
@@ -52,6 +56,7 @@ int inflate(z_stream *strm, int flush);
 int inflateEnd(z_stream *strm);
 const char *zlibVersion(void);
 ]]
+end
 
 local z = ffi.load("z")
 

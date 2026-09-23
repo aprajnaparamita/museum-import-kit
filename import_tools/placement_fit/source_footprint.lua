@@ -4,7 +4,15 @@
 -- a TRUE per-chunk footprint (which chunks actually have real saved
 -- data -- not a bounding rectangle, which is all `chunk_bounds` in
 -- museum_manifest.json has ever recorded) plus a surface height and
--- land/water classification for each present chunk.
+-- land/water classification for each present chunk. Per column it emits
+-- three surface heights of decreasing "how solid is this really":
+--   cols         -- topmost block of any kind;
+--   solid_cols   -- topmost non-liquid block;
+--   terrain_cols -- topmost NATURAL TERRAIN block, with floating masses
+--                   (thin run over a >=3 gap -- platforms, stilted
+--                   floors, floating islands) rejected. This is the
+--                   gap-fill seam target: the ground a base sits on, not
+--                   whatever is built on top of it.
 --
 -- Why this exists: Tactical Nuke's water-intrusion bug (round 25) traced
 -- back to the placement pipeline never checking real terrain compatibility
@@ -54,6 +62,77 @@ local WATER_NAMES = {
 	["minecraft:water"] = true,
 	["minecraft:bubble_column"] = true, -- always sits directly on/in water
 }
+
+-- Natural terrain materials (vanilla 1.13+ flattened names). Used for the
+-- `terrain_cols` per-column surface: the topmost NATURAL GROUND block, not
+-- the topmost block of any kind. The difference matters hugely for a base:
+-- `solid_cols` on a chunk with a hangar in it reports the hangar roof, and
+-- the gap-fill merge then ramps the surrounding terrain up to ROOF height.
+-- terrain_cols reports the ground the base sits on (the ocean floor under
+-- a stilted platform, the grass under a house), which is what a seam
+-- should match. Verified against real capture palettes.
+--
+-- Deliberate exclusions: cobble/stone_bricks/planks/etc (man-made even
+-- though "stone-like"), obsidian (platform staple), dirt_path (player
+-- tool), snow LAYER (thin cover, not ground), all vegetation.
+local TERRAIN_NAMES = {
+	["grass_block"] = true, ["dirt"] = true, ["coarse_dirt"] = true,
+	["podzol"] = true, ["rooted_dirt"] = true, ["mycelium"] = true,
+	["moss_block"] = true, ["mud"] = true, ["packed_mud"] = true,
+	["sand"] = true, ["red_sand"] = true, ["gravel"] = true,
+	["sandstone"] = true, ["red_sandstone"] = true,
+	["smooth_sandstone"] = true, ["smooth_red_sandstone"] = true,
+	["stone"] = true, ["granite"] = true, ["diorite"] = true,
+	["andesite"] = true, ["tuff"] = true, ["calcite"] = true,
+	["deepslate"] = true, ["clay"] = true, ["snow_block"] = true,
+	["ice"] = true, ["packed_ice"] = true, ["blue_ice"] = true,
+	["basalt"] = true, ["smooth_basalt"] = true, ["blackstone"] = true,
+	["magma_block"] = true, ["netherrack"] = true, ["soul_sand"] = true,
+	["soul_soil"] = true, ["end_stone"] = true, ["dripstone_block"] = true,
+}
+
+local function is_terrain_name(name)
+	local bare = name:match("^minecraft:(.+)$") or name
+	if TERRAIN_NAMES[bare] then return true end
+	if bare:match("_ore$") then return true end -- iron_ore, deepslate_iron_ore, ...
+	if bare:match("_nylium$") then return true end
+	if bare:match("_terracotta$") and not bare:match("glazed") then return true end
+	return false
+end
+
+-- "Floating mass" rejection for a column's top terrain run. The topmost
+-- terrain block is NOT the ground if the thin mass it belongs to hangs
+-- over a gap (a 1-2 block platform over water/air, a floating island):
+--   * run thickness <= FLOAT_MAX_THICK blocks down from the top, AND
+--   * a gap of >= FLOAT_MIN_GAP non-terrain blocks below that run
+-- means the run is floating -- skip it and use the next run down instead
+-- (the actual ground). Note real terrain over a cave is a THICK run (top
+-- soil + stone down to the cave ceiling) and is never rejected; a misfire
+-- needs thin soil directly over a tall cave, which the gap-fill's field
+-- smoothing absorbs anyway.
+local FLOAT_MAX_THICK = 2
+local FLOAT_MIN_GAP = 3
+
+-- tops is a descending list of the topmost terrain-block y values seen in
+-- the column (up to 4). Returns the y that should count as the column's
+-- terrain surface (falls back to the caller's own solid/summary heights).
+local function terrain_surface_y(tops)
+	local t1 = tops[1]
+	if not t1 then return nil end
+	local thickness = 1
+	if tops[2] == t1 - 1 then
+		thickness = 2
+		if tops[3] == t1 - 2 then thickness = 3 end
+	end
+	local below = tops[thickness + 1] -- topmost terrain y under the run (or nil)
+	local run_bottom = t1 - thickness + 1
+	local gap = below and (run_bottom - below - 1) or math.huge
+	if thickness <= FLOAT_MAX_THICK and gap >= FLOAT_MIN_GAP then
+		-- floating: the run below the gap is the real ground
+		return below
+	end
+	return t1
+end
 
 -- Surface biome for a chunk. World Downloader captures flatten the 3D
 -- biome field to a single biome per section (verified against real data:
@@ -111,6 +190,7 @@ for _, fpath in ipairs(files) do
 				local top_y = {}   -- local index lx*16+lz -> y (0..255)
 				local top_name = {}
 				local solid_y = {} -- highest NON-LIQUID block (ground/floor)
+				local terrain_tops = {} -- idx -> descending top-4 natural-terrain y values
 				local base_x = cx * 16
 				local base_z = cz * 16
 				local ok_decode, decode_err = pcall(anvil.decode_chunk_blocks, chunk, function(x, y, z, name)
@@ -126,6 +206,23 @@ for _, fpath in ipairs(files) do
 					if not WATER_NAMES[name] then
 						local cur2 = solid_y[idx]
 						if not cur2 or y > cur2 then solid_y[idx] = y end
+					end
+					if is_terrain_name(name) then
+						local tops = terrain_tops[idx]
+						if not tops then
+							tops = {}
+							terrain_tops[idx] = tops
+						end
+						-- keep a descending top-4 (the surface rule only
+						-- needs the top run and the next run below it)
+						if #tops < 4 or y > tops[4] then
+							local n = #tops
+							while n >= 1 and tops[n] < y do
+								if n < 4 then tops[n + 1] = tops[n] end
+								n = n - 1
+							end
+							if n < 4 then tops[n + 1] = y end
+						end
 					end
 				end)
 				if not ok_decode then
@@ -159,17 +256,25 @@ for _, fpath in ipairs(files) do
 						-- blocks anywhere fall back to the chunk's own
 						-- summary height. solid_cols is the same but
 						-- liquid-excluding (the terrain surface: ground
-						-- for land, ocean floor for water) -- what the
-						-- gap-fill terrain blend actually wants.
-						local cols, solid_cols = {}, {}
+						-- for land, ocean floor for water). terrain_cols
+						-- is the merge target: topmost NATURAL terrain
+						-- material, with floating masses (thin run over a
+						-- >=3 gap) rejected -- structures, platforms and
+						-- floating islands must NOT count as ground, or
+						-- the gap-fill seam ramps the ring terrain up to
+						-- a roof/platform height. Per-column fallback
+						-- chain: terrain -> solid -> top -> height.
+						local cols, solid_cols, terrain_cols = {}, {}, {}
 						for idx = 0, 255 do
 							cols[idx + 1] = top_y[idx] or height
 							solid_cols[idx + 1] = solid_y[idx] or height
+							terrain_cols[idx + 1] = terrain_surface_y(terrain_tops[idx] or {})
+								or solid_y[idx] or top_y[idx] or height
 						end
 						chunks[cx .. "," .. cz] = {
 							cx = cx, cz = cz, height = height,
 							is_water = is_water, cols = cols,
-							solid_cols = solid_cols,
+							solid_cols = solid_cols, terrain_cols = terrain_cols,
 							biome = chunk_surface_biome(chunk),
 						}
 					end
@@ -199,14 +304,16 @@ for _, c in pairs(chunks) do
 	if not first then out:write(',\n') end
 	first = false
 	-- Compact per-column maps: 256 ints, local x*16+z order.
-	local cols, solid_cols = {}, {}
+	local cols, solid_cols, terrain_cols = {}, {}, {}
 	for i = 1, 256 do
 		cols[i] = c.cols[i]
 		solid_cols[i] = c.solid_cols[i]
+		terrain_cols[i] = c.terrain_cols[i]
 	end
-	out:write(string.format('    {"cx":%d,"cz":%d,"height":%d,"is_water":%s,"biome":%q,"cols":[%s],"solid_cols":[%s]}',
+	out:write(string.format(
+		'    {"cx":%d,"cz":%d,"height":%d,"is_water":%s,"biome":%q,"cols":[%s],"solid_cols":[%s],"terrain_cols":[%s]}',
 		c.cx, c.cz, c.height, c.is_water and "true" or "false", c.biome or "",
-		table.concat(cols, ","), table.concat(solid_cols, ",")))
+		table.concat(cols, ","), table.concat(solid_cols, ","), table.concat(terrain_cols, ",")))
 	if c.is_water then n_water = n_water + 1 else n_land = n_land + 1 end
 end
 out:write('\n  ],\n')

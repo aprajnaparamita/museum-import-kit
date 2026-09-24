@@ -117,6 +117,13 @@ end
 --
 -- opts.aquatic: set of keys whose edges are NOT slope-constrained (see
 -- edge_ok above).
+-- opts.natural: "x,z" -> the column's own natural surface height. An
+--   edge the MERGE did not make steeper than it already was (|h diff| <=
+--   |natural diff| + 0.5) is natural relief and is never counted
+--   fixable -- otherwise the widening loop chases thousands of natural
+--   v7 cliffs it can never fix, concludes "widening doesn't help", and
+--   stops early while genuine seam ramps still need room (owner report
+--   2026-09-24: a 42-block step left at the seam-transition).
 --
 -- Returns L, U maps ("x,z" -> number). L > U marks a locally infeasible
 -- pinch (the pins demand more than the slope cap allows) -- the caller's
@@ -316,6 +323,7 @@ function field.violations(free, fixed, h, step, kinds)
 		end
 		return false
 	end
+	local natural = (kinds and kinds.natural) or {}
 	local n_fixable, n_structural, worst = 0, 0, 0
 	local seen = {}
 	for key in pairs(h) do
@@ -329,7 +337,11 @@ function field.violations(free, fixed, h, step, kinds)
 					local diff = math.abs(h[key] - hv)
 					if diff > step + eps then
 						if diff > worst then worst = diff end
-						if is_fixable(kind(key), kind(nkey)) then
+						local nk = natural[key]
+						local nnv = natural[nkey]
+						local natural_relief = nk and nnv
+							and diff <= math.abs(nk - nnv) + 0.5
+						if not natural_relief and is_fixable(kind(key), kind(nkey)) then
 							n_fixable = n_fixable + 1
 						else
 							n_structural = n_structural + 1
@@ -340,6 +352,66 @@ function field.violations(free, fixed, h, step, kinds)
 		end
 	end
 	return n_fixable, n_structural, worst
+end
+
+-- Post-solve polish: collapse residual 2-block zigzags on FREE-FREE
+-- edges. The bounded clamp in solve() lands on midpoint fixed points
+-- along a sloped band (a column squeezed between two neighbours one
+-- step away settles between them and the neighbours then split around
+-- it) -- invisible in the pin-pinch worst-case but it leaves "square"
+-- 2-step jogs across hillsides (owner, 2026-09-24: "large square
+-- cliffs"). A few Gauss-Seidel passes of "split the excess" converge to
+-- <= step wherever a feasible layout exists, WITHOUT touching:
+--   * pinned columns (fixed),
+--   * edges whose natural relief is already steeper (natural table --
+--     the merge must not destroy real cliffs),
+--   * both-aquatic edges (sea floor relief),
+--   * pin-pinch columns (L > U: no room exists; violations() reports).
+-- opts: step, aquatic (set), natural ("x,z" -> natural height),
+--       L, U (bounds maps from bounds() -- optional, keeps polish inside
+--       the pin-implied envelope).
+function field.deflate_steps(free, fixed, h, opts)
+	local step = (opts and opts.step) or 1.0
+	local eps = 1e-6
+	local aquatic = opts and opts.aquatic
+	local natural = (opts and opts.natural) or {}
+	local L = opts and opts.L
+	local U = opts and opts.U
+	for _ = 1, 32 do
+		local worst = 0
+		for key in pairs(free) do
+			local x, z = parse_key(key)
+			for _, d in ipairs(DIRS) do
+				local nkey = field.key(x + d[1], z + d[2])
+				if free[nkey] and h[nkey] and key < nkey
+						and edge_ok(key, nkey, aquatic) then
+					local diff = h[key] - h[nkey]
+					local ad = math.abs(diff)
+					if ad > step + eps then
+						local nk, nv = natural[key], natural[nkey]
+						local natural_relief = nk and nv
+							and ad <= math.abs(nk - nv) + 0.5
+						if not natural_relief then
+							local excess = (ad - step) / 2
+							local s = diff > 0 and 1 or -1
+							local a = h[key] - s * excess
+							local b = h[nkey] + s * excess
+							if L and U and L[key] <= U[key] then
+								a = math.max(L[key], math.min(U[key], a))
+							end
+							if L and U and L[nkey] <= U[nkey] then
+								b = math.max(L[nkey], math.min(U[nkey], b))
+							end
+							h[key], h[nkey] = a, b
+							if ad > worst then worst = ad end
+						end
+					end
+				end
+			end
+		end
+		if worst <= step + eps then break end
+	end
+	return h
 end
 
 -- The columns orthogonally adjacent to the solved domain but not IN it

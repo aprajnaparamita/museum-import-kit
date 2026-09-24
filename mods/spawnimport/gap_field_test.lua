@@ -249,6 +249,45 @@ do
 		nf .. "/" .. ns)
 end
 
+print("=== deflate_steps collapses 2-block zigzags, keeps real cliffs ===")
+do
+	-- A zigzag the bounded clamp leaves behind: 5,7,6 over a 3-column
+	-- chain. Both edges are free-free and feasible -> polish must leave
+	-- every edge <= 1.
+	local k1, k2, k3 = field.key(1, 0), field.key(2, 0), field.key(3, 0)
+	local free = { [k1] = 5, [k2] = 7, [k3] = 6 }
+	local fixed = {}
+	local h = { [k1] = 5, [k2] = 7, [k3] = 6 }
+	field.deflate_steps(free, fixed, h, { step = 1.0 })
+	local worst = math.max(math.abs(h[k1] - h[k2]), math.abs(h[k2] - h[k3]))
+	check("zigzag collapsed to <= 1 per column", worst <= 1.0 + 1e-6,
+		string.format("%.2f", worst))
+	check("polish conserves the neighbourhood height",
+		math.abs((h[k1] + h[k2] + h[k3]) - 18) < 0.5,
+		string.format("%.2f", h[k1] + h[k2] + h[k3]))
+
+	-- A REAL cliff (natural relief 5) must come through untouched -- the
+	-- merge may not destroy terrain that predates it.
+	local m1, m2 = field.key(1, 1), field.key(2, 1)
+	local free2 = { [m1] = 10, [m2] = 15 }
+	local h2 = { [m1] = 10, [m2] = 15 }
+	field.deflate_steps(free2, {}, h2, { step = 1.0, natural = { [m1] = 10, [m2] = 15 } })
+	check("natural cliff preserved", math.abs(h2[m1] - h2[m2]) == 5,
+		string.format("%.2f", math.abs(h2[m1] - h2[m2])))
+
+	-- Pinned columns never move. Free-FIXED edges are left alone too:
+	-- the L/U envelope from bounds() owns those (a violating one means
+	-- pin-pinch -- no local fix exists, violations()/widening reports it).
+	local f1, f2 = field.key(1, 2), field.key(2, 2)
+	local free3 = { [f2] = 8 }
+	local fixed3 = { [f1] = 3 }
+	local h3 = { [f1] = 3, [f2] = 8 }
+	field.deflate_steps(free3, fixed3, h3, { step = 1.0 })
+	check("fixed pin never moves", h3[f1] == 3, tostring(h3[f1]))
+	check("free-fixed edge left to the envelope/widening", h3[f2] == 8,
+		tostring(h3[f2]))
+end
+
 print("=== frontier reports the columns outside the domain ===")
 do
 	local free = { [field.key(1, 1)] = 0 }

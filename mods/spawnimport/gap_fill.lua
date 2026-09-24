@@ -650,6 +650,11 @@ function gap_fill.build_plan(job, real, entries, opts)
 		local aquatic = {}
 		for _ = 1, 3 do
 			h = gap_field.solve(free, fixed, { step = step, aquatic = aquatic })
+			-- collapse the clamp-midpoint zigzags the relaxation leaves
+			-- on sloped bands (the "square jogs"); free-free only, real
+			-- cliffs and pins untouched
+			gap_field.deflate_steps(free, fixed, h,
+				{ step = step, aquatic = aquatic, natural = natural })
 			local new_aquatic, changed = {}, false
 			for skey in pairs(h) do
 				local is_water = h[skey] < WATER_LEVEL
@@ -660,7 +665,8 @@ function gap_fill.build_plan(job, real, entries, opts)
 			if not changed then break end
 		end
 		fixable, structural, worst = gap_field.violations(free, fixed, h, step,
-			{ soft = soft, guard = guard, aquatic = aquatic })
+			{ soft = soft, guard = guard, aquatic = aquatic,
+			  natural = natural })
 		hard_final, soft_final, guard_final = hard, soft, guard
 		if fixable == 0 or rounds > gap_fill.MAX_EXTRA_RINGS then break end
 		-- Widen only while it actually HELPS: big-relief seams (a base
@@ -848,7 +854,10 @@ function gap_fill.audit(job, plan)
 					local cid = data[area:index(x, y, z)]
 					if cid ~= core.CONTENT_AIR and cid ~= core.CONTENT_IGNORE then
 						if not top then top = y end
-						if is_ground(cid) then
+						-- vegetation exactly at the planned height is decor
+						-- grown ON the written surface (coral etc. take the
+						-- surface node) -- the surface is there
+						if is_ground(cid) or (y == ytop and is_veg(cid)) then
 							S = y
 							break
 						end
@@ -904,8 +913,17 @@ function gap_fill.audit(job, plan)
 							end
 						elseif not is_veg(cid) then
 							local below = data[area:index(x, y - 1, z)]
-							if below == core.CONTENT_AIR or below == core.CONTENT_IGNORE or is_liquid(below) then
+							local nm = cid_name(cid)
+							local ice = nm:find("ice") ~= nil
+							if below == core.CONTENT_AIR or below == core.CONTENT_IGNORE
+								or (is_liquid(below) and not ice) then
 								floating_junk = floating_junk + 1
+								if floating_junk <= 5 then
+									core.log("warning", string.format(
+										"[gap-fill] junk at (%d,%d,%d): %s (below=%s)",
+										sx, y, sz, nm,
+										cid_name(data[area:index(x, y - 1, z)])))
+								end
 							end
 						else
 							-- vegetation checks (worldgen-merge audit 5/6):
@@ -990,13 +1008,31 @@ function gap_fill.audit(job, plan)
 				-- seam cliffs) and at the untouched boundary are matched
 				-- or left alone on purpose.
 				local nat_diff = math.abs((nat[skey] or S) - (nat[nkey] or Sn))
+				local fld = plan.field
+				local la = fld and fld.level and fld.level[skey]
+				local lb = fld and fld.level and fld.level[nkey]
+				local capture_cliff = la and lb
+					and math.abs(la - lb) > allowed
 				if diff > allowed and diff > nat_diff + 0.5 then
+				 if not capture_cliff then
 					if slope_bad + relief_bad <= 5 then
+						local function dbg(k, xx, zz)
+							local ckey = math.floor(xx / C) .. "_" .. math.floor(zz / C)
+							local ck = plan.chunks[ckey]
+							local c = ck and ck.col[((xx % C) * C + (zz % C)) + 1]
+							local fld = plan.field or {}
+							return string.format("d=%s lvl=%s nat=%s B=%s",
+								tostring(fld.dist and fld.dist[k]),
+								tostring(fld.level and fld.level[k]),
+								c and tostring(c.S) or "?",
+								c and tostring(c.B) or "?")
+						end
 						core.log("warning", string.format(
-							"[gap-fill] steep pair (%d,%d)=%d(%s)..(%d,%d)=%d(%s) nat=%0.1f",
-							sx, sz, S, surface_name[skey] or "?",
+							"[gap-fill] steep pair (%d,%d)=%d(%s) [%s]..(%d,%d)=%d(%s) [%s] nat=%0.1f",
+							sx, sz, S, surface_name[skey] or "?", dbg(skey, sx, sz),
 							sx + d[1], sz + d[2], Sn,
-							surface_name[nkey] or "?", nat_diff))
+							surface_name[nkey] or "?", dbg(nkey, sx + d[1], sz + d[2]),
+							nat_diff))
 					end
 					-- Steps at pinned columns are the capture's own seam
 					-- cliffs or the untouched-boundary relief (matched or
@@ -1019,6 +1055,14 @@ function gap_fill.audit(job, plan)
 								tostring(plan.pins[skey]), tostring(plan.pins[nkey]))
 						end
 					end
+				 else
+					relief_bad = relief_bad + 1
+					if diff > relief_worst then
+						relief_worst = diff
+						relief_pos = string.format("(%d,%d)=%d..(%d,%d)=%d [capture cliff]",
+							sx, sz, S, sx + d[1], sz + d[2], Sn)
+					end
+				 end
 				end
 			end
 		end

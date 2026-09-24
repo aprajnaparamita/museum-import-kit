@@ -571,18 +571,27 @@ function gap_fill.build_plan(job, real, entries, opts)
 			if fixed[skey] then free[skey] = nil end
 		end
 
-		-- Two-pass solve: the first pass decides which columns continue as
-		-- water (merged height below sea); the second pass caps only the
-		-- walking (land-to-land) slopes -- land dropping into the sea is a
-		-- sea cliff and the sea floor may be as steep as it likes. Capping
-		-- the water edges too dragged whole coastlines down to the sea
-		-- floor and demanded impossible ramps (runaway widening).
-		h = gap_field.solve(free, fixed, { step = step })
+		-- Slope constraints apply only to walking (land-to-land) edges:
+		-- land dropping into the sea is a sea cliff and the sea floor may
+		-- be as steep as it likes. Which columns are water depends on the
+		-- solved heights themselves, so classify and re-solve until the
+		-- classification stops changing (two passes usually; the cap is
+		-- for pathological ping-pong). An earlier two-pass version stopped
+		-- one pass early and left land-land edges unconstrained wherever
+		-- the classification flickered -- the real-world audit caught it
+		-- as 60-90 block "steps" between two land columns.
 		local aquatic = {}
-		for skey, v in pairs(h) do
-			if v < WATER_LEVEL then aquatic[skey] = true end
+		for _ = 1, 3 do
+			h = gap_field.solve(free, fixed, { step = step, aquatic = aquatic })
+			local new_aquatic, changed = {}, false
+			for skey in pairs(h) do
+				local is_water = h[skey] < WATER_LEVEL
+				if is_water then new_aquatic[skey] = true end
+				if is_water ~= (aquatic[skey] or false) then changed = true end
+			end
+			aquatic = new_aquatic
+			if not changed then break end
 		end
-		h = gap_field.solve(free, fixed, { step = step, aquatic = aquatic })
 		fixable, structural, worst = gap_field.violations(free, fixed, h, step,
 			{ soft = soft, guard = guard, aquatic = aquatic })
 		hard_final, soft_final, guard_final = hard, soft, guard

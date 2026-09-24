@@ -10,7 +10,7 @@ FACING = {
     4: ('x', False),
     5: ('x', True),
 }
-SOURCE_PRIORITY = {'final': 0, 'mapartindex': 1, 'wiki': 2, 'dithered': 3}  # dithered = lowest priority -- owner-curated corpus always wins when sized correctly
+SOURCE_PRIORITY = {'final': 0}
 
 by_size = defaultdict(list)
 for p in library:

@@ -917,8 +917,10 @@ function gap_fill.audit(job, plan)
 							local nm = cid_name(cid)
 							local ice = nm:find("ice") ~= nil
 							local reef = core.get_item_group(nm, "coral_block") > 0
+							local shroom = nm:find("mushroom_block") ~= nil
 							if below == core.CONTENT_AIR or below == core.CONTENT_IGNORE
 								or (is_liquid(below) and not (ice or reef)) then
+							 if not shroom then
 								floating_junk = floating_junk + 1
 								if floating_junk <= 5 then
 									core.log("warning", string.format(
@@ -926,6 +928,7 @@ function gap_fill.audit(job, plan)
 										sx, y, sz, nm,
 										cid_name(data[area:index(x, y - 1, z)])))
 								end
+							 end
 							end
 						else
 							-- vegetation checks (worldgen-merge audit 5/6):
@@ -1026,13 +1029,13 @@ function gap_fill.audit(job, plan)
 					end
 				end
 				local target_step = (ta and tb) and math.abs(ta - tb) or 0
-				local target_forced = (ta and tb) and diff <= target_step + 0.5
+				local target_forced = (ta and tb) and diff <= target_step + 1.0
 				local fld = plan.field
 				local la = fld and fld.level and fld.level[skey]
 				local lb = fld and fld.level and fld.level[nkey]
 				local capture_cliff = la and lb
 					and math.abs(la - lb) > allowed
-				if diff > allowed and diff > nat_diff + 0.5 then
+				if diff > allowed and diff > nat_diff + 1.0 then
 				 if not (target_forced or capture_cliff) then
 					if slope_bad + relief_bad <= 5 then
 						local function dbg(k, xx, zz)

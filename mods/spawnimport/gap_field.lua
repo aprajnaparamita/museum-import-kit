@@ -389,8 +389,9 @@ function field.deflate_steps(free, fixed, h, opts)
 					local ad = math.abs(diff)
 					if ad > step + eps then
 						local nk, nv = natural[key], natural[nkey]
-						local natural_relief = nk and nv
-							and ad <= math.abs(nk - nv) + 0.5
+						local ndiff = nk and nv and math.abs(nk - nv)
+						local natural_relief = ndiff and ndiff > step
+							and ad <= ndiff + 1.0
 						if not natural_relief then
 							local excess = (ad - step) / 2
 							local s = diff > 0 and 1 or -1

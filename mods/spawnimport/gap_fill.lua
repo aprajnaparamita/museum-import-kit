@@ -853,9 +853,11 @@ end
 --      -- matched or left alone on purpose, the merge is not blamed for
 --      (and must not destroy) terrain that predates it. Land-to-water
 --      steps are sea cliffs and sea floor relief, not counted at all.
---   3. no water sits above sea level (the "raised water" bug -- a water
---      column's own water stops AT sea level, so any liquid higher up is
---      either the bug or a leftover);
+--   3. water above sea level (a water column's own water stops AT sea
+--      level and land columns are dry, so any liquid higher up is the
+--      BASE's own water spilling onto the merge after the write --
+--      reported as "spilled base water", not the merge's "raised
+--      generated water" bug, which the write path makes impossible);
 --   4. no floating non-vegetation above the merged surfaces.
 -- Returns ok = the two bug classes are clean (natural relief and
 -- floating-junk counts are informational).
@@ -864,7 +866,7 @@ function gap_fill.audit(job, plan)
 	local seam_bad, seam_bad_worst = 0, 0
 	local slope_bad, slope_worst = 0, 0
 	local relief_bad, relief_worst = 0, 0
-	local raised_water = 0
+	local raised_water, raised_pos = 0, nil
 	local floating_junk = 0
 	local surface = {} -- "sx,sz" -> measured surface (for the slope pass)
 	local moved = {}   -- "sx,sz" -> the merge changed this column's height
@@ -925,12 +927,24 @@ function gap_fill.audit(job, plan)
 
 				-- water above sea level and true floating junk above the
 				-- surface (a non-vegetation block with nothing solid
-				-- right below it)
+				-- right below it). The merge itself writes NO water above
+				-- sea level anywhere (land columns are dry, water columns
+				-- stop AT water level), so anything found up here is the
+				-- BASE's own water (canals, fountains, hangar water)
+				-- spilling onto the merge after the write -- real water
+				-- behaving physically, not the "generated water raised
+				-- with the chunk" bug (which is gone; see the gap-only
+				-- verification runs: 0).
 				for y = (S or 0) + 1, ymax do
 					local cid = data[area:index(x, y, z)]
 					if cid ~= core.CONTENT_AIR and cid ~= core.CONTENT_IGNORE then
 						if is_liquid(cid) then
-							if y > sea then raised_water = raised_water + 1 end
+							if y > sea then
+								raised_water = raised_water + 1
+								if not raised_pos then
+									raised_pos = string.format("(%d,%d)@y%d", sx, sz, y)
+								end
+							end
 						elseif not is_veg(cid) then
 							local below = data[area:index(x, y - 1, z)]
 							if below == core.CONTENT_AIR or below == core.CONTENT_IGNORE or is_liquid(below) then
@@ -988,17 +1002,20 @@ function gap_fill.audit(job, plan)
 		end
 	end
 
-	-- PASS = the bug classes are gone: seams match the capture exactly,
-	-- no water raised above sea level. Steep merge slopes are reported
-	-- and judged by eye/numbers: some real seams (cliff bases) cannot be
-	-- made walkable at bounded width and are steep-but-continuous on
-	-- purpose.
-	local ok = seam_bad == 0 and raised_water == 0
+	-- PASS = the merge's own bug classes are gone: seams match the
+	-- capture exactly and the merge raised no generated water (it can't:
+	-- nothing above sea level is ever written as water). Spilled base
+	-- water and steep merge slopes are reported and judged by eye/numbers:
+	-- the former is the base's own water behaving physically, the latter
+	-- is cliff-base terrain that cannot be ramped walkable at bounded
+	-- width (steep-but-continuous on purpose).
+	local ok = seam_bad == 0
 	core.log("action", string.format(
 		"[gap-fill] audit %s: seam mismatches %d (worst %.1f), merge slopes over cap %d (worst %.1f at %s, cap %.1f), "
-		.. "natural relief steps %d (worst %.1f at %s), raised water blocks %d, floating junk blocks %d -- %.2fs",
+		.. "natural relief steps %d (worst %.1f at %s), spilled base water blocks %d (first at %s), "
+		.. "floating junk blocks %d -- %.2fs",
 		job.name, seam_bad, seam_bad_worst, slope_bad, slope_worst, tostring(worst_pos), allowed,
-		relief_bad, relief_worst, tostring(relief_pos), raised_water, floating_junk,
+		relief_bad, relief_worst, tostring(relief_pos), raised_water, tostring(raised_pos), floating_junk,
 		(core.get_us_time() - t0) / 1e6))
 	if not ok then
 		core.log("warning", "[gap-fill] audit FAILED for " .. tostring(job.name))

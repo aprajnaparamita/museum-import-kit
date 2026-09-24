@@ -1091,8 +1091,8 @@ for _, m in ipairs(log_messages) do
 	if m.msg:match("audit FAILED") then audit_failed = true end
 end
 check("gap_fill.audit ran", audit_line ~= nil)
-check("gap_fill.audit reported zero seam mismatches and zero raised water",
-	audit_line and audit_line:match("seam mismatches 0") and audit_line:match("raised water blocks 0"),
+check("gap_fill.audit reported zero seam mismatches and zero spilled water",
+	audit_line and audit_line:match("seam mismatches 0") and audit_line:match("spilled base water blocks 0"),
 	tostring(audit_line))
 check("gap_fill.audit did not fail", not audit_failed)
 

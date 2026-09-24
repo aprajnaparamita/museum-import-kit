@@ -1886,7 +1886,7 @@ core.register_chatcommand("worldplace", {
 	params = "<world_folder> <x> <z> [name] [dimension_path] | list | status | cancel | gapaudit"
 		.. " | force <world_folder> <x> <z> [name] [dimension_path]",
 	description = "Bulk-import a WorldTools Minecraft world capture into this world "
-		.. "(mapped through the spawnmasons pipeline). See server_mod/spawnimport/README.md.",
+		.. "(mapped through the spawnmasons pipeline). See the kit README.md.",
 	privs = { worldplace = true },
 	func = function(player_name, param)
 		local tokens = {}
@@ -2003,7 +2003,7 @@ end)
 core.register_chatcommand("museumimport", {
 	params = "start <manifest_path> [limit] | status",
 	description = "Batch-drive spawnimport over a JSON manifest from museum_survey.py. " ..
-		"See server_mod/spawnimport/README.md.",
+		"See the kit README.md.",
 	privs = { worldplace = true },
 	func = function(player_name, param)
 		local tokens = {}

@@ -12,6 +12,9 @@ Approach B (driving `mcl_levelgen` with a custom density field) was
 assessed as the cleaner-but-much-harder path and is not built. The
 implemented behaviour is documented in `FEATURE-gap-fill-blend.md`; the
 rest of this file is the original design note kept for context.
+**(2026-09-24: Approach A evolved into the "merge chunk" — seam-exact
+height merge with a walkable slope cap and bounded widening; see
+`FEATURE-gap-fill-blend.md` and `SESSION_2026-09-24_SUMMARY.md`.)**
 
 ## What Mineclonia's mapgen actually is (investigated)
 

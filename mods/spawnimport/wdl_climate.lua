@@ -156,21 +156,285 @@ end
 
 -- Base temperature of a captured column's MC biome name.
 function climate.mc_temp(mc_biome)
-	return climate.MC_TEMP[mc_biome] or DEFAULT_TEMP
+	-- ---------------------------------------------------------------------
+-- Organic seam-edge noise (pure). The per-column merge weight used to
+-- follow the capture outline GEOMETRICALLY (a 4-neighbour BFS distance
+-- has straight Voronoi edges and triangular diagonals) -- owner
+-- 2026-09-25: "very square shaped snow ... highly triangular ... it
+-- looks very mathematical and uniform". Value noise on the column
+-- position shifts the fade edge by a few columns in smooth ~20-block
+-- blobs, which is what real biome borders look like.
+local function hash2(x, z)
+	local n = math.sin(x * 127.1 + z * 311.7) * 43758.5453
+	return n - math.floor(n)
+end
+
+function climate.noise2(x, z, scale)
+	local fx, fz = x / scale, z / scale
+	local ix, iz = math.floor(fx), math.floor(fz)
+	local tx, tz = fx - ix, fz - iz
+	tx = tx * tx * (3 - 2 * tx)
+	tz = tz * tz * (3 - 2 * tz)
+	local a = hash2(ix, iz)
+	local b = hash2(ix + 1, iz)
+	local c = hash2(ix, iz + 1)
+	local d = hash2(ix + 1, iz + 1)
+	local ab = a + (b - a) * tx
+	local cd = c + (d - c) * tx
+	return ab + (cd - ab) * tz
+end
+
+-- Seam-edge jitter in COLUMNS (added to the BFS distance before the
+-- biome/material fade is evaluated).
+function climate.jitter(x, z)
+	return (climate.noise2(x, z, 23) - 0.5) * 16
+		+ (climate.noise2(x, z, 7) - 0.5) * 6
+end
+
+-- Surface family of a captured seam column from the REAL nodes around
+-- its surface. This exists because footprints carry ONE biome name per
+-- 16x16 chunk (no biome_cols) and the tag is frequently wrong for the
+-- columns next to it -- minecraft:snowy_plains tags over grass+birch
+-- ground produced the owner's square snow fields with trees growing
+-- through them. The blocks tell the truth:
+--   "snow"   frozen ground / snow layer / ice -> the seam is COLD
+--   "grass"  unfrozen soil                    -> the seam is TEMPERATE
+--   "sand"   bare sand                        -> the seam is WARM
+--   "water"  liquid top                       -> neutral (tag decides)
+--   nil      stone / builds / plain dirt      -> neutral (tag decides)
+function climate.surface_family(top_name, ground_name)
+	local function snowish(n)
+		return n ~= nil and (n:find("snow") or n:find("ice")) ~= nil
+	end
+	if snowish(top_name) then return "snow" end
+	if top_name and top_name:find("water") then return "water" end
+	local g = ground_name
+	if not g or g == "" or g == "ignore" then return nil end
+	if snowish(g) then return "snow" end
+	-- seagrass_*/kelp_* floors are seabed with a plant name, not soil
+	if g:find("seagrass") or g:find("kelp") then
+		return g:find("sand") and "sand" or nil
+	end
+	if g:find("grass") or g:find("podzol") or g:find("mycelium") then
+		return "grass"
+	end
+	if g:find("sand") then return "sand" end
+	return nil
+end
+
+return climate.MC_TEMP[mc_biome] or DEFAULT_TEMP
 end
 
 -- Temperature at a column's surface height (dest y + offset = MC y).
 function climate.temp_at(mc_biome, y_dest, dest_y_offset)
-	return climate.temp_at_height(
+	-- ---------------------------------------------------------------------
+-- Organic seam-edge noise (pure). The per-column merge weight used to
+-- follow the capture outline GEOMETRICALLY (a 4-neighbour BFS distance
+-- has straight Voronoi edges and triangular diagonals) -- owner
+-- 2026-09-25: "very square shaped snow ... highly triangular ... it
+-- looks very mathematical and uniform". Value noise on the column
+-- position shifts the fade edge by a few columns in smooth ~20-block
+-- blobs, which is what real biome borders look like.
+local function hash2(x, z)
+	local n = math.sin(x * 127.1 + z * 311.7) * 43758.5453
+	return n - math.floor(n)
+end
+
+function climate.noise2(x, z, scale)
+	local fx, fz = x / scale, z / scale
+	local ix, iz = math.floor(fx), math.floor(fz)
+	local tx, tz = fx - ix, fz - iz
+	tx = tx * tx * (3 - 2 * tx)
+	tz = tz * tz * (3 - 2 * tz)
+	local a = hash2(ix, iz)
+	local b = hash2(ix + 1, iz)
+	local c = hash2(ix, iz + 1)
+	local d = hash2(ix + 1, iz + 1)
+	local ab = a + (b - a) * tx
+	local cd = c + (d - c) * tx
+	return ab + (cd - ab) * tz
+end
+
+-- Seam-edge jitter in COLUMNS (added to the BFS distance before the
+-- biome/material fade is evaluated).
+function climate.jitter(x, z)
+	return (climate.noise2(x, z, 23) - 0.5) * 16
+		+ (climate.noise2(x, z, 7) - 0.5) * 6
+end
+
+-- Surface family of a captured seam column from the REAL nodes around
+-- its surface. This exists because footprints carry ONE biome name per
+-- 16x16 chunk (no biome_cols) and the tag is frequently wrong for the
+-- columns next to it -- minecraft:snowy_plains tags over grass+birch
+-- ground produced the owner's square snow fields with trees growing
+-- through them. The blocks tell the truth:
+--   "snow"   frozen ground / snow layer / ice -> the seam is COLD
+--   "grass"  unfrozen soil                    -> the seam is TEMPERATE
+--   "sand"   bare sand                        -> the seam is WARM
+--   "water"  liquid top                       -> neutral (tag decides)
+--   nil      stone / builds / plain dirt      -> neutral (tag decides)
+function climate.surface_family(top_name, ground_name)
+	local function snowish(n)
+		return n ~= nil and (n:find("snow") or n:find("ice")) ~= nil
+	end
+	if snowish(top_name) then return "snow" end
+	if top_name and top_name:find("water") then return "water" end
+	local g = ground_name
+	if not g or g == "" or g == "ignore" then return nil end
+	if snowish(g) then return "snow" end
+	-- seagrass_*/kelp_* floors are seabed with a plant name, not soil
+	if g:find("seagrass") or g:find("kelp") then
+		return g:find("sand") and "sand" or nil
+	end
+	if g:find("grass") or g:find("podzol") or g:find("mycelium") then
+		return "grass"
+	end
+	if g:find("sand") then return "sand" end
+	return nil
+end
+
+return climate.temp_at_height(
 		climate.mc_temp(mc_biome), y_dest - (dest_y_offset or 0))
 end
 
 function climate.is_snowy(mc_biome, y_dest, dest_y_offset)
-	return climate.temp_at(mc_biome, y_dest, dest_y_offset) < climate.SNOW_TEMP
+	-- ---------------------------------------------------------------------
+-- Organic seam-edge noise (pure). The per-column merge weight used to
+-- follow the capture outline GEOMETRICALLY (a 4-neighbour BFS distance
+-- has straight Voronoi edges and triangular diagonals) -- owner
+-- 2026-09-25: "very square shaped snow ... highly triangular ... it
+-- looks very mathematical and uniform". Value noise on the column
+-- position shifts the fade edge by a few columns in smooth ~20-block
+-- blobs, which is what real biome borders look like.
+local function hash2(x, z)
+	local n = math.sin(x * 127.1 + z * 311.7) * 43758.5453
+	return n - math.floor(n)
+end
+
+function climate.noise2(x, z, scale)
+	local fx, fz = x / scale, z / scale
+	local ix, iz = math.floor(fx), math.floor(fz)
+	local tx, tz = fx - ix, fz - iz
+	tx = tx * tx * (3 - 2 * tx)
+	tz = tz * tz * (3 - 2 * tz)
+	local a = hash2(ix, iz)
+	local b = hash2(ix + 1, iz)
+	local c = hash2(ix, iz + 1)
+	local d = hash2(ix + 1, iz + 1)
+	local ab = a + (b - a) * tx
+	local cd = c + (d - c) * tx
+	return ab + (cd - ab) * tz
+end
+
+-- Seam-edge jitter in COLUMNS (added to the BFS distance before the
+-- biome/material fade is evaluated).
+function climate.jitter(x, z)
+	return (climate.noise2(x, z, 23) - 0.5) * 16
+		+ (climate.noise2(x, z, 7) - 0.5) * 6
+end
+
+-- Surface family of a captured seam column from the REAL nodes around
+-- its surface. This exists because footprints carry ONE biome name per
+-- 16x16 chunk (no biome_cols) and the tag is frequently wrong for the
+-- columns next to it -- minecraft:snowy_plains tags over grass+birch
+-- ground produced the owner's square snow fields with trees growing
+-- through them. The blocks tell the truth:
+--   "snow"   frozen ground / snow layer / ice -> the seam is COLD
+--   "grass"  unfrozen soil                    -> the seam is TEMPERATE
+--   "sand"   bare sand                        -> the seam is WARM
+--   "water"  liquid top                       -> neutral (tag decides)
+--   nil      stone / builds / plain dirt      -> neutral (tag decides)
+function climate.surface_family(top_name, ground_name)
+	local function snowish(n)
+		return n ~= nil and (n:find("snow") or n:find("ice")) ~= nil
+	end
+	if snowish(top_name) then return "snow" end
+	if top_name and top_name:find("water") then return "water" end
+	local g = ground_name
+	if not g or g == "" or g == "ignore" then return nil end
+	if snowish(g) then return "snow" end
+	-- seagrass_*/kelp_* floors are seabed with a plant name, not soil
+	if g:find("seagrass") or g:find("kelp") then
+		return g:find("sand") and "sand" or nil
+	end
+	if g:find("grass") or g:find("podzol") or g:find("mycelium") then
+		return "grass"
+	end
+	if g:find("sand") then return "sand" end
+	return nil
+end
+
+return climate.temp_at(mc_biome, y_dest, dest_y_offset) < climate.SNOW_TEMP
 end
 
 function climate.is_frozen(mc_biome, y_dest, dest_y_offset)
-	return climate.temp_at(mc_biome, y_dest, dest_y_offset) < climate.FREEZE_TEMP
+	-- ---------------------------------------------------------------------
+-- Organic seam-edge noise (pure). The per-column merge weight used to
+-- follow the capture outline GEOMETRICALLY (a 4-neighbour BFS distance
+-- has straight Voronoi edges and triangular diagonals) -- owner
+-- 2026-09-25: "very square shaped snow ... highly triangular ... it
+-- looks very mathematical and uniform". Value noise on the column
+-- position shifts the fade edge by a few columns in smooth ~20-block
+-- blobs, which is what real biome borders look like.
+local function hash2(x, z)
+	local n = math.sin(x * 127.1 + z * 311.7) * 43758.5453
+	return n - math.floor(n)
+end
+
+function climate.noise2(x, z, scale)
+	local fx, fz = x / scale, z / scale
+	local ix, iz = math.floor(fx), math.floor(fz)
+	local tx, tz = fx - ix, fz - iz
+	tx = tx * tx * (3 - 2 * tx)
+	tz = tz * tz * (3 - 2 * tz)
+	local a = hash2(ix, iz)
+	local b = hash2(ix + 1, iz)
+	local c = hash2(ix, iz + 1)
+	local d = hash2(ix + 1, iz + 1)
+	local ab = a + (b - a) * tx
+	local cd = c + (d - c) * tx
+	return ab + (cd - ab) * tz
+end
+
+-- Seam-edge jitter in COLUMNS (added to the BFS distance before the
+-- biome/material fade is evaluated).
+function climate.jitter(x, z)
+	return (climate.noise2(x, z, 23) - 0.5) * 16
+		+ (climate.noise2(x, z, 7) - 0.5) * 6
+end
+
+-- Surface family of a captured seam column from the REAL nodes around
+-- its surface. This exists because footprints carry ONE biome name per
+-- 16x16 chunk (no biome_cols) and the tag is frequently wrong for the
+-- columns next to it -- minecraft:snowy_plains tags over grass+birch
+-- ground produced the owner's square snow fields with trees growing
+-- through them. The blocks tell the truth:
+--   "snow"   frozen ground / snow layer / ice -> the seam is COLD
+--   "grass"  unfrozen soil                    -> the seam is TEMPERATE
+--   "sand"   bare sand                        -> the seam is WARM
+--   "water"  liquid top                       -> neutral (tag decides)
+--   nil      stone / builds / plain dirt      -> neutral (tag decides)
+function climate.surface_family(top_name, ground_name)
+	local function snowish(n)
+		return n ~= nil and (n:find("snow") or n:find("ice")) ~= nil
+	end
+	if snowish(top_name) then return "snow" end
+	if top_name and top_name:find("water") then return "water" end
+	local g = ground_name
+	if not g or g == "" or g == "ignore" then return nil end
+	if snowish(g) then return "snow" end
+	-- seagrass_*/kelp_* floors are seabed with a plant name, not soil
+	if g:find("seagrass") or g:find("kelp") then
+		return g:find("sand") and "sand" or nil
+	end
+	if g:find("grass") or g:find("podzol") or g:find("mycelium") then
+		return "grass"
+	end
+	if g:find("sand") then return "sand" end
+	return nil
+end
+
+return climate.temp_at(mc_biome, y_dest, dest_y_offset) < climate.FREEZE_TEMP
 end
 
 -- MC biome name -> Mineclonia biome name (nil when unmapped).
@@ -214,19 +478,37 @@ function climate.candidate_biomes(registered, is_water)
 	return out
 end
 
--- Nearest registered biome by (heat_point, humidity_point).
-function climate.nearest_biome(registered, names, heat, humidity)
-	local best, best_d = nil, math.huge
-	for _, n in ipairs(names) do
-		local def = registered[n]
-		if def and def.heat_point and def.humidity_point then
-			local dh = def.heat_point - heat
-			local du = def.humidity_point - humidity
-			local d = dh * dh + du * du
-			if d < best_d then best, best_d = n, d end
+-- Nearest registered biome by (heat_point, humidity_point), honouring
+-- the biome's registered y_min/y_max band the way the engine's own
+-- picker does. Without the band, mountain biomes with extreme climate
+-- points (StonyPeaks 45/88, y_min=72) beat lowland biomes at their own
+-- game (BirchForest 31/78) and merged terrain came out as treeless
+-- stone peaks in the middle of birch forest (owner 2026-09-25: "there
+-- are no trees on these areas"). Pass y = the column's surface height;
+-- nil skips the band check.
+function climate.nearest_biome(registered, names, heat, humidity, y)
+	local function pick(check_y)
+		local best, best_d = nil, math.huge
+		for _, n in ipairs(names) do
+			local def = registered[n]
+			if def and def.heat_point and def.humidity_point
+				and (not check_y
+					or ((def.y_min or -31000) <= y
+						and y <= (def.y_max or 31000) + (def.vertical_blend or 0))) then
+				local dh = def.heat_point - heat
+				local du = def.humidity_point - humidity
+				local d = dh * dh + du * du
+				-- the engine's exact rule (mg_biome.cpp
+				-- BiomeGenOriginal::calcBiomeFromNoise): dist /= weight
+				local wgt = def.weight
+				if wgt and wgt > 0 then d = d / wgt end
+				if d < best_d then best, best_d = n, d end
+			end
 		end
+		return best
 	end
-	return best
+	if y == nil then return pick(false) end
+	return pick(true) or pick(false)
 end
 
 -- Surface stack of a Mineclonia biome def (a core.registered_biomes
@@ -253,6 +535,72 @@ function climate.surface_of(def, is_water)
 		tint = def._mcl_palette_index,
 		water_top = def.node_water_top,
 	}
+end
+
+-- ---------------------------------------------------------------------
+-- Organic seam-edge noise (pure). The per-column merge weight used to
+-- follow the capture outline GEOMETRICALLY (a 4-neighbour BFS distance
+-- has straight Voronoi edges and triangular diagonals) -- owner
+-- 2026-09-25: "very square shaped snow ... highly triangular ... it
+-- looks very mathematical and uniform". Value noise on the column
+-- position shifts the fade edge by a few columns in smooth ~20-block
+-- blobs, which is what real biome borders look like.
+local function hash2(x, z)
+	local n = math.sin(x * 127.1 + z * 311.7) * 43758.5453
+	return n - math.floor(n)
+end
+
+function climate.noise2(x, z, scale)
+	local fx, fz = x / scale, z / scale
+	local ix, iz = math.floor(fx), math.floor(fz)
+	local tx, tz = fx - ix, fz - iz
+	tx = tx * tx * (3 - 2 * tx)
+	tz = tz * tz * (3 - 2 * tz)
+	local a = hash2(ix, iz)
+	local b = hash2(ix + 1, iz)
+	local c = hash2(ix, iz + 1)
+	local d = hash2(ix + 1, iz + 1)
+	local ab = a + (b - a) * tx
+	local cd = c + (d - c) * tx
+	return ab + (cd - ab) * tz
+end
+
+-- Seam-edge jitter in COLUMNS (added to the BFS distance before the
+-- biome/material fade is evaluated).
+function climate.jitter(x, z)
+	return (climate.noise2(x, z, 23) - 0.5) * 16
+		+ (climate.noise2(x, z, 7) - 0.5) * 6
+end
+
+-- Surface family of a captured seam column from the REAL nodes around
+-- its surface. This exists because footprints carry ONE biome name per
+-- 16x16 chunk (no biome_cols) and the tag is frequently wrong for the
+-- columns next to it -- minecraft:snowy_plains tags over grass+birch
+-- ground produced the owner's square snow fields with trees growing
+-- through them. The blocks tell the truth:
+--   "snow"   frozen ground / snow layer / ice -> the seam is COLD
+--   "grass"  unfrozen soil                    -> the seam is TEMPERATE
+--   "sand"   bare sand                        -> the seam is WARM
+--   "water"  liquid top                       -> neutral (tag decides)
+--   nil      stone / builds / plain dirt      -> neutral (tag decides)
+function climate.surface_family(top_name, ground_name)
+	local function snowish(n)
+		return n ~= nil and (n:find("snow") or n:find("ice")) ~= nil
+	end
+	if snowish(top_name) then return "snow" end
+	if top_name and top_name:find("water") then return "water" end
+	local g = ground_name
+	if not g or g == "" or g == "ignore" then return nil end
+	if snowish(g) then return "snow" end
+	-- seagrass_*/kelp_* floors are seabed with a plant name, not soil
+	if g:find("seagrass") or g:find("kelp") then
+		return g:find("sand") and "sand" or nil
+	end
+	if g:find("grass") or g:find("podzol") or g:find("mycelium") then
+		return "grass"
+	end
+	if g:find("sand") then return "sand" end
+	return nil
 end
 
 return climate

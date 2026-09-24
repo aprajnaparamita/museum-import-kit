@@ -103,6 +103,42 @@ local function seam_materials(data, area, x, y, z, ymin, ymax)
 	return top, filler
 end
 
+-- Materials the outward geology fade may scatter from the seam: natural
+-- ground only -- never build blocks (stone bricks next to a castle would
+-- read as debris) and never floor-with-plant nodes (seagrass on land).
+-- Cached per name.
+local ground_cache = {}
+local function is_natural_ground(name)
+	local v = ground_cache[name]
+	if v == nil then
+		if name:find("seagrass") or name:find("kelp") or name:find("coral")
+			or name:find("brick") or name:find("plank") or name:find("wool")
+			or name:find("glass") or name:find("quartz") or name:find("concrete")
+			or name:find("terracotta") or name:find("mushroom")
+			or name:find("leaves") or name:find("tree") then
+			v = false
+		else
+			v = (name:find("stone") or name:find("cobble") or name:find("gravel")
+				or name:find("sand") or name:find("dirt") or name:find("snow")
+				or name:find("ice") or name:find("clay") or name:find("andesite")
+				or name:find("diorite") or name:find("granite") or name:find("calcite")
+				or name:find("tuff") or name:find("deepslate") or name:find("basalt")
+				or name:find("moss") or name:find("mycelium") or name:find("podzol"))
+				and true or false
+		end
+		ground_cache[name] = v
+	end
+	return v
+end
+
+-- Geology fade width (columns) from the seam: the exact seam row copies
+-- the captured neighbour's own materials (below); the next few columns
+-- keep a NOISY fraction of the seam source's ground material, so rock /
+-- sand geology dies out in ragged scree instead of ending in a straight
+-- line against the biome's own soil (owner: "square snow area connecting
+-- to rock ... should be more natural looking", 2026-09-25).
+local SCREE_FADE = 7
+
 -- ---------------------------------------------------------------------
 -- WRITE: rebuild one merge chunk
 -- ---------------------------------------------------------------------
@@ -162,6 +198,15 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 							filler = f or t
 							if top then break end
 						end
+					end
+				end
+				if not top and not is_water and col.smat and col.sdist
+					and col.sdist > 1 and col.sdist <= SCREE_FADE
+					and is_natural_ground(cname(col.smat)) then
+					local p = 1 - (col.sdist - 1) / SCREE_FADE
+					if wdl.noise2(x, z, 6) < p * 0.9 then
+						top = col.smat
+						filler = col.smat
 					end
 				end
 				top = top or cid(surf.node_top

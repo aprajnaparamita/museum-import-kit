@@ -594,6 +594,19 @@ function gap_fill.build_plan(job, real, entries, opts)
 		local fld = wgen_inputs.field(job, real, natural,
 			function(r, _cx, _cz, lx, lz, _sx, _sz)
 				return seam_target(r, lx, lz) + dy
+			end,
+			-- the seam source column's REAL surface family + ground
+			-- material: footprints carry one biome tag per 16x16 chunk
+			-- and it regularly disagrees with the blocks next to it --
+			-- grounding the biome/snow decisions in the actual surface is
+			-- what kills the owner's "square snow" fields (2026-09-25)
+			function(_r, cx, cz, lx, lz, _sx, _sz)
+				local cols = cols_for(cx, cz)
+				local c = cols and cols[lx * C + lz + 1]
+				if not c then return nil end
+				local gname = c.mat and core.get_name_from_content_id(c.mat) or nil
+				local tname = c.T and core.get_name_from_content_id(c.T) or nil
+				return wgen_inputs.surface_family(tname, gname), c.mat
 			end)
 		free = wgen_inputs.height_targets(fld, natural)
 		last_field = fld
@@ -741,6 +754,11 @@ function gap_fill.build_plan(job, real, entries, opts)
 					tgt = free[skey],
 					seam = is_seam,
 					boundary = soft_final[skey] and true or false,
+					-- seam-source geology for the write's outward fade
+					smat = last_field and last_field.gmat
+						and last_field.gmat[skey] or nil,
+					sdist = last_field and last_field.dist
+						and last_field.dist[skey] or nil,
 				}
 				if is_seam then
 					plan.hard[skey] = math.floor(hard_all[skey] + 0.5)

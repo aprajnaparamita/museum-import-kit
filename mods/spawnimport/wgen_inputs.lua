@@ -36,6 +36,15 @@ local C = 16
 -- width); beyond it the column is fully natural.
 local FADE = 33
 
+-- Heat-point calibration against mcl_biomes' registered set: every
+-- snowy-type biome sits at heat_point <= 8 (IcePlains/ColdTaiga 8,
+-- SnowySlopes 6, IcePlainsSpikes -5); taiga is 22 and everything
+-- temperate is 45+. SNOW_CEIL pins a frozen seam's climate into the
+-- frozen set; TEMPERATE_FLOOR lifts a seam whose real blocks are
+-- unfrozen ground/sand out of it, whatever its chunk tag claims.
+local SNOW_CEIL = 8
+local TEMPERATE_FLOOR = 24
+
 local DIRS = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } }
 
 -- Distance -> seam weights (owner spec 2026-09-24: "the minecraft
@@ -47,13 +56,26 @@ local DIRS = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } }
 --   * w_biome  (biomes):   1.0 across the inner chunk (<=16 columns --
 --     the "closer chunk" copies the seam's biome), fading to 0 across
 --     the outer chunk (the shift band), natural from 33 columns out.
-local function weights(d)
-	local wl = (FADE - d) / (FADE - 1)
+local function weights(d, j)
+	-- j (optional): per-column noise jitter in columns, so the fade
+	-- edge is organic instead of a BFS-distance isoline (straight
+	-- Voronoi edges / triangular diagonals -- the owner's "very
+	-- mathematical and uniform" snow, 2026-09-25). Heights pass no
+	-- jitter (the slope solver wants clean targets); biome/material
+	-- fades do.
+	local dd = d + (j or 0)
+	if dd < 1 then dd = 1 end
+	local wl = (FADE - dd) / (FADE - 1)
 	if wl < 0 then wl = 0 elseif wl > 1 then wl = 1 end
-	local wb
-	if d <= 16 then wb = 1
-	elseif d >= FADE then wb = 0
-	else wb = (FADE - d) / (FADE - 16) end
+	-- biome weight: smoothstep over the full span. The old shape held
+	-- w=1 flat for the inner chunk ("copy the seam biome into the
+	-- closer chunk") -- but that plateau is exactly what turned one
+	-- wrong 16x16 chunk tag into a 16-column square snow field.
+	-- Smoothstep still matches the touching blocks at the seam (w~1 at
+	-- d=1) while shifting outward gradually and on noisy edges.
+	local t = (dd - 1) / (FADE - 1)
+	if t < 0 then t = 0 elseif t > 1 then t = 1 end
+	local wb = 1 - t * t * (3 - 2 * t)
 	return wl, wb
 end
 
@@ -74,7 +96,7 @@ end
 --   mc[skey]    -- that captured column's Minecraft biome name
 -- Columns with no entry are not adjacent to the capture through the
 -- domain (callers fall back to full-natural there).
-function inputs.field(job, real, domain, level_at)
+function inputs.field(job, real, domain, level_at, mat_at)
 	local dy = job.dest_y_offset or 0
 	local function src_level(r, cx, cz, lx, lz, sx, sz)
 		if level_at then
@@ -86,6 +108,10 @@ function inputs.field(job, real, domain, level_at)
 		return (r.terrain_cols[lx * C + lz + 1] or r.height) + dy
 	end
 	local dist, level, mc = {}, {}, {}
+	-- fam: surface family of the seam source column ("snow"/"grass"/
+	-- "sand"/"water"/nil, see wdl_climate.surface_family); gmat: its
+	-- ground content id (the write fades the seam geology out with it)
+	local fam, gmat = {}, {}
 	local queue, qhead = {}, 1
 	local function key(x, z) return x .. "," .. z end
 	local function parse(k)
@@ -104,6 +130,11 @@ function inputs.field(job, real, domain, level_at)
 				dist[skey] = 1
 				level[skey] = src_level(r, cx, cz, lx, lz, nx, nz)
 				mc[skey] = captured_mc_biome(r, lx, lz)
+				if mat_at then
+					local f, g = mat_at(r, cx, cz, lx, lz, nx, nz)
+					if f then fam[skey] = f end
+					if g then gmat[skey] = g end
+				end
 				queue[#queue + 1] = skey
 				break
 			end
@@ -120,13 +151,18 @@ function inputs.field(job, real, domain, level_at)
 				dist[nkey] = dist[skey] + 1
 				level[nkey] = level[skey]
 				mc[nkey] = mc[skey]
+				if fam[skey] then fam[nkey] = fam[skey] end
+				if gmat[skey] then gmat[nkey] = gmat[skey] end
 				queue[#queue + 1] = nkey
 			end
 		end
 	end
 
-	return { dist = dist, level = level, mc = mc }
+	return { dist = dist, level = level, mc = mc, fam = fam, gmat = gmat }
 end
+
+-- re-export for callers (gap_fill) that only receive this module
+inputs.surface_family = wdl.surface_family
 
 -- Height targets for the solver: w(d)*seam_level + (1-w(d))*natural.
 -- w = 1 at the seam (match the touching block), 0 from FADE columns out
@@ -180,8 +216,14 @@ function inputs.attach_targets(job, real, plan)
 				local skey = sx .. "," .. sz
 				local d = field.dist[skey]
 				local mc = field.mc[skey]
+				local fam = field.fam and field.fam[skey]
 				local _, w = 0, 0
-				if d then _, w = weights(d) end
+				if d then
+					-- noisy edge: biome/material fades follow an organic
+					-- seam outline, not the BFS-distance isoline
+					_, w = weights(d, wdl.jitter(chunk.base_x + lx,
+						chunk.base_z + lz))
+				end
 
 				local y = col.B or col.S or 0
 				local wet = col.B and col.B < sea
@@ -214,20 +256,38 @@ function inputs.attach_targets(job, real, plan)
 				-- same-climate wet/dry sibling -- an ocean seam next to a
 				-- dry column yields that biome's LAND variant: sand with
 				-- desert decor, never bare seabed sand on a hill).
+				-- Ground the seam climate in the touching column's REAL
+				-- surface family (wdl_climate.surface_family): footprint
+				-- biome tags are one name per 16x16 chunk and often lie
+				-- about the columns next to them (a minecraft:snowy_
+				-- plains tag over grass+birch ground gave the owner's
+				-- square snow fields with trees through them). The blocks
+				-- win: frozen ground -> cold seam, unfrozen soil or bare
+				-- sand -> never a snowy seam. Stone/builds/water stay
+				-- neutral and the tag decides.
+				local seam_heat = seam_def and seam_def.heat_point or nil
+				local seam_hum = seam_def and (seam_def.humidity_point or 50) or nil
+				if seam_heat then
+					if fam == "snow" then
+						seam_heat = math.min(seam_heat, SNOW_CEIL)
+					elseif fam == "grass" or fam == "sand" then
+						seam_heat = math.max(seam_heat, TEMPERATE_FLOOR)
+					end
+				end
+
 				local mcl, def
 				local heat, hum
-				if seam_def and seam_def.heat_point and nat_heat then
-					heat = w * seam_def.heat_point + (1 - w) * nat_heat
-					hum = w * (seam_def.humidity_point or 50)
-						+ (1 - w) * (nat_hum or 50)
-				elseif seam_def and seam_def.heat_point then
-					heat, hum = seam_def.heat_point, seam_def.humidity_point or 50
+				if seam_heat and nat_heat then
+					heat = w * seam_heat + (1 - w) * nat_heat
+					hum = w * (seam_hum or 50) + (1 - w) * (nat_hum or 50)
+				elseif seam_heat then
+					heat, hum = seam_heat, seam_hum or 50
 				elseif nat_heat then
 					heat, hum = nat_heat, nat_hum or 50
 				end
 				if heat then
 					local names = wdl.candidate_biomes(registered, wet or false)
-					mcl = wdl.nearest_biome(registered, names, heat, hum)
+					mcl = wdl.nearest_biome(registered, names, heat, hum, y)
 					def = mcl and registered[mcl] or nil
 				end
 				if not mcl then
@@ -239,8 +299,20 @@ function inputs.attach_targets(job, real, plan)
 				col.tmc, col.tmcl, col.tid, col.tdef = mc, mcl,
 					mcl and core.get_biome_id(mcl) or nil, def
 				col.tint = def and def._mcl_palette_index or nil
-				col.tsnow = (def and def._mcl_biome_type == "snowy")
-					or (mc and wdl.is_snowy(mc, y, job.dest_y_offset)) or false
+				-- Snow layer from the RESOLVED biome only. The old extra
+				-- clause ("or wdl.is_snowy(mc, y, ...)") read the raw
+				-- chunk tag and blanketed snow over columns whose resolved
+				-- biome was BirchForest -- snow with birch trees growing
+				-- through it (owner 2026-09-25). Merged terrain must look
+				-- like NATIVE Mineclonia terrain, and Mineclonia puts snow
+				-- where its biome says snow; a real frozen seam still gets
+				-- snow via the "snow" surface family above (the resolved
+				-- biome goes cold at w~1) and the seam-material copy keeps
+				-- the touching blocks' look.
+				col.tsnow = (def and def._mcl_biome_type == "snowy") or false
+				if col.tsnow and (fam == "grass" or fam == "sand") and w > 0.35 then
+					col.tsnow = false
+				end
 				local grp = def and def._mcl_groups
 				col.tdeep = (grp and grp.is_ocean) and "ocean" or "sand"
 			end

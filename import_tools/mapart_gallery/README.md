@@ -6,32 +6,6 @@ grid. See HANDOFF.md's round 20 writeup for the full story, caveats,
 and the real bug found/fixed in the existing captured-map walls at
 Tactical Nuke and Fort Alcazar.
 
-## Dithering new pieces
-
-`dither_to_maparts.py` is a faithful Python port of
-[rebane2001/mapartcraft](https://github.com/rebane2001/mapartcraft)'s
-palette + Floyd-Steinberg error-diffusion dithering, so any image on
-disk can be turned into a 128x128 mapart tile without visiting the
-browser tool. It writes tiles to the local `./dithered/` directory in
-the same `<base_id>_<row>_<col>.png` format as the corpus sources.
-
-The `./dithered/` dir is **a staging area, not an auto-scanned source**
-— the library index scans only `~/dev/museum-maparts/output/final/`.
-To promote a dithered piece into the gallery pipeline, move (or
-symlink) the tile(s) into `~/dev/museum-maparts/output/final/` with the
-same `<base_id>_<row>_<col>.png` naming.
-
-```bash
-# promote one piece into the live library
-mv dithered/cat_mob_1_1.png ~/dev/museum-maparts/output/final/
-# or symlink it (lets dither_to_maparts.py regenerate it on a re-run)
-ln -sf "$(pwd)/dithered/cat_mob_1_1.png" \
-       ~/dev/museum-maparts/output/final/cat_mob_1_1.png
-```
-
-After promotion, the next `build_library_index.py` run sees it
-automatically (no code change needed).
-
 Run order (all scripts hardcode `/tmp` intermediate files and the
 deployed world path `~/Library/Application Support/minetest/worlds/2b2t
 Museum TEST` -- written for this one round's run, not a polished CLI;
@@ -43,13 +17,9 @@ adjust paths before reusing for another gallery/base):
 2. Cluster the survey into rectangular frame-groups (3D BFS keyed on
    `param2` as a hard constraint, Chebyshev distance <=2 to tolerate
    alcove/recess stepping) -- produces `/tmp/gallery_clusters.json`.
-3. `dither_to_maparts.py` -- (optional, pre-step) drop source images
-   into the local `dithered/` directory. See "Generating new maparts"
-   below. Tiles land in `dithered/` only; promote them into
-   `~/dev/museum-maparts/output/final/` to actually feed the pipeline.
-4. `build_library_index.py` -- scans `final/`, groups
-   `<base_id>_<row>_<col>.png` tiles by base_id, keeps only complete
-   grids, writes `/tmp/mapart_library.json`.
+3. `build_library_index.py` -- scans `~/dev/museum-maparts/output/final/`,
+   groups `<base_id>_<row>_<col>.png` tiles by base_id, keeps only
+   complete grids, writes `/tmp/mapart_library.json`.
 5. `build_placement_plan.py` -- matches each empty cluster to a
    library piece of the exact same (rows,cols), falling back to a
    transposed piece (rotated 90 deg) only when exact supply runs out;

@@ -2,5 +2,3 @@
 *.tmp
 .pi/
 tools/harness_world/
-__pycache__/
-*.pyc

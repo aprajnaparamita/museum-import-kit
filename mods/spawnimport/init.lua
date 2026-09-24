@@ -282,7 +282,10 @@ local ITEM_FRAME_FACING_TO_WALLMOUNTED = {
 
 local registry = dofile(modpath .. "/registry.lua") -- inside the mod's own dir, sandboxed dofile is fine
 local gap_field = dofile(modpath .. "/gap_field.lua") -- pure merge height-field solver (gap_field_test.lua covers it)
-local gap_fill = dofile(modpath .. "/gap_fill.lua")(gap_field) -- "merge chunk" gap-fill, see that file's own header
+local wdl_climate = dofile(modpath .. "/wdl_climate.lua") -- WDL biome/temperature map (pure; PLAN-worldgen-merge.md)
+local wgen_inputs = dofile(modpath .. "/wgen_inputs.lua")(wdl_climate) -- per-column merge targets (biome/material/tint/snow)
+local wgen_write = dofile(modpath .. "/wgen_write.lua")(wdl_climate) -- column rebuild + natural vegetation regrow
+local gap_fill = dofile(modpath .. "/gap_fill.lua")(gap_field) -- merge plan + audit, see that file's own header
 
 -- core.get_mod_storage() is scoped per-calling-modname, so a different mod
 -- (museumwarp) can't read this one's storage directly -- publish the
@@ -714,7 +717,7 @@ local function new_job(p)
 	-- writes into never-generated blocks are regenerated over and never
 	-- sent to clients, so the pregen range must cover it.
 	local gap_margin = self.gap_fill_chunks
-		and ((1 + gap_fill.MAX_EXTRA_RINGS) * 16) or 0
+		and ((gap_fill.RING + gap_fill.MAX_EXTRA_RINGS) * 16) or 0
 	self.pregen_min = {
 		x = p.dest_bbox.x_min - gap_margin, y = PREGEN_Y_MIN + self.dest_y_offset,
 		z = p.dest_bbox.z_min - gap_margin,
@@ -1650,6 +1653,9 @@ function Job:step()
 				-- here -- nothing else writes them.
 				self.gap_plan = gap_fill.build_plan(self, self.gap_real, self.gap_fill_chunks,
 					{ avoid = self.gap_avoid })
+				-- worldgen-merge: per-column targets (WDL biome/temperature
+				-- map -> Mineclonia biome, surface material, tint, snow)
+				wgen_inputs.attach_targets(self, self.gap_real, self.gap_plan)
 				local queued = {}
 				for _, e in ipairs(self.gap_fill_chunks) do queued[e.cx .. "_" .. e.cz] = true end
 				for _, key in ipairs(self.gap_plan.chunk_order) do
@@ -1661,8 +1667,24 @@ function Job:step()
 						self.cursor_total = self.cursor_total + 1
 					end
 				end
+				-- GROW phase: engine-native vegetation on the finished
+				-- surface, queued AFTER every write entry so the terrain is
+				-- final before any tree is planted (PLAN-worldgen-merge.md
+				-- §3.4 -- this ordering is the whole point).
+				for _, key in ipairs(self.gap_plan.chunk_order) do
+					local cx, cz = key:match("^(.-)_(.-)$")
+					self.cursor_list[#self.cursor_list + 1] = {
+						is_gap = true, is_grow = true, cx = tonumber(cx), cz = tonumber(cz),
+					}
+					self.cursor_total = self.cursor_total + 1
+				end
 			end
-			local ok, err = pcall(gap_fill.place_gap_chunk, self, self.gap_plan, entry, content_id_for)
+			local ok, err
+			if entry.is_grow then
+				ok, err = pcall(wgen_write.grow_chunk, self, self.gap_plan, entry)
+			else
+				ok, err = pcall(wgen_write.place_chunk, self, self.gap_plan, entry, content_id_for)
+			end
 			if ok then
 				self.gap_chunks_placed = (self.gap_chunks_placed or 0) + 1
 			else

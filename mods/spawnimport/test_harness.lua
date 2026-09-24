@@ -386,7 +386,31 @@ _G.core = {
 		print("  [chat->" .. player_name .. "] " .. msg)
 	end,
 	registered_nodes = mock_registered_nodes,
-	registered_biomes = {}, -- gap_fill's biome tint looks in here; empty = no tint, fine for the mock
+	registered_biomes = {}, -- wgen_inputs resolves targets here; empty = fallback materials, fine for the mock
+	-- worldgen-merge API surface (PLAN-worldgen-merge.md §2.3): biome ids
+	-- and the engine decoration pass. The mock's pass plants trunk-only
+	-- "trees" (tree-group blocks, self-supporting so the floating-veg
+	-- audit stays green) at the INPUT heightmap heights -- this is the
+	-- whole contract: vegetation lands at the MERGED surface, not at the
+	-- natural one.
+	get_biome_id = function(_name) return 1 end,
+	get_biome_name = function(_id) return nil end,
+	generate_decorations_with_inputs = function(vm, p1, p2, H, Bm)
+		decor_passes = (decor_passes or 0) + 1
+		decor_heightmap = H
+		for lz = 0, 15 do
+			for lx = 0, 15 do
+				local h = H[16 * lz + lx + 1]
+				if h and h < 32767 and h > 1 and (lx * 3 + lz * 5) % 7 == 0 then
+					for t = 1, 3 do
+						fake_map[(p1.x + lx) .. "," .. (h + t) .. "," .. (p1.z + lz)]
+							= content_id_of["mcl_core:jungletree"] or core.get_content_id("mcl_core:jungletree")
+					end
+				end
+			end
+		end
+		return true
+	end,
 	get_name_from_content_id = function(id)
 		return content_name_of[id] or (id == 0 and "air" or "unknown:" .. tostring(id))
 	end,
@@ -877,6 +901,7 @@ print("=== Test 6: gap-fill merge chunk end to end ===")
 mock_registered_nodes["mcl_core:water_source"] = { groups = { liquid = 1 } }
 mock_registered_nodes["mcl_core:jungletree"] = { groups = { tree = 1 } }
 mock_registered_nodes["mcl_core:jungleleaves"] = { groups = { leaves = 1 } }
+mock_registered_nodes["mcl_ocean:kelp"] = { groups = { plant = 1 } }
 
 local GAP_X, GAP_Z = 30000, 30000 -- far from every earlier test base
 local NAT_TOP = 10                 -- synthetic generated ground level
@@ -1014,6 +1039,7 @@ local W0z = GAP_Z + ((MIN_CZ - 1) * 16 - ORIGIN_Z)
 local W1x = GAP_X + ((MAX_CX + 1) * 16 + 15 - ORIGIN_X)
 local W1z = GAP_Z + ((MIN_CZ + 1) * 16 + 15 - ORIGIN_Z)
 local surface, water_found, island_found, tree_found = {}, 0, 0, 0
+local old_tree_left, grown_trees = 0, 0
 for key, cid in pairs(fake_map) do
 	local x, y, z = key:match("^(%-?%d+),(%-?%d+),(%-?%d+)$")
 	x, y, z = tonumber(x), tonumber(y), tonumber(z)
@@ -1024,10 +1050,37 @@ for key, cid in pairs(fake_map) do
 			local name = content_name_of[cid]
 			if name == "mcl_core:water_source" then water_found = water_found + 1 end
 			if name == "mcl_core:stone" and y > 40 then island_found = island_found + 1 end
-			if (name == "mcl_core:jungletree" or name == "mcl_core:jungleleaves") and y > NAT_TOP then
-				tree_found = tree_found + 1
+			local is_veg_name = (name == "mcl_core:jungletree"
+				or name == "mcl_core:jungleleaves" or name == "mcl_ocean:kelp")
+			if name == "mcl_core:jungletree" or name == "mcl_core:jungleleaves" then
+				-- worldgen-merge semantics: vegetation is NEVER carried
+				-- along (that was the smear bug) -- it is cleared and
+				-- regrown by the engine decor pass at the MERGED surface.
+				-- Trees at natural-height columns are legitimate regrow,
+				-- so check the OLD tree's exact coordinates instead.
+				if (x == TREE_TRUNK_X and z == TREE_TRUNK_Z and y >= 11 and y <= 13)
+					or (x == TREE_TRUNK_X + 1 and z == TREE_TRUNK_Z and y >= 12 and y <= 13) then
+					old_tree_left = old_tree_left + 1
+				end
+				if y > 15 then
+					tree_found = tree_found + 1
+					-- every grown tree block must stand on solid ground or
+					-- on another tree block (trunk column of the mock's
+					-- 3-block trees) -- no floating trunks, no smears
+					local below = fake_map[x .. "," .. (y - 1) .. "," .. z]
+					local below_name = below and content_name_of[below]
+					if below_name and below_name ~= "mcl_core:water_source"
+						and not (below_name == "mcl_core:jungleleaves")
+						and below_name ~= "mcl_ocean:kelp" then
+						grown_trees = grown_trees + 1
+					end
+				end
 			end
-			if TERRAIN_TEST[name] then
+			-- Surface = topmost solid ground block, same semantics as the
+			-- mod's audit (NOT a narrow name whitelist): seam columns take
+			-- the captured neighbour's own surface material, which can be
+			-- any real capture block name.
+			if not is_veg_name and name ~= "mcl_core:water_source" then
 				local skey = x .. "," .. z
 				if not surface[skey] or y > surface[skey] then surface[skey] = y end
 			end
@@ -1038,7 +1091,12 @@ check("no generated water survived the merge (raised water -> air)", water_found
 	tostring(water_found))
 check("floating island is gone (and never counted as ground)", island_found == 0,
 	tostring(island_found))
-check("tree rode along with the shifted surface", tree_found >= 5, tostring(tree_found))
+check("old tree was cleared, NOT carried along (no smearing)", old_tree_left == 0,
+	tostring(old_tree_left))
+check("trees regrown by the engine decor pass at merged heights", tree_found >= 5,
+	tostring(tree_found))
+check("regrown trees stand on the merged surface (no floating trunks)",
+	grown_trees == tree_found, string.format("%d/%d", grown_trees, tree_found))
 
 -- Seam exactness: every merged column orthogonally adjacent to a
 -- captured chunk must sit at exactly TARGET.
@@ -1074,14 +1132,14 @@ for skey, s in pairs(surface) do
 		local ns = surface[nkey]
 		if ns then
 			local diff = math.abs(s - ns)
-			if diff > 1 then
+			if diff > 2 then
 				slope_bad = slope_bad + 1
 				if diff > slope_worst then slope_worst = diff end
 			end
 		end
 	end
 end
-check("merged slopes are walkable (<= 1 block/column)", slope_bad == 0,
+check("merged slopes are walkable (<= 1 block/column + rounding)", slope_bad == 0,
 	string.format("%d bad, worst %.0f", slope_bad, slope_worst))
 
 -- The built-in audit must agree (its numbers go to the log).

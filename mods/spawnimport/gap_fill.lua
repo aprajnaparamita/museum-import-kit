@@ -241,27 +241,40 @@ function gap_fill.load_real_heights(footprint_path)
 			if type(solid) ~= "table" or #solid ~= 256 then solid = cols end
 			local terrain = c.terrain_cols
 			if type(terrain) ~= "table" or #terrain ~= 256 then terrain = solid end
+			local biome_cols = c.biome_cols
+			if type(biome_cols) ~= "table" or #biome_cols ~= 256 then
+				biome_cols = nil
+			end
 			real[c.cx .. "_" .. c.cz] = {
 				height = c.height, cols = cols, solid_cols = solid,
 				terrain_cols = terrain, biome = c.biome,
+				biome_cols = biome_cols,
 			}
 		end
 	end
 	return real
 end
 
--- The single-chunk ring: every chunk whose 8-neighbourhood touches a
--- captured chunk (and that isn't captured itself). Everything further out
--- stays real generated terrain -- filling wider areas destroys far too
--- much of it (see HANDOVER.md). Returns { {cx=, cz=}, ... }.
+-- The ring around a base: chunks within RING chunks (Chebyshev) of a
+-- captured chunk get merged. RING = 2 per the owner decision
+-- (PLAN-worldgen-merge.md): two chunks of blend on each edge give the
+-- height ramp double the run, so seam relief lands walkable instead of
+-- as square-edged cliffs. Everything further out stays real generated
+-- terrain -- filling wider areas destroys far too much of it
+-- (see HANDOVER.md). Returns { {cx=, cz=}, ... }.
+gap_fill.RING = 2
+
 function gap_fill.ring_chunks(chunk_bounds, real)
+	local R = gap_fill.RING
 	local ring = {}
-	for cx = chunk_bounds.x_min, chunk_bounds.x_max do
-		for cz = chunk_bounds.z_min, chunk_bounds.z_max do
+	-- the scan window must grow with the ring radius or edge chunks of a
+	-- wide base never see their second-ring neighbours
+	for cx = chunk_bounds.x_min - R, chunk_bounds.x_max + R do
+		for cz = chunk_bounds.z_min - R, chunk_bounds.z_max + R do
 			if not real[cx .. "_" .. cz] then
 				local touched = false
-				for ox = -1, 1 do
-					for oz = -1, 1 do
+				for ox = -R, R do
+					for oz = -R, R do
 						if real[(cx + ox) .. "_" .. (cz + oz)] then touched = true break end
 					end
 					if touched then break end
@@ -637,16 +650,28 @@ function gap_fill.build_plan(job, real, entries, opts)
 		rounds = rounds,
 	}
 	local hard_all = hard_final
+	local by_key = {}
 	for key in pairs(domain) do
 		local cx, cz = domain[key].cx, domain[key].cz
 		local cols = cols_for(cx, cz)
 		local base_x = job.anchor_x + (cx * C - job.origin_x)
 		local base_z = job.anchor_z + (cz * C - job.origin_z)
 		local chunk = { cx = cx, cz = cz, base_x = base_x, base_z = base_z, col = {} }
+		-- does this chunk directly touch a captured chunk? (its columns
+		-- keep the capture's climate -- see wgen_inputs.attach_targets)
+		local touches = false
+		for ox = -1, 1 do
+			for oz = -1, 1 do
+				if real[(cx + ox) .. "_" .. (cz + oz)] then touches = true break end
+			end
+			if touches then break end
+		end
+		chunk.touches_capture = touches
 		for lz = 0, C - 1 do
 			for lx = 0, C - 1 do
 				local sx, sz = cx * C + lx, cz * C + lz
 				local skey = sx .. "," .. sz
+				by_key[skey] = true
 				local src = cols[lx * C + lz + 1]
 				local B = h[skey]
 				if B then B = math.floor(B + 0.5) end
@@ -667,6 +692,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 		plan.chunks[key] = chunk
 		plan.chunk_order[#plan.chunk_order + 1] = key
 	end
+	plan.by_key = by_key
 	table.sort(plan.chunk_order)
 	-- edge biome tint per column (captured neighbour's biome)
 	add_seam_tints(real, plan)
@@ -683,158 +709,9 @@ function gap_fill.build_plan(job, real, entries, opts)
 	return plan
 end
 
--- Sub/deep materials for the fill below the shifted surface skin.
-local function material_for(cid)
-	local c_stone = core.get_content_id("mcl_core:stone")
-	local name = cid and cid_name(cid) or ""
-	if name == "mcl_core:sand" or name == "mcl_core:redsand" or name == "mcl_core:gravel" then
-		return cid, cid, c_stone
-	elseif name == "mcl_core:dirt" or name == "mcl_core:coarse_dirt"
-		or name == "mcl_core:podzol" or name == "mcl_core:mycelium"
-		or name == "mcl_lush_caves:moss" or name == "mcl_mud:mud" then
-		return cid, core.get_content_id("mcl_core:dirt"), c_stone
-	elseif name == "mcl_core:dirt_with_grass" or name:match("dirt_with_") then
-		return cid, core.get_content_id("mcl_core:dirt"), c_stone
-	end
-	return cid or c_stone, cid or c_stone, c_stone
-end
-
--- ---------------------------------------------------------------------
--- Apply: write one merge chunk
--- ---------------------------------------------------------------------
-
-function gap_fill.place_gap_chunk(job, plan, entry, content_id_for)
-	local chunk = plan.chunks[entry.cx .. "_" .. entry.cz]
-	if not chunk then return end
-	local base_x, base_z = chunk.base_x, chunk.base_z
-	local xmin, xmax = base_x, base_x + C - 1
-	local zmin, zmax = base_z, base_z + C - 1
-	local ymin, ymax = GAP_Y_MIN + job.dest_y_offset, GAP_Y_MAX + job.dest_y_offset
-	local sea = plan.sea
-
-	local c_air = core.CONTENT_AIR
-	local c_ignore = core.CONTENT_IGNORE
-	local c_water = core.get_content_id("mcl_core:water_source")
-	local c_bedrock = core.get_content_id("mcl_core:bedrock")
-	local c_void = core.get_content_id("mcl_core:void")
-
-	local vm = core.get_voxel_manip()
-	local emin, emax = vm:read_from_map({ x = xmin, y = ymin, z = zmin }, { x = xmax, y = ymax, z = zmax })
-	local area = VoxelArea:new({ MinEdge = emin, MaxEdge = emax })
-	local data = vm:get_data()
-	local p2data = vm:get_param2_data()
-
-	for lz = 0, C - 1 do
-		local z = zmin + lz
-		for lx = 0, C - 1 do
-			local x = xmin + lx
-			local col = chunk.col[lx * C + lz + 1]
-			local B = col.B
-			if B then
-				local S_col, T_col = col.S, col.T
-				local surf, sub, deep = material_for(col.mat)
-				if B < sea then
-					-- Water column: open water -- floor at B up to sea
-					-- level, air above. Generated leftovers (trees,
-					-- floating junk) cleared, never carried up.
-					for y = ymin, ymax do
-						local idx = area:index(x, y, z)
-						data[idx] = c_air
-						p2data[idx] = 0
-					end
-					for y = B, ymin, -1 do
-						local idx = area:index(x, y, z)
-						local cid
-						if y > BEDROCK_MAX then
-							if y == B then cid = surf
-							elseif y >= B - 3 then cid = sub
-							else cid = deep end
-						elseif y >= BEDROCK_MIN then
-							cid = c_bedrock
-						else
-							cid = c_void
-						end
-						data[idx] = cid
-						p2data[idx] = 0
-					end
-					for y = B + 1, sea do
-						local idx = area:index(x, y, z)
-						data[idx] = c_water
-						p2data[idx] = 0
-					end
-				else
-					-- Land column: shift the natural surface skin and the
-					-- vegetation on it by (B - S) -- real material and
-					-- trees preserved. Everything else above the surface
-					-- (surface water, floating islands/junk) becomes AIR:
-					-- generated water must NOT ride up with a raised
-					-- chunk, and floating masses must not move terrain.
-					local movable = {}
-					if S_col then
-						for y = S_col - 3, S_col do
-							if y >= ymin and y <= ymax then
-								local idx = area:index(x, y, z)
-								local cid, p2 = data[idx], p2data[idx]
-								if cid ~= c_air and cid ~= c_ignore and not is_liquid(cid) then
-									movable[y - S_col] = { cid, p2 }
-								end
-							end
-						end
-						for y = S_col + 1, (T_col or S_col) do
-							if y >= ymin and y <= ymax then
-								local idx = area:index(x, y, z)
-								local cid, p2 = data[idx], p2data[idx]
-								if cid ~= c_air and cid ~= c_ignore and is_veg(cid) then
-									movable[y - S_col] = { cid, p2 }
-								end
-							end
-						end
-					end
-					for y = ymin, ymax do
-						local idx = area:index(x, y, z)
-						data[idx] = c_air
-						p2data[idx] = 0
-					end
-					for off, block in pairs(movable) do
-						local ny = B + off
-						if ny >= ymin and ny <= ymax then
-							local idx = area:index(x, ny, z)
-							data[idx] = block[1]
-							p2data[idx] = block[2]
-						end
-					end
-					-- fill sub/deep stone, bedrock and void below
-					for y = B - 4, ymin, -1 do
-						local idx = area:index(x, y, z)
-						local cid
-						if y > BEDROCK_MAX then
-							cid = deep
-						elseif y >= BEDROCK_MIN then
-							cid = c_bedrock
-						else
-							cid = c_void
-						end
-						data[idx] = cid
-						p2data[idx] = 0
-					end
-				end
-
-				-- seam biome tint on the surface (biomecolor nodes only)
-				if col.tint then
-					local name = cid_name(surf)
-					if core.get_item_group(name, "biomecolor") > 0 then
-						p2data[area:index(x, B, z)] = col.tint
-					end
-				end
-			end
-		end
-	end
-
-	vm:set_data(data)
-	vm:set_param2_data(p2data)
-	vm:write_to_map(true)
-	vm:close()
-end
+-- The write path moved to wgen_write.lua (worldgen-merge: column rebuild
+-- with target-biome materials and NO vegetation carry, plus the natural
+-- vegetation regrow pass) -- see PLAN-worldgen-merge.md.
 
 -- ---------------------------------------------------------------------
 -- Audit: verify the merge actually came out right
@@ -868,6 +745,7 @@ function gap_fill.audit(job, plan)
 	local relief_bad, relief_worst = 0, 0
 	local raised_water, raised_pos = 0, nil
 	local floating_junk = 0
+	local floating_veg, kelp_dry = 0, 0
 	local surface = {} -- "sx,sz" -> measured surface (for the slope pass)
 	local moved = {}   -- "sx,sz" -> the merge changed this column's height
 	local nat = {}     -- "sx,sz" -> the natural surface before the merge
@@ -950,6 +828,23 @@ function gap_fill.audit(job, plan)
 							if below == core.CONTENT_AIR or below == core.CONTENT_IGNORE or is_liquid(below) then
 								floating_junk = floating_junk + 1
 							end
+						else
+							-- vegetation checks (worldgen-merge audit 5/6):
+							-- nothing green may hang in the air (the old
+							-- shift's smear signature), and kelp/seagrass
+							-- belong under water only (the "kelp on
+							-- mountainsides" signature).
+							local name = cid_name(cid)
+							if name:find("kelp") or name:find("seagrass") then
+								if y > sea then
+									kelp_dry = kelp_dry + 1
+								end
+							else
+								local below = data[area:index(x, y - 1, z)]
+								if below == core.CONTENT_AIR or below == core.CONTENT_IGNORE then
+									floating_veg = floating_veg + 1
+								end
+							end
 						end
 					end
 				end
@@ -1013,9 +908,10 @@ function gap_fill.audit(job, plan)
 	core.log("action", string.format(
 		"[gap-fill] audit %s: seam mismatches %d (worst %.1f), merge slopes over cap %d (worst %.1f at %s, cap %.1f), "
 		.. "natural relief steps %d (worst %.1f at %s), spilled base water blocks %d (first at %s), "
-		.. "floating junk blocks %d -- %.2fs",
+		.. "floating junk blocks %d, floating veg %d, kelp out of water %d -- %.2fs",
 		job.name, seam_bad, seam_bad_worst, slope_bad, slope_worst, tostring(worst_pos), allowed,
 		relief_bad, relief_worst, tostring(relief_pos), raised_water, tostring(raised_pos), floating_junk,
+		floating_veg, kelp_dry,
 		(core.get_us_time() - t0) / 1e6))
 	if not ok then
 		core.log("warning", "[gap-fill] audit FAILED for " .. tostring(job.name))

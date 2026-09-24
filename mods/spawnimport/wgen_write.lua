@@ -72,11 +72,29 @@ end
 -- (non-air, non-liquid); fall back to nils and let the caller use the
 -- biome's own materials.
 local function seam_materials(data, area, x, y, z, ymin, ymax)
+	local function is_veg(c)
+		local name = cname(c)
+		-- floor-with-plant ocean nodes are ground, not vegetation
+		if name:find("^mcl_ocean:kelp_") or name:find("^mcl_ocean:seagrass_") then
+			return false
+		end
+		for _, g in ipairs({ "leaves", "tree", "attached_node", "plant",
+				"snow", "grass", "flora", "flower",
+				"coral_plant", "coral_fan", "deco_block" }) do
+			if core.get_item_group(name, g) > 0 then return true end
+		end
+		return false
+	end
 	local function solid_at(yy)
 		if yy < ymin or yy > ymax then return nil end
 		local c = data[area:index(x, yy, z)]
-		if c == core.CONTENT_AIR or c == core.CONTENT_IGNORE or is_liquid(c) then
+		if c == core.CONTENT_AIR or c == core.CONTENT_IGNORE or is_liquid(c)
+			or is_veg(c) then
 			return nil
+		end
+		local def = core.registered_nodes[cname(c)]
+		if def and def.walkable == false then
+			return nil -- decor (coral plants, fans): not ground
 		end
 		return c
 	end
@@ -289,7 +307,6 @@ function write.grow_chunk(job, plan, entry)
 	end
 	vm:set_data(data)
 	vm:write_to_map(true)
-	vm:update_liquids()
 	vm:close()
 end
 

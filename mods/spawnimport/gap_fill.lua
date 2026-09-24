@@ -128,6 +128,14 @@ local TERRAIN_NAMES = {
 	["mcl_blackstone:blackstone"] = true,
 	["mcl_crimson:crimson_nylium"] = true, ["mcl_crimson:warped_nylium"] = true,
 	["mcl_end:end_stone"] = true,
+	-- floor-with-plant variants: walkable ground wearing a plant (natural
+	-- ocean-floor decoration writes these). Ground, NOT vegetation --
+	-- classifying them as veg made the surface read 1 block low and
+	-- produced phantom seam mismatches.
+	["mcl_ocean:kelp_sand"] = true, ["mcl_ocean:kelp_dirt"] = true,
+	["mcl_ocean:kelp_gravel"] = true,
+	["mcl_ocean:seagrass_sand"] = true, ["mcl_ocean:seagrass_dirt"] = true,
+	["mcl_ocean:seagrass_gravel"] = true,
 }
 
 local function is_terrain_name(name)
@@ -142,7 +150,13 @@ end
 -- junk (islands, platforms, dropped structures) do NOT ride along -- they
 -- become air.
 local VEG_GROUPS = { leaves = true, tree = true, attached_node = true,
-	plant = true, snow = true, grass = true, flora = true, flower = true }
+	plant = true, snow = true, grass = true, flora = true, flower = true,
+	-- decor that sits ON the floor (coral plants/fans, sea pickles...):
+	-- never counts as ground surface even though it is walkable. Coral
+	-- BLOCKS carry coral_block (not coral_plant) and stay ground -- the
+	-- seam continuing the capture's reef block with a coral on top is the
+	-- merge working as designed.
+	coral_plant = true, coral_fan = true, deco_block = true }
 
 -- Classification caches (content id -> flag) -- the scan runs over
 -- tens of millions of nodes, name/group lookups must not repeat.
@@ -171,8 +185,11 @@ local function is_veg(cid)
 	if v == nil then
 		local name = cid_name(cid)
 		v = false
-		for group in pairs(VEG_GROUPS) do
-			if core.get_item_group(name, group) > 0 then v = true break end
+		-- ground names win over plant groups (floor-with-plant nodes)
+		if not is_terrain_name(name) then
+			for group in pairs(VEG_GROUPS) do
+				if core.get_item_group(name, group) > 0 then v = true break end
+			end
 		end
 		veg_cache[cid] = v
 	end
@@ -186,6 +203,25 @@ local function is_liquid(cid)
 		liquid_cache[cid] = v
 	end
 	return v
+end
+
+-- The engine's own ground definition is "topmost WALKABLE node"
+-- (Mapgen::findGroundLevel). Non-walkable decor (coral plants and fans,
+-- flower heads) must never count as surface -- reading them as ground
+-- was the last source of phantom seam mismatches and slope noise.
+local walk_cache = {}
+local function is_walkable(cid)
+	local v = walk_cache[cid]
+	if v == nil then
+		local def = core.registered_nodes[cid_name(cid)]
+		v = not (def and def.walkable == false)
+		walk_cache[cid] = v
+	end
+	return v
+end
+
+local function is_ground(cid)
+	return is_walkable(cid) and not is_veg(cid) and not is_liquid(cid)
 end
 
 -- Floating-mass rejection, same rule as the footprint side (see
@@ -747,6 +783,7 @@ function gap_fill.audit(job, plan)
 	local floating_junk = 0
 	local floating_veg, kelp_dry = 0, 0
 	local surface = {} -- "sx,sz" -> measured surface (for the slope pass)
+	local surface_name = {} -- "sx,sz" -> name at that surface (diagnostics)
 	local moved = {}   -- "sx,sz" -> the merge changed this column's height
 	local nat = {}     -- "sx,sz" -> the natural surface before the merge
 	local sea = plan.sea
@@ -776,18 +813,28 @@ function gap_fill.audit(job, plan)
 				-- gravel had its sub-blocks dropped), and re-deriving the
 				-- plan's own surface with a different rule turned that
 				-- into phantom seam mismatches and 90-block "steps".
+				-- Surface measurement is clamped to the PLANNED height:
+				-- scan down from min(ymax, col.B). Everything the grow
+				-- pass may add on top -- trees, grass, snow, coral bushes
+				-- (whose base is a solid coral_block!) -- is above B and
+				-- can never shift the reading. A write that missed B is
+				-- still caught: the scan then reports where ground really
+				-- is, and the seam/slope checks flag the difference.
 				local S, top = nil, nil
-				for y = ymax, ymin, -1 do
+				local ytop = ymax
+				if col.B and col.B < ytop then ytop = col.B end
+				for y = ytop, ymin, -1 do
 					local cid = data[area:index(x, y, z)]
 					if cid ~= core.CONTENT_AIR and cid ~= core.CONTENT_IGNORE then
 						if not top then top = y end
-						if not is_veg(cid) and not is_liquid(cid) then
+						if is_ground(cid) then
 							S = y
 							break
 						end
 					end
 				end
 				surface[skey] = S or top
+				surface_name[skey] = cid_name(data[area:index(x, surface[skey], z)])
 				nat[skey] = (col.S and math.floor(col.S + 0.5)) or surface[skey]
 				if col.S and col.B and math.abs(col.B - col.S) > 0.5 then
 					moved[skey] = true
@@ -800,6 +847,16 @@ function gap_fill.audit(job, plan)
 					if diff > 0.5 then
 						seam_bad = seam_bad + 1
 						if diff > seam_bad_worst then seam_bad_worst = diff end
+						if seam_bad <= 5 then
+							local names = {}
+							for yy = S + 2, S - 1, -1 do
+								names[#names + 1] = yy .. ":"
+									.. cid_name(data[area:index(x, yy, z)])
+							end
+							core.log("warning", string.format(
+								"[gap-fill] seam mismatch at (%d,%d): S=%d target=%d [%s]",
+								sx, sz, S, target, table.concat(names, " ")))
+						end
 					end
 				end
 
@@ -813,7 +870,8 @@ function gap_fill.audit(job, plan)
 				-- behaving physically, not the "generated water raised
 				-- with the chunk" bug (which is gone; see the gap-only
 				-- verification runs: 0).
-				for y = (S or 0) + 1, ymax do
+				for y = (S or col.B or 0) + 1, ymax do
+					if not col.B then break end -- unwritten column: not the merge's water
 					local cid = data[area:index(x, y, z)]
 					if cid ~= core.CONTENT_AIR and cid ~= core.CONTENT_IGNORE then
 						if is_liquid(cid) then
@@ -830,19 +888,60 @@ function gap_fill.audit(job, plan)
 							end
 						else
 							-- vegetation checks (worldgen-merge audit 5/6):
-							-- nothing green may hang in the air (the old
-							-- shift's smear signature), and kelp/seagrass
-							-- belong under water only (the "kelp on
-							-- mountainsides" signature).
+							-- trunks and plants may never hang in the air
+							-- (the old shift's smear signature), and
+							-- kelp/seagrass belong under water only (the
+							-- "kelp on mountainsides" signature). Leaves,
+							-- vines and flowers legitimately overhang air
+							-- (canopy undersides) and are exempt.
 							local name = cid_name(cid)
-							if name:find("kelp") or name:find("seagrass") then
+							if (name:find("kelp") or name:find("seagrass"))
+								and not is_terrain_name(name) then
 								if y > sea then
 									kelp_dry = kelp_dry + 1
 								end
 							else
-								local below = data[area:index(x, y - 1, z)]
-								if below == core.CONTENT_AIR or below == core.CONTENT_IGNORE then
-									floating_veg = floating_veg + 1
+								local n = cid
+								local trunk_or_plant =
+									core.get_item_group(name, "tree") > 0
+									or core.get_item_group(name, "plant") > 0
+									or core.get_item_group(name, "grass") > 0
+								if trunk_or_plant then
+									local below = data[area:index(x, y - 1, z)]
+									if below == core.CONTENT_AIR or below == core.CONTENT_IGNORE then
+										-- branch blocks (L-system trees use the
+										-- trunk node for branches) overhang air
+										-- legitimately -- they stay attached to
+										-- the tree beside them. Flag only
+										-- DISCONNECTED floating veg (the smear
+										-- signature: shifted debris in the air).
+										local attached = false
+										for _, d in ipairs({ { 1, 0 }, { -1, 0 },
+												{ 0, 1 }, { 0, -1 }, { 1, 1 },
+												{ 1, -1 }, { -1, 1 }, { -1, -1 } }) do
+											for _, dy2 in ipairs({ 0, -1 }) do
+												local nb = data[area:index(x + d[1], y + dy2, z + d[2])]
+												if nb and nb ~= core.CONTENT_AIR
+													and nb ~= core.CONTENT_IGNORE then
+													local nn = cid_name(nb)
+													if core.get_item_group(nn, "tree") > 0
+														or core.get_item_group(nn, "leaves") > 0
+														or is_ground(nb) then
+														attached = true
+													end
+												end
+											end
+											if attached then break end
+										end
+										if not attached then
+											floating_veg = floating_veg + 1
+											if floating_veg <= 5 then
+												core.log("warning", string.format(
+													"[gap-fill] floating veg at (%d,%d,%d): %s",
+													sx, y, sz, name))
+											end
+										end
+									end
 								end
 							end
 						end
@@ -871,6 +970,13 @@ function gap_fill.audit(job, plan)
 				-- or left alone on purpose.
 				local nat_diff = math.abs((nat[skey] or S) - (nat[nkey] or Sn))
 				if diff > allowed and diff > nat_diff + 0.5 then
+					if slope_bad + relief_bad <= 5 then
+						core.log("warning", string.format(
+							"[gap-fill] steep pair (%d,%d)=%d(%s)..(%d,%d)=%d(%s) nat=%0.1f",
+							sx, sz, S, surface_name[skey] or "?",
+							sx + d[1], sz + d[2], Sn,
+							surface_name[nkey] or "?", nat_diff))
+					end
 					-- Steps at pinned columns are the capture's own seam
 					-- cliffs or the untouched-boundary relief (matched or
 					-- left alone on purpose); free-range steps at columns

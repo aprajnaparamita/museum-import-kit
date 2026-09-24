@@ -230,14 +230,21 @@ function field.solve(free, fixed, opts)
 			end
 		end
 		done = done + batch
-		-- early exit: all constrained edges within the cap, or no real
-		-- progress any more (natural-cliff stall)
+		-- Early exit: all constrained edges within the cap, or no real
+		-- progress any more (natural-cliff stall). The stall metric must
+		-- watch FREE-FREE edges only: pin-pinch columns between seam pins
+		-- 85 blocks apart can never converge (their bounds box is empty),
+		-- and letting those dominate `worst` fired this exit prematurely
+		-- while ordinary ramp edges were still violating -- which left
+		-- 2-block staircases all over the merge (the owner's "square
+		-- cliffs"). Free-free edges are the only degrees of freedom the
+		-- iteration can still move.
 		local worst = 0
 		for key in pairs(free) do
 			local x, z = parse_key(key)
 			for _, d in ipairs(DIRS) do
 				local nkey = field.key(x + d[1], z + d[2])
-				if h[nkey] and key < nkey and edge_ok(key, nkey, aquatic) then
+				if free[nkey] and h[nkey] and key < nkey and edge_ok(key, nkey, aquatic) then
 					local diff = math.abs(h[key] - h[nkey])
 					if diff > worst then worst = diff end
 				end

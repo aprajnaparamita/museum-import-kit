@@ -529,6 +529,38 @@ local CHEST_PLACEHOLDERS = {
 	["mcl_chests:ender_chest"] = true,
 	["mcl_portals:portal"] = true,
 }
+-- Mirror of mcl_chests' formspec_shulker_box() (mods/ITEMS/mcl_chests/
+-- init.lua): a shulker's inventory UI lives in NODE META "formspec",
+-- written by set_shulkerbox_meta() from after_place_node() -- which never
+-- fires for a VoxelManip bulk write. Owner report 2026-09-25 "Shulkers in
+-- Tactical are not opening": probed every imported shulker at the base --
+-- formspec_len=0, so right-click animates the lid and opens nothing.
+-- Chests are unaffected (they call core.show_formspec directly in
+-- on_rightclick); shulkers rely on the engine's node-meta formspec.
+local function shulker_formspec(name)
+	local parts = {
+		"formspec_version[4]",
+		"size[11.75,10.425]",
+		"label[0.375,0.375;" .. core.formspec_escape(name or "") .. "]",
+	}
+	if mcl_formspec and mcl_formspec.get_itemslot_bg_v4 then
+		parts[#parts + 1] = mcl_formspec.get_itemslot_bg_v4(0.375, 0.75, 9, 3)
+	end
+	parts[#parts + 1] = "list[context;main;0.375,0.75;9,3;]"
+	parts[#parts + 1] = "label[0.375,4.7;Inventory]"
+	if mcl_formspec and mcl_formspec.get_itemslot_bg_v4 then
+		parts[#parts + 1] = mcl_formspec.get_itemslot_bg_v4(0.375, 5.1, 9, 3)
+	end
+	parts[#parts + 1] = "list[current_player;main;0.375,5.1;9,3;9]"
+	if mcl_formspec and mcl_formspec.get_itemslot_bg_v4 then
+		parts[#parts + 1] = mcl_formspec.get_itemslot_bg_v4(0.375, 9.05, 9, 1)
+	end
+	parts[#parts + 1] = "list[current_player;main;0.375,9.05;9,1;]"
+	parts[#parts + 1] = "listring[context;main]"
+	parts[#parts + 1] = "listring[current_player;main]"
+	return table.concat(parts)
+end
+
 local function needs_construct(name)
 	return CHEST_PLACEHOLDERS[name] or core.get_item_group(name, "container") > 0
 end
@@ -1129,9 +1161,15 @@ function Job:place_one_chunk(entry)
 			-- size), so the emptiness wasn't visible in any rebuild log.
 			local post_node = core.get_node(pos)
 			if core.get_item_group(post_node.name, "shulker_box") > 0 then
-				local inv = core.get_meta(pos):get_inventory()
+				local meta = core.get_meta(pos)
+				local inv = meta:get_inventory()
 				if inv:get_size("main") == 0 then
 					inv:set_size("main", 27)
+				end
+				-- and the UI itself (see shulker_formspec's header)
+				if meta:get_string("formspec") == "" then
+					meta:set_string("formspec",
+						shulker_formspec(meta:get_string("name")))
 				end
 			end
 		end

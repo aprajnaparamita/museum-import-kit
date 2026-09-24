@@ -755,6 +755,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 	end
 	plan.by_key = by_key
 	plan.field = last_field
+	plan._dbg_free, plan._dbg_fixed = free, fixed
 	table.sort(plan.chunk_order)
 	-- edge biome tint per column (captured neighbour's biome)
 	add_seam_tints(real, plan)

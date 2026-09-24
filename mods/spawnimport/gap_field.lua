@@ -231,12 +231,27 @@ function field.solve(free, fixed, opts)
 					end
 				end
 				if n > 0 then
-					local lower, upper = hi - step, lo + step
+					local n_lower, n_upper = hi - step, lo + step -- neighbour band
+					local lower, upper = n_lower, n_upper
 					if L[key] > lower then lower = L[key] end
 					if U[key] < upper then upper = U[key] end
 					if lower > upper then
-						lower = (lower + upper) / 2
-						upper = lower
+						if n_lower > n_upper then
+							-- neighbour band itself empty: two pins disagree across
+							-- this column and no ramp fits -- terrace at their
+							-- midpoint (this is the natural-cliff terracing the
+							-- "natural surface jumps" test pins down)
+							lower = (n_lower + n_upper) / 2
+							upper = lower
+						else
+							-- the bounds conflict instead (a distant pin vs the
+							-- pull target -- the y=186-mountain-vs-seam-pin wall,
+							-- 2026-09-25). The neighbour band is the local
+							-- authority: keep the pull target inside it.
+							if s < n_lower then lower, upper = n_lower, n_lower
+							elseif s > n_upper then lower, upper = n_upper, n_upper
+							else lower, upper = s, s end
+						end
 					end
 					if v < lower then v = lower elseif v > upper then v = upper end
 					v = h[key] + omega * (v - h[key])

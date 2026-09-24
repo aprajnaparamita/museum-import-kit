@@ -203,24 +203,50 @@ do
 		string.format("h5=%.2f h55=%.2f", h[field.key(5, 0)], h[field.key(55, 0)]))
 end
 
-print("=== land dropping into water is sea relief, not a violation ===")
+print("=== water-to-land edges are walkable-constrained (owner rule) ===")
 do
-	-- A coast: land column at 25 right next to a water column pinned at
-	-- -5 (the base's sea floor). That step is a sea cliff -- real
-	-- coastlines do that and the player swims it -- so with the column
-	-- classified aquatic it must NOT trigger widening.
+	-- Owner rule 2026-09-24: merged columns must be reachable from the
+	-- touching world download block -- "the edges should always match
+	-- the level/characteristics of the touching world download blocks".
+	-- The old policy (any edge touching water unconstrained) left free
+	-- columns keeping their natural +24 hills DIRECTLY BESIDE a captured
+	-- ocean floor at -13: the "raised ocean floor / large square cliffs".
+	-- So a water-to-land edge is now a ramp edge like any other. In this
+	-- degenerate 3-column case the two pins disagree by 30 (a cliff in
+	-- the CAPTURE itself) and no ramp fits: the column lands at the
+	-- compromise, it is NOT left as a 30-block wall against the sea
+	-- floor. With faded height targets (wgen_inputs.height_targets) the
+	-- real pipeline never even reaches this pinch: the target itself is
+	-- the ramp.
 	local free = { [field.key(1, 0)] = 25 }
 	local fixed = { [field.key(0, 0)] = 25, [field.key(2, 0)] = -5 }
 	local aquatic = { [field.key(2, 0)] = true }
 	local h = field.solve(free, fixed, { aquatic = aquatic })
-	check("land column stays at land height (not dragged under)", h[field.key(1, 0)] > 20,
+	check("land column compromises toward the water pin (no cliff)",
+		h[field.key(1, 0)] < 15, string.format("%.1f", h[field.key(1, 0)]))
+	local nf, ns = field.violations(free, fixed, h, nil, { aquatic = aquatic })
+	check("waterline pinch counts as FIXABLE (widen for room)", nf >= 1, tostring(nf))
+	local nf2 = field.violations(free, fixed, h)
+	check("sanity: same edges counted without the classification", nf2 >= 1, tostring(nf2))
+end
+
+print("=== sea floor relief between two water columns stays exempt ===")
+do
+	-- Both-underwater edges are still unconstrained: the sea floor may
+	-- drop off a ledge and nobody walks there. The -8 free column must
+	-- keep its level (not dragged to the -30 pin) and the 22-block
+	-- seabed step must classify as structural relief, not a violation
+	-- the widening loop chases.
+	local free = { [field.key(1, 0)] = -8 }
+	local fixed = { [field.key(0, 0)] = -8, [field.key(2, 0)] = -30 }
+	local aquatic = { [field.key(0, 0)] = true, [field.key(1, 0)] = true,
+		[field.key(2, 0)] = true }
+	local h = field.solve(free, fixed, { aquatic = aquatic })
+	check("sea floor column keeps its level", math.abs(h[field.key(1, 0)] + 8) < 2,
 		string.format("%.1f", h[field.key(1, 0)]))
 	local nf, ns = field.violations(free, fixed, h, nil, { aquatic = aquatic })
-	check("no fixable violation across the waterline", nf == 0, tostring(nf))
-	check("counted as (aquatic) structural relief", ns >= 1, tostring(ns))
-	-- and without the classification it IS a violation (sanity)
-	local nf2 = field.violations(free, fixed, h)
-	check("sanity: same edge counts without aquatic", nf2 >= 1, tostring(nf2))
+	check("seabed ledge: structural relief, zero fixable", nf == 0 and ns >= 1,
+		nf .. "/" .. ns)
 end
 
 print("=== frontier reports the columns outside the domain ===")

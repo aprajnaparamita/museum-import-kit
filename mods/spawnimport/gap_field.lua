@@ -34,16 +34,24 @@ field.DIRS = DIRS
 
 function field.key(x, z) return x .. "," .. z end
 
--- An edge is only slope-constrained when BOTH endpoints matter for
--- walking. `aquatic` (optional set, keys whose solved height is below
--- the sea) marks columns where the terrain continues as water: land
--- dropping into the sea is a sea cliff (you fall/swim), the sea floor
--- can be as steep as it likes. Constraining those edges too made the
--- merge drag whole coastlines down to the sea floor and demanded
--- impossible ramps (runaway widening on the ocean base).
+-- Slope constraints between two solved columns. Both-underwater edges
+-- are exempt (sea floor relief is invisible and real); water-to-LAND
+-- edges ARE constrained.
+--
+-- History: this used to exempt every edge touching water ("the sea
+-- floor can be as steep as it likes"). That exemption applied right at
+-- the seam too -- free columns kept their natural +24 v7 hills DIRECTLY
+-- BESIDE a captured ocean floor at -13: the owner's "raised ocean
+-- floor / large square cliffs" (2026-09-24, probes P1/P3). The seam is
+-- exactly where the constraint matters most: the goal is that merged
+-- columns are always walkable-reachable from the touching world
+-- download block. The old "drag whole coastlines to the sea floor /
+-- runaway widening" concern is handled by the distance-faded height
+-- TARGETS (wgen_inputs.height_target) plus the bounded, only-while-it-
+-- helps widening loop -- not by dropping the constraint.
 local function edge_ok(a, b, aquatic)
 	if not aquatic then return true end
-	return not (aquatic[a] or aquatic[b])
+	return not (aquatic[a] and aquatic[b])
 end
 
 local function parse_key(k)
@@ -296,9 +304,10 @@ function field.violations(free, fixed, h, step, kinds)
 		return "H"
 	end
 	local function is_fixable(a, b)
-		-- anything touching water is sea cliff / sea floor relief: real
-		-- coastlines do that, and the player swims it
-		if a == "W" or b == "W" then return false end
+		-- both-underwater edges are sea floor relief: real coastlines do
+		-- that and nobody walks there. Water-to-LAND edges are fixable
+		-- (and now constrained) -- the seam must stay walkable.
+		if a == "W" and b == "W" then return false end
 		-- free vs any pin: the merge ramp, widen for room
 		if (a == "F" and b ~= "F") or (b == "F" and a ~= "F") then return true end
 		-- a seam pin against untouched terrain: grow the ramp outward

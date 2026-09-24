@@ -178,6 +178,57 @@ function climate.mcl_biome(mc_biome)
 	return mc_biome and climate.MC_TO_MCL[mc_biome] or nil
 end
 
+-- Mineclonia's own climate axes (def.heat_point / def.humidity_point,
+-- the same numbers the engine's biome picker uses). Blending on these
+-- and re-resolving to the nearest registered biome is what gives a
+-- NATURAL biome shift between the capture's biome and the surrounding
+-- Mineclonia terrain (no chunk-edge squares).
+local LAND_NAMES = {
+	"Plains", "SunflowerPlains", "Forest", "FlowerForest", "BirchForest",
+	"BirchForestM", "RoofedForest", "PaleGarden", "Taiga", "MegaTaiga",
+	"MegaSpruceTaiga", "ColdTaiga", "IcePlains", "IcePlainsSpikes",
+	"SnowySlopes", "Grove", "Meadow", "CherryGrove", "FrozenPeaks",
+	"JaggedPeaks", "StonyPeaks", "Desert", "Mesa", "MesaBryce",
+	"MesaPlateauF", "MesaPlateauFM", "Savanna", "SavannaM", "Jungle",
+	"JungleM", "JungleEdge", "JungleEdgeM", "BambooJungle", "Swampland",
+	"MangroveSwamp", "MushroomIsland", "ExtremeHills", "ExtremeHillsM",
+	"ExtremeHills+", "StoneBeach",
+}
+climate.LAND_NAMES = LAND_NAMES
+
+-- Candidate surface biomes for nearest-climate resolution, split by
+-- wet/dry so sea floors get seabed materials and land gets land ones.
+function climate.candidate_biomes(registered, is_water)
+	local out = {}
+	if is_water then
+		for _, n in ipairs(LAND_NAMES) do
+			local w = n .. "_ocean"
+			if registered[w] then out[#out + 1] = w end
+		end
+		if #out == 0 then out[1] = "Plains_ocean" end
+	else
+		for _, n in ipairs(LAND_NAMES) do
+			if registered[n] then out[#out + 1] = n end
+		end
+	end
+	return out
+end
+
+-- Nearest registered biome by (heat_point, humidity_point).
+function climate.nearest_biome(registered, names, heat, humidity)
+	local best, best_d = nil, math.huge
+	for _, n in ipairs(names) do
+		local def = registered[n]
+		if def and def.heat_point and def.humidity_point then
+			local dh = def.heat_point - heat
+			local du = def.humidity_point - humidity
+			local d = dh * dh + du * du
+			if d < best_d then best, best_d = n, d end
+		end
+	end
+	return best
+end
+
 -- Surface stack of a Mineclonia biome def (a core.registered_biomes
 -- entry) with safe fallbacks. Returns
 --   { top=, depth_top=, filler=, depth_filler=, tint=, water_top= }

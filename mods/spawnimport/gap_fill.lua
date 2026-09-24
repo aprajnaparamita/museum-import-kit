@@ -54,7 +54,7 @@
 -- source_footprint.lua output -- terrain_cols/cols/solid_cols/biome per
 -- captured chunk) and the generated map itself.
 
-local function factory(gap_field)
+local function factory(gap_field, wgen_inputs)
 local gap_fill = {}
 
 local C = 16
@@ -552,6 +552,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 	end
 
 	local h, free, fixed, fixable, structural, worst = nil, nil, nil, nil, nil, nil
+	local natural, last_field = nil, nil
 	local hard_final, soft_final, guard_final = {}, {}, {}
 	local prev_fixable = nil
 	local rounds = 0
@@ -581,7 +582,21 @@ function gap_fill.build_plan(job, real, entries, opts)
 			end
 		end
 		-- spikes (misdetected floating leftovers) off before solving
-		free = gap_field.median3(free)
+		natural = gap_field.median3(free)
+		-- worldgen-merge: pull the solver toward the touching world
+		-- download blocks near the seam and toward natural terrain far
+		-- out -- not toward natural everywhere. Without this, free
+		-- columns kept their natural +24 v7 hills directly beside a
+		-- captured ocean floor at -13 (the owner's "raised ocean floor"
+		-- pillars, 2026-09-24). The field also carries the seam level
+		-- and biome per column: "the edges should always match the
+		-- level/characteristics of the touching world download blocks".
+		local fld = wgen_inputs.field(job, real, natural,
+			function(r, _cx, _cz, lx, lz, _sx, _sz)
+				return seam_target(r, lx, lz) + dy
+			end)
+		free = wgen_inputs.height_targets(fld, natural)
+		last_field = fld
 		-- Domain-boundary columns bordering untouched terrain are pinned
 		-- to their own natural height (the merge must be invisible there),
 		-- and the untouched neighbour columns enter the solve as GUARDS
@@ -597,7 +612,10 @@ function gap_fill.build_plan(job, real, entries, opts)
 				local gcx, gcz = math.floor(nx / C), math.floor(nz / C)
 				local gkey = gcx .. "_" .. gcz
 				if not domain[gkey] and not real[gkey] then
-					soft[skey] = free[skey]
+					-- pin to the column's NATURAL height (not the faded
+					-- target in free[]) or the outer edge stops matching
+					-- untouched terrain exactly
+					soft[skey] = natural[skey] or free[skey]
 					local gcols = cols_for(gcx, gcz)
 					local gcol = gcols[(nx - gcx * C) * C + (nz - gcz * C) + 1]
 					if gcol and gcol.S then
@@ -729,11 +747,12 @@ function gap_fill.build_plan(job, real, entries, opts)
 		plan.chunk_order[#plan.chunk_order + 1] = key
 	end
 	plan.by_key = by_key
+	plan.field = last_field
 	table.sort(plan.chunk_order)
 	-- edge biome tint per column (captured neighbour's biome)
 	add_seam_tints(real, plan)
 
-	local stats = gap_field.stats(free, h)
+	local stats = gap_field.stats(natural or free, h)
 	core.log("action", string.format(
 		"[gap-fill] merge plan: %d chunks (%d solve round(s)), %d seam columns, "
 		.. "slope cap %.2f, unresolvable slopes %d (structural %d, worst %.2f), "
@@ -757,15 +776,17 @@ end
 -- notice:
 --   1. seam columns match the capture's ground EXACTLY (no step at the
 --      chunk border);
---   2. every slope the MERGE introduced on land is walkable (<= step +
---      0.5, the 0.5 being integer rounding) -- reported, since some
---      seams genuinely cannot be ramped walkable at bounded width (a
---      base built against a cliff, its capture truncated at the chunk
---      border). Steps AT pinned columns (the capture's own seam cliffs)
---      and at the untouched boundary are reported separately as relief
---      -- matched or left alone on purpose, the merge is not blamed for
---      (and must not destroy) terrain that predates it. Land-to-water
---      steps are sea cliffs and sea floor relief, not counted at all.
+--   2. every slope the MERGE introduced is walkable (<= step + 0.5,
+--      the 0.5 being integer rounding) -- counted on every pair that is
+--      not BOTH water, because per the owner's 2026-09-24 rule ("the
+--      edges should always match the level/characteristics of the
+--      touching world download blocks") even a water-to-land step must
+--      be walkable-reachable from the seam. Both-water pairs stay
+--      exempt (sea floor relief is real and unwalked). Steps AT pinned
+--      columns (the capture's own seam cliffs) and at the untouched
+--      boundary are reported separately as relief -- matched or left
+--      alone on purpose, the merge is not blamed for (and must not
+--      destroy) terrain that predates it.
 --   3. water above sea level (a water column's own water stops AT sea
 --      level and land columns are dry, so any liquid higher up is the
 --      BASE's own water spilling onto the merge after the write --
@@ -959,7 +980,7 @@ function gap_fill.audit(job, plan)
 		for _, d in ipairs(gap_field.DIRS) do
 			local nkey = (sx + d[1]) .. "," .. (sz + d[2])
 			local Sn = surface[nkey]
-			if Sn and skey < nkey and S >= sea and Sn >= sea then
+			if Sn and skey < nkey and (S >= sea or Sn >= sea) then
 				local diff = math.abs(S - Sn)
 				-- The merge owns a step only where it made the pair
 				-- STEEPER than it already was (this world has genuine

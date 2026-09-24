@@ -285,7 +285,7 @@ local gap_field = dofile(modpath .. "/gap_field.lua") -- pure merge height-field
 local wdl_climate = dofile(modpath .. "/wdl_climate.lua") -- WDL biome/temperature map (pure; PLAN-worldgen-merge.md)
 local wgen_inputs = dofile(modpath .. "/wgen_inputs.lua")(wdl_climate) -- per-column merge targets (biome/material/tint/snow)
 local wgen_write = dofile(modpath .. "/wgen_write.lua")(wdl_climate) -- column rebuild + natural vegetation regrow
-local gap_fill = dofile(modpath .. "/gap_fill.lua")(gap_field) -- merge plan + audit, see that file's own header
+local gap_fill = dofile(modpath .. "/gap_fill.lua")(gap_field, wgen_inputs) -- merge plan + audit, see that file's own header
 
 -- core.get_mod_storage() is scoped per-calling-modname, so a different mod
 -- (museumwarp) can't read this one's storage directly -- publish the

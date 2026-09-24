@@ -3,6 +3,14 @@ from collections import defaultdict
 from PIL import Image, ImageChops, ImageStat
 
 OUTPUT_DIR = os.path.expanduser('~/dev/museum-maparts/output')
+# Local dithered-source directory -- this script's sister dither_to_maparts.py
+# drops PNG tiles here in the same <base_id>_<row>_<col>.png format used by
+# the museum-maparts/output sources, so a freshly-dithered artwork becomes
+# a candidate mapart piece for the gallery fill without any other plumbing.
+DITHERED_DIR = os.path.join(os.path.dirname(__file__), 'dithered')
+# (source_name) -> (root_dir_for_source). mapartcraft-derived tiles live in
+# the local DITHERED_DIR and use the same on-disk naming as the others.
+LOCAL_SOURCES = {'dithered': DITHERED_DIR}
 TILE_RE = re.compile(r'^(.*)_(\d+)_(\d+)\.png$')
 
 # Round 21 fix (owner live report, image showing two "rocket" tiles that
@@ -93,7 +101,9 @@ def coherence_score(tiles, rows, cols):
 	return sum(diffs) / len(diffs) if diffs else 0.0
 
 def scan_dir(source):
-    d = os.path.join(OUTPUT_DIR, source)
+    d = LOCAL_SOURCES.get(source) or os.path.join(OUTPUT_DIR, source)
+    if not os.path.isdir(d):
+        return {}
     pieces = defaultdict(dict)  # base_id -> {(row,col): filename}
     for fn in os.listdir(d):
         if not fn.endswith('.png'):
@@ -122,7 +132,11 @@ def build_index(check_animated=True):
     final_manifest = load_final_manifest()
     n_rejected_animated = 0
 
-    for source in ('final', 'mapartindex', 'wiki'):
+    # Source priority: museum-maparts/output/{final,mapartindex,wiki} (the
+    # curated corpus, in owner-priority order), then the local 'dithered'
+    # dir of freshly-dithered images. Same dedupe/animated/coherence logic
+    # applies to all sources; final_manifest lookups only matter for 'final'.
+    for source in ('final', 'mapartindex', 'wiki', 'dithered'):
         pieces = scan_dir(source)
         for base_id, tiles in pieces.items():
             rows = max(rc[0] for rc in tiles)
@@ -140,7 +154,8 @@ def build_index(check_animated=True):
                     # disagree -- filenames are the ground truth for what
                     # tiles actually exist on disk.
                     pass
-            abs_tiles = {rc: os.path.join(OUTPUT_DIR, source, fn) for rc, fn in tiles.items()}
+            tile_root = LOCAL_SOURCES.get(source) or os.path.join(OUTPUT_DIR, source)
+            abs_tiles = {rc: os.path.join(tile_root, fn) for rc, fn in tiles.items()}
             if check_animated and rows * cols > 1 and has_animated_duplicate_tiles(abs_tiles, rows, cols):
                 n_rejected_animated += 1
                 continue

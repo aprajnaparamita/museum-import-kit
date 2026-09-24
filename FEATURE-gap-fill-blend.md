@@ -122,14 +122,23 @@ Re-reads every written column and reports/verifies:
 Land-to-water steps are sea cliffs and sea floor relief and are not
 counted at all.
 
-## Real-world numbers (Tactical Nuke 2023-09, gap-only verification run)
+## Real-world numbers (all 4 test bases, 2026-09-24 rebuild audits)
 
-201 ring chunks (201 → 407 with 2 widening rounds), 3172 seam columns,
-seam mismatches 0, raised water 0, floating junk 0, merge slopes over cap
-1497 with worst 4.0 (occasional 2–4 block steps where relief exceeds the
-budget), natural relief steps 934 with worst 25 (pre-existing v7 cliffs —
-the natural surface in the ring spans −32..119). Plan ~13 s, audit ~1.6 s
-per base.
+| base | merge chunks (ring → +widened) | seam mismatches | merge slopes over cap (worst) | spilled base water | floating junk |
+|---|---|---|---|---|---|
+| cutecurly's City | 221 → 709 | **0** | 1246 (2.0) | 78 | 0 |
+| Tactical Nuke 2023-09 | 201 → 407 | **0** | 1524 (4.0) | 17 | 0 |
+| Fort Alcazar | ~290 → 709+ | **0** | 4704 (14.0) | 639 | 0 |
+| Dark Souls Castle | ~250 → 709+ | **0** | 572 (3.0) | 127 | 0 |
+
+Seam exactness (the owner's "gaps in height near the edges") is 0/3172–3908
+seam columns per base. The remaining "merge slopes over cap" are gentle
+2–4 block steps (14 at Fort Alcazar, a castle against big cliffs) where
+the relief exceeds the ramp budget — steep-but-continuous by design.
+"Spilled base water" is the captured base's own canals/fountains/moats
+pouring onto the merge after the write (gap-only runs without the base
+placed report 0; the merge's write path cannot produce water above sea
+level at all). Plan ~10–30 s, audit ~2–5 s per base.
 
 ## The −61 sea-level offset
 

@@ -108,6 +108,26 @@ the server down when done).
   water-column water as "raised", and a one-pass water/land classification
   that flickered and left land-land cliffs unconstrained.
 
+## Final audit numbers (the 4-base rebuild)
+
+| base | seam mismatches | merge slopes (worst) | spilled base water | floating junk |
+|---|---|---|---|---|
+| cutecurly's City | **0** | 1246 (2.0) | 78 | 0 |
+| Tactical Nuke 2023-09 | **0** | 1524 (4.0) | 17 | 0 |
+| Fort Alcazar | **0** | 4704 (14.0) | 639 | 0 |
+| Dark Souls Castle 2015-10-26 | **0** | 572 (3.0) | 127 | 0 |
+
+Placed blocks (registry, deployed): 64.6M / 43.9M / 138.2M / 40.4M, all
+`dest_y_offset = −61`, warp targets recorded. map + mod_storage integrity
+ok, `mcl_maps` = 404 textures, gallery fill 342 placements / 0 unfilled.
+
+The spilled-water interpretation was probed post-hoc on the deployed
+world (throwaway `gapprobe` worldmod, removed again): broad scans only
+find the bases' own water features (Fort Alcazar's moat network etc.) and
+natural underground spring pockets (water in stone at y>1 — Mineclonia
+generates those); gap-only runs with no base placed report 0 above-surface
+water in the merge, and the merge's write path cannot produce it.
+
 ## Deployed
 
 `import_tools/full_rebuild.sh` — staging `~/dev/museum-playtest` (all 4

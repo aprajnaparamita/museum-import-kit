@@ -8,7 +8,8 @@ just running this again somewhere with reliable storage.
 
 ## What you need on the remote box
 
-1. **Luanti 5.16.x** (server build is enough — no GUI needed).
+1. **Luanti 5.17.x** (server build is enough — no GUI needed; the
+   client must run the SAME Mineclonia as the server).
 2. **Mineclonia** in `games/mineclonia`.
 3. **The WDL archive** — rsync `~/dev/2b2tmuseum-WDL` across (~13 GB).
 4. **This kit.**
@@ -53,8 +54,10 @@ in ways that are not obvious for hours.
 - **`mg_name = v7` (real terrain) + gap-fill** — the early "self-contained
   capture" idea (`mg_name = singlenode`) was abandoned: the world now
   generates real Mineclonia terrain everywhere, and `spawnimport`'s
-  gap-fill blends only the single-chunk ring around each base into the
-  world download. See `FEATURE-gap-fill-blend.md`. Turning off
+  gap-fill MERGES the single-chunk ring around each base into the
+  world download: seam heights match the capture's ground exactly,
+  slopes are walkable, and generated surface water / floating masses
+  become air. See `FEATURE-gap-fill-blend.md`. Turning off
   `mcl_singlenode_mapgen` was worth ~23x on pre-generation (178.7s → 7.6s
   per base-sized volume) back when singlenode was in play.
 

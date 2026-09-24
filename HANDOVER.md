@@ -69,6 +69,19 @@ HANDOVER.md           this file
   overworld `dest_y_offset` is now **−61**, not −64 (see the hard-won fact
   below) — the only ocean base (Tactical Nuke) was flooding. Current test
   world is `~/dev/museum-tactical-test` (Tactical Nuke only).
+- **2026-09-24 session ("merge chunk"):** gap-fill rewritten a fourth
+  time into the current **merge-chunk** algorithm (see
+  `FEATURE-gap-fill-blend.md`): seam heights now match the capture's
+  ground EXACTLY (`terrain_cols` -- the ground under a base, not its
+  roofs; the old "meet half-way" blend left half the difference as a
+  cliff at the chunk border and ramped toward ROOF heights), the field is
+  solved jointly over all ring chunks with a walkable slope cap,
+  generated water in raised columns becomes air, floating islands/roofs
+  never count as ground, and the domain widens (bounded, only while it
+  helps) where a ramp needs room. An audit verifies seam exactness / no
+  raised water / slopes at the end of every import (`/worldplace
+  gapaudit`). The kit is now a **git repo** (branch `gap-fill-merge`
+  holds this work). All 4 test bases rebuilt and deployed with it.
 
 ### Caveats on the rescue world
 
@@ -160,13 +173,17 @@ actually fills water. Gap-fill used the preset value and produced
 2-block-low water. Use `core.get_mapgen_setting("water_level")` (dest
 space) for any water-fill decision.
 
-**Gap-fill: only the single-chunk ring around a base, and keep the natural
-terrain there.** Filling the whole bounding box destroyed a huge amount of
-Mineclonia-generated terrain; filling only chunks whose 8-neighbourhood
-touches a captured chunk, then *blending* the natural surface height
-toward the world download (not replacing it with synthetic stone/dirt),
-is the wanted behaviour. See `FEATURE-gap-fill-blend.md` and
-`FEATURE-gap-fill-mapgen.md`.
+**Gap-fill: the single-chunk ring around a base, MERGED -- not filled.**
+Filling the whole bounding box destroyed a huge amount of Mineclonia-
+generated terrain; the merge only touches chunks whose 8-neighbourhood
+touches a captured chunk (plus, where a ramp needs room, up to 3 more
+rings -- bounded, and only while it helps). The ring KEEPS the natural
+terrain (material, trees) and shifts it onto a height field that meets
+the capture's `terrain_cols` ground EXACTLY at the seam (no "meet
+half-way" step at the chunk border) with walkable slopes, drops surface
+water and floating masses to air, and never lets a roof or floating block
+set the height. See `FEATURE-gap-fill-blend.md` (current behaviour) and
+`FEATURE-gap-fill-mapgen.md` (design history).
 
 **Client and server must run the SAME Mineclonia.** The import used
 `~/dev/mineclonia-git`, but the client still loaded release 35899, whose
@@ -220,10 +237,10 @@ Harnesses exist and should stay green:
    text).
 3. **Warp browser UI** — `FEATURE-warp-ui.md`.
 4. **Optional: worldgen for continuity** — proven to work, see above.
-5. **Rebuild the other three test bases** (cutecurly's City, Fort Alcazar,
-   Dark Souls Castle) with the −61 offset — their manifests are already
-   updated, only the worlds need a fresh import. Add them to the tactical
-   test manifest when ready.
+5. ~~**Rebuild the other three test bases** (cutecurly's City, Fort
+   Alcazar, Dark Souls Castle) with the −61 offset.~~ Done 2026-09-24:
+   all 4 test bases rebuilt with the merge-chunk gap-fill and deployed to
+   `…/worlds/2b2t Museum TEST`.
 6. **Biome colours.** The footprint now extracts each chunk's surface
    biome (`sections[].biomes`); the ring blend already re-tints the edge
    grass with it. Re-tinting the *bases themselves* still has to happen at

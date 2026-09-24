@@ -1,6 +1,24 @@
 # PLAN — worldgen merge: patch gap chunks *before* trees, plants and structures
 
-Status: **plan only — nothing implemented yet.**
+Status: **SHIPPED and live-validated** (2026-09-25). Shipped: engine shim
+`core.generate_decorations_with_inputs` (l_mapgen.cpp, rebuilt Luanti 5.17);
+`wdl_climate.lua` (MC→Mineclonia biome/climate map); `wgen_inputs.lua`
+(per-column distance-fade height + climate-blend biome targets);
+`wgen_write.lua` (column rebuild + grow pass); `gap_fill.lua` RING=2 with
+faded solver targets. Owner-approved on Tactical Nuke ("Total win") and
+validated on all 4 test bases. Two post-review fixes (2026-09-25):
+* **square seam cliffs** — `field.bounds` propagates bounds from every
+  fixed pin without a distance limit; a distant mountain pin made the
+  seam column's bounds box empty (L > U) and the solver took the box
+  MIDPOINT (a y=186 peak 111 columns away vs a seam pin at -1 => h=37
+  beside a seabed at -1). Infeasible boxes now keep the pull target's
+  side of the span (the fade target is the authority); the midpoint is
+  only kept for empty NEIGHBOUR bands, which is the legitimate
+  natural-cliff terracing (gap_field_test pins both cases).
+* **shulker boxes never open** — mcl_chests keeps a shulker's UI in node
+  meta "formspec", written only by after_place_node (never fires for
+  VoxelManip writes). The construct sweep now writes it; probed fix
+  sites: formspec_len was 0 on every imported shulker.
 Owner direction (2026-09-24): abandon the "merge chunk" post-processing
 method (`FEATURE-gap-fill-blend.md`) — it produces smeared trees, huge
 cliff faces, kelp on mountainsides and still leaves very large square-

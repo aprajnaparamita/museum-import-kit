@@ -1,5 +1,11 @@
 # Gap-fill — "merge chunk": world download meets generated terrain
 
+> **SUPERSEDED (2026-09-25)** by the worldgen-merge method in
+> `PLAN-worldgen-merge.md` — the "merge chunk" blend below was replaced
+> after the owner's 2026-09-24 review ("the edges should always match
+> the level/characteristics of the touching world download blocks").
+> Kept for design history; do not implement from this document.
+
 Current gap-fill behaviour (2026-09-24). It replaces the earlier rounds
 (flat IDW fill → synthetic "meet half-way" ring → natural-surface blend)
 and is documented here in full; `FEATURE-gap-fill-mapgen.md` keeps the

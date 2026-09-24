@@ -738,6 +738,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 				local is_seam = hard_all[skey] and true or false
 				chunk.col[lx * C + lz + 1] = {
 					S = src.S, mat = src.mat, T = src.T, B = B,
+					tgt = free[skey],
 					seam = is_seam,
 					boundary = soft_final[skey] and true or false,
 				}
@@ -915,8 +916,9 @@ function gap_fill.audit(job, plan)
 							local below = data[area:index(x, y - 1, z)]
 							local nm = cid_name(cid)
 							local ice = nm:find("ice") ~= nil
+							local reef = core.get_item_group(nm, "coral_block") > 0
 							if below == core.CONTENT_AIR or below == core.CONTENT_IGNORE
-								or (is_liquid(below) and not ice) then
+								or (is_liquid(below) and not (ice or reef)) then
 								floating_junk = floating_junk + 1
 								if floating_junk <= 5 then
 									core.log("warning", string.format(
@@ -1008,13 +1010,30 @@ function gap_fill.audit(job, plan)
 				-- seam cliffs) and at the untouched boundary are matched
 				-- or left alone on purpose.
 				local nat_diff = math.abs((nat[skey] or S) - (nat[nkey] or Sn))
+				local ca = plan.chunks
+				local ta = nil
+				local tb = nil
+				do
+					for _, ck in pairs(plan.chunks) do
+						local ax, az = sx - ck.cx * C, sz - ck.cz * C
+						if ax >= 0 and ax < C and az >= 0 and az < C then
+							ta = ck.col[ax * C + az + 1].tgt
+						end
+						local bx, bz = sx + d[1] - ck.cx * C, sz + d[2] - ck.cz * C
+						if bx >= 0 and bx < C and bz >= 0 and bz < C then
+							tb = ck.col[bx * C + bz + 1].tgt
+						end
+					end
+				end
+				local target_step = (ta and tb) and math.abs(ta - tb) or 0
+				local target_forced = (ta and tb) and diff <= target_step + 0.5
 				local fld = plan.field
 				local la = fld and fld.level and fld.level[skey]
 				local lb = fld and fld.level and fld.level[nkey]
 				local capture_cliff = la and lb
 					and math.abs(la - lb) > allowed
 				if diff > allowed and diff > nat_diff + 0.5 then
-				 if not capture_cliff then
+				 if not (target_forced or capture_cliff) then
 					if slope_bad + relief_bad <= 5 then
 						local function dbg(k, xx, zz)
 							local ckey = math.floor(xx / C) .. "_" .. math.floor(zz / C)
@@ -1059,8 +1078,8 @@ function gap_fill.audit(job, plan)
 					relief_bad = relief_bad + 1
 					if diff > relief_worst then
 						relief_worst = diff
-						relief_pos = string.format("(%d,%d)=%d..(%d,%d)=%d [capture cliff]",
-							sx, sz, S, sx + d[1], sz + d[2], Sn)
+						relief_pos = string.format("(%d,%d)=%d..(%d,%d)=%d [capture cliff tgt=%0.1f/%0.1f]",
+							sx, sz, S, sx + d[1], sz + d[2], Sn, target_step, diff)
 					end
 				 end
 				end

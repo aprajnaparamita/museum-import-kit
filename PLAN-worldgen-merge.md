@@ -15,6 +15,18 @@ validated on all 4 test bases. Two post-review fixes (2026-09-25):
   side of the span (the fade target is the authority); the midpoint is
   only kept for empty NEIGHBOUR bands, which is the legitimate
   natural-cliff terracing (gap_field_test pins both cases).
+* **square/uniform snow + missing trees** (Dark Souls review 2026-09-25)
+  -- footprints carry one biome tag per 16x16 chunk (no biome_cols) and
+  `tsnow` ORed in `wdl.is_snowy(raw tag)` regardless of the resolved
+  biome: a snow-layer blanket over birch forest whose Voronoi-cell edges
+  were straight lines ("very square ... triangular ... mathematical"),
+  and the snow layer is what blocked tree decor from planting. Now: seam
+  climate grounded in the touching column's REAL surface family
+  (wdl_climate.surface_family), snow only from the RESOLVED biome,
+  smoothstep fade with value-noise jitter (organic borders), and
+  nearest_biome replicates the engine's picker exactly (y band +
+  vertical_blend + dist/weight, mg_biome.cpp). Verified: resolved biome
+  == core.get_biome_name at the same column on every probe.
 * **shulker boxes never open** — mcl_chests keeps a shulker's UI in node
   meta "formspec", written only by after_place_node (never fires for
   VoxelManip writes). The construct sweep now writes it; probed fix

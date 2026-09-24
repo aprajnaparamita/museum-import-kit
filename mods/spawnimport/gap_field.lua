@@ -355,21 +355,24 @@ function field.split_pins(fixed, soft)
 	return keep, release
 end
 
--- 2-D diagnostics for logs/audit: min/max of the solved heights and the
--- mean |h - s| over free columns (how much natural terrain got moved).
+-- 2-D diagnostics for logs/audit: min/max of the solved and natural
+-- heights plus the mean |h - s| over free columns (how much natural
+-- terrain got moved).
 function field.stats(free, h)
-	local min_h, max_h, moved, n = math.huge, -math.huge, 0, 0
+	local min_h, max_h, min_s, max_s, moved, n = math.huge, -math.huge, math.huge, -math.huge, 0, 0
 	for key, s in pairs(free) do
 		local v = h[key]
 		if v then
 			if v < min_h then min_h = v end
 			if v > max_h then max_h = v end
+			if s < min_s then min_s = s end
+			if s > max_s then max_s = s end
 			moved = moved + math.abs(v - s)
 			n = n + 1
 		end
 	end
 	if n == 0 then return { n = 0 } end
-	return { n = n, min_h = min_h, max_h = max_h, mean_move = moved / n }
+	return { n = n, min_h = min_h, max_h = max_h, min_s = min_s, max_s = max_s, mean_move = moved / n }
 end
 
 return field

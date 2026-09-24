@@ -662,12 +662,15 @@ function gap_fill.build_plan(job, real, entries, opts)
 	-- edge biome tint per column (captured neighbour's biome)
 	add_seam_tints(real, plan)
 
+	local stats = gap_field.stats(free, h)
 	core.log("action", string.format(
 		"[gap-fill] merge plan: %d chunks (%d solve round(s)), %d seam columns, "
-		.. "slope cap %.2f, unresolvable slopes %d (structural %d, worst %.2f), %.2fs",
+		.. "slope cap %.2f, unresolvable slopes %d (structural %d, worst %.2f), "
+		.. "natural surface %.0f..%.0f, merged %.0f..%.0f, mean move %.2f, %.2fs",
 		#plan.chunk_order, rounds, count_keys(plan.hard), step,
 		plan.n_fixable or 0, plan.n_structural or 0, plan.worst_slope or 0,
-		(core.get_us_time() - t0) / 1e6))
+		stats.min_s or 0, stats.max_s or 0, stats.min_h or 0, stats.max_h or 0,
+		stats.mean_move or 0, (core.get_us_time() - t0) / 1e6))
 	return plan
 end
 
@@ -856,6 +859,7 @@ function gap_fill.audit(job, plan)
 	local floating_junk = 0
 	local surface = {} -- "sx,sz" -> measured surface (for the slope pass)
 	local moved = {}   -- "sx,sz" -> the merge changed this column's height
+	local nat = {}     -- "sx,sz" -> the natural surface before the merge
 	local sea = plan.sea
 
 	for key, chunk in pairs(plan.chunks) do
@@ -875,21 +879,27 @@ function gap_fill.audit(job, plan)
 				local sx, sz = chunk.cx * C + lx, chunk.cz * C + lz
 				local skey = sx .. "," .. sz
 				local col = chunk.col[lx * C + lz + 1]
-				local tops, top = {}, nil
-				local top_count = 0
+				-- The merged surface = the topmost solid ground block:
+				-- everything above it is vegetation (kept on purpose) or
+				-- air. Deliberately NOT the terrain-run/floating rule used
+				-- for scanning NATURAL columns: a written surface skin can
+				-- legitimately be thin (a sand floor over waterlogged
+				-- gravel had its sub-blocks dropped), and re-deriving the
+				-- plan's own surface with a different rule turned that
+				-- into phantom seam mismatches and 90-block "steps".
+				local S, top = nil, nil
 				for y = ymax, ymin, -1 do
 					local cid = data[area:index(x, y, z)]
 					if cid ~= core.CONTENT_AIR and cid ~= core.CONTENT_IGNORE then
 						if not top then top = y end
-						if is_terrain(cid) then
-							top_count = top_count + 1
-							if top_count <= 4 then tops[top_count] = y end
-							if top_count >= 4 then break end
+						if not is_veg(cid) and not is_liquid(cid) then
+							S = y
+							break
 						end
 					end
 				end
-				local S = surface_from_tops(tops) or top
-				surface[skey] = S
+				surface[skey] = S or top
+				nat[skey] = (col.S and math.floor(col.S + 0.5)) or surface[skey]
 				if col.S and col.B and math.abs(col.B - col.S) > 0.5 then
 					moved[skey] = true
 				end
@@ -925,6 +935,7 @@ function gap_fill.audit(job, plan)
 	end
 
 	local allowed = (plan.step or 1) + 0.5
+	local worst_pos, relief_pos = nil, nil
 	for skey, S in pairs(surface) do
 		local sx, sz = skey:match("^(%-?%d+),(%-?%d+)$")
 		sx, sz = tonumber(sx), tonumber(sz)
@@ -933,7 +944,15 @@ function gap_fill.audit(job, plan)
 			local Sn = surface[nkey]
 			if Sn and skey < nkey and S >= sea and Sn >= sea then
 				local diff = math.abs(S - Sn)
-				if diff > allowed then
+				-- The merge owns a step only where it made the pair
+				-- STEEPER than it already was (this world has genuine
+				-- 90-block natural cliffs -- v7 mountains over ravines --
+				-- and blaming the merge for keeping them would flag every
+				-- rebuild). Steps at pinned columns (the capture's own
+				-- seam cliffs) and at the untouched boundary are matched
+				-- or left alone on purpose.
+				local nat_diff = math.abs((nat[skey] or S) - (nat[nkey] or Sn))
+				if diff > allowed and diff > nat_diff + 0.5 then
 					-- Steps at pinned columns are the capture's own seam
 					-- cliffs or the untouched-boundary relief (matched or
 					-- left alone on purpose); free-range steps at columns
@@ -941,10 +960,19 @@ function gap_fill.audit(job, plan)
 					if plan.pins[skey] or plan.pins[nkey]
 							or not (moved[skey] or moved[nkey]) then
 						relief_bad = relief_bad + 1
-						if diff > relief_worst then relief_worst = diff end
+						if diff > relief_worst then
+							relief_worst = diff
+							relief_pos = string.format("(%d,%d)=%d..(%d,%d)=%d",
+								sx, sz, S, sx + d[1], sz + d[2], Sn)
+						end
 					else
 						slope_bad = slope_bad + 1
-						if diff > slope_worst then slope_worst = diff end
+						if diff > slope_worst then
+							slope_worst = diff
+							worst_pos = string.format("(%d,%d)=%d..(%d,%d)=%d [pins:%s/%s]",
+								sx, sz, S, sx + d[1], sz + d[2], Sn,
+								tostring(plan.pins[skey]), tostring(plan.pins[nkey]))
+						end
 					end
 				end
 			end
@@ -958,10 +986,11 @@ function gap_fill.audit(job, plan)
 	-- purpose.
 	local ok = seam_bad == 0 and raised_water == 0
 	core.log("action", string.format(
-		"[gap-fill] audit %s: seam mismatches %d (worst %.1f), merge slopes over cap %d (worst %.1f, cap %.1f), "
-		.. "natural relief steps %d (worst %.1f), raised water blocks %d, floating junk blocks %d -- %.2fs",
-		job.name, seam_bad, seam_bad_worst, slope_bad, slope_worst, allowed,
-		relief_bad, relief_worst, raised_water, floating_junk, (core.get_us_time() - t0) / 1e6))
+		"[gap-fill] audit %s: seam mismatches %d (worst %.1f), merge slopes over cap %d (worst %.1f at %s, cap %.1f), "
+		.. "natural relief steps %d (worst %.1f at %s), raised water blocks %d, floating junk blocks %d -- %.2fs",
+		job.name, seam_bad, seam_bad_worst, slope_bad, slope_worst, tostring(worst_pos), allowed,
+		relief_bad, relief_worst, tostring(relief_pos), raised_water, floating_junk,
+		(core.get_us_time() - t0) / 1e6))
 	if not ok then
 		core.log("warning", "[gap-fill] audit FAILED for " .. tostring(job.name))
 	end

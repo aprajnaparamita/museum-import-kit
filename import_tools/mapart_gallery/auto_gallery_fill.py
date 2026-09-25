@@ -59,12 +59,9 @@ from tga_write import save_tga
 from PIL import Image
 
 FACING = {2: ('z', True), 3: ('z', False), 4: ('x', False), 5: ('x', True)}
-SOURCE_PRIORITY = {'final': 0, 'mapartindex': 1, 'wiki': 2}
-# Weighted spawn odds by source: final/ pieces are preferred (owner:
-# "prioritizing maparts in final/ with a higher chance of spawning...
-# slightly higher odds"). Soft weighting, not a hard priority -- mapartindex
-# and wiki pieces still appear, just less often.
-SOURCE_WEIGHTS = {'final': 3, 'mapartindex': 2, 'wiki': 1}
+SOURCE_PRIORITY = {'final': 0}
+# Single source now (~/dev/museum-maparts/output/final/) -- other source
+# dirs were removed when the gallery fill was scoped to final/ only.
 
 
 def log(msg):

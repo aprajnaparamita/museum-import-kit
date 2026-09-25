@@ -246,3 +246,16 @@ Harnesses exist and should stay green:
    grass with it. Re-tinting the *bases themselves* still has to happen at
    import time (the `param2` palette indices from Mineclonia's
    `mcl_biomes`).
+
+
+## Game patch required: mcl_maps load_map headless callback (2026-09-25)
+
+`mods/ITEMS/mcl_maps/init.lua` -> `load_map()` must fall back to invoking
+the media callback immediately when `#core.get_connected_players() == 0`.
+Without it, map-frame imports multiply `mcl_itemframes:item` entities
+without bound (mcl_itemframes:set_item's `core.after(0, update_entity)`
+retry fires every step, and `find_entity` cannot see saved/static
+objects): observed 50,050 frame entities in ONE mapblock from 50 source
+frames, plus a near-crash during the gap-fill audit. See
+`import_tools/game_patches/mcl_maps-load_map-headless.patch`. Applied to
+`~/dev/mineclonia-git` on 2026-09-25 -- re-apply after upstream merges.

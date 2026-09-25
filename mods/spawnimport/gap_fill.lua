@@ -823,6 +823,15 @@ end
 -- floating-junk counts are informational).
 function gap_fill.audit(job, plan)
 	local t0 = core.get_us_time()
+	-- The audit is long, pure-Lua column scanning; on 2026-09-25 a run
+	-- died inside it with SIGBUS/KERN_MEMORY_ERROR (Apple Silicon JIT
+	-- page allocation under load -- crash report luanti-073449.ips).
+	-- The audit costs seconds even unjitted; the placement/plan phases
+	-- keep their JIT. Toggle back afterwards.
+	local jitted = jit and jit.off and (jit.off() or true)
+	local function audit_done()
+		if jitted and jit.on then jit.on() end
+	end
 	local seam_bad, seam_bad_worst = 0, 0
 	local slope_bad, slope_worst = 0, 0
 	local relief_bad, relief_worst = 0, 0
@@ -1128,6 +1137,7 @@ function gap_fill.audit(job, plan)
 	if not ok then
 		core.log("warning", "[gap-fill] audit FAILED for " .. tostring(job.name))
 	end
+	audit_done()
 	return ok
 end
 

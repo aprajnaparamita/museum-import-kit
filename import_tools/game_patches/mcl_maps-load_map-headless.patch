@@ -1,0 +1,14 @@
+--- a/mods/ITEMS/mcl_maps/init.lua
++++ b/mods/ITEMS/mcl_maps/init.lua
+@@ load_map(): dynamic_add_media's callback only fires once a PLAYER has
++ received the media. With nobody connected (map import / headless
++ server) it never fires, and mcl_itemframes' set_item "dirty recursive
++ hack" then retries update_entity EVERY step -- spawning a NEW frame
++ display entity each time because find_entity cannot see already-saved
++ (static) objects. Observed: one mapblock with 50 map frames ended up
++ with 50,050 mcl_itemframes:item objects (museum import 2026-09-25).
++ Fix: when no player exists to send the media to, mark the map loaded
++ and invoke the callback immediately (the texture is on disk either
++ way; the callback only hands its name to the caller).
++ Applied to ~/dev/mineclonia-git (2026-09-25). RE-APPLY after upstream
++ merges -- without it every map-frame import multiplies entities.

@@ -50,3 +50,47 @@ adjust paths before reusing for another gallery/base):
 `tga_read.py`/`tga_write.py` are also generally useful any time this
 project needs to inspect or author a real Mineclonia map texture
 outside the game engine.
+
+## Re-dithering curated pieces (`dither_to_maparts.py`)
+
+`dither_to_maparts.py` is a faithful Python port of
+[rebane2001/mapartcraft](https://github.com/rebane2001/mapartcraft)'s
+palette + Floyd-Steinberg error-diffusion dithering. It reads
+mapartcraft's `coloursJSON.json` directly so the palette is bit-
+identical to what the React worker produces.
+
+Defaults are wired for this project's curated workflow:
+
+- input  = `~/dev/museum-maparts/final`  (the 20 owner-curated JPEGs)
+- output = `~/dev/museum-maparts/output/final`  (the library scan dir)
+
+So a bare `python3 dither_to_maparts.py` reads every image in
+`final/`, dithers it to mapartcraft's 183-colour palette, and writes
+`<base_id>_<row>_<col>.png` tiles into `output/final/` where
+`build_library_index.py` finds them automatically. No pipeline wiring
+needed -- the library picks them up on the next run.
+
+```bash
+# re-dither all 20 curated sources, write into the library scan dir
+python3 dither_to_maparts.py
+
+# one source, output redirected to a temp dir (don't overwrite real output)
+python3 dither_to_maparts.py ~/dev/museum-maparts/final/74.jpg --output /tmp/dither-test
+
+# explicit grid + cover fit for a non-default aspect ratio
+python3 dither_to_maparts.py photo.jpg --tiles 3x2 --fit cover --id meme_42
+
+# use a different palette (e.g. add the unobtainable tones for the
+# mapdat "staircasing ON unobtainable" mapartcraft mode)
+python3 dither_to_maparts.py photo.jpg --tones dark,normal,light,unobtainable
+```
+
+Run cost: ~120 ms per 128x128 tile on a modern Mac, so the whole
+20-image corpus is ~5 s at default settings.
+
+The existing tiles in `output/final/` are *not* palette-quantized (each
+carries ~10 000 unique source colors). Running this script with the
+defaults will overwrite them with mapartcraft-quantized versions --
+the placement plan and `render_and_place.py` work unchanged either
+way, but palette-dithered tiles render sharper when read back through
+the in-game map item.

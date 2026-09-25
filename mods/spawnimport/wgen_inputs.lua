@@ -289,6 +289,15 @@ function inputs.attach_targets(job, real, plan)
 					local names = wdl.candidate_biomes(registered, wet or false)
 					mcl = wdl.nearest_biome(registered, names, heat, hum, y)
 					def = mcl and registered[mcl] or nil
+					-- non-overworld placements (the End bases anchor at
+					-- y ~ -27000): no overworld biome lives in that y
+					-- band, and the engine's OWN pick at the column is the
+					-- truth (End/EndBarrens/...) -- use it rather than an
+					-- out-of-band overworld biome
+					if def and y and ((def.y_min and y < def.y_min)
+							or (def.y_max and y > def.y_max)) then
+						mcl, def = nat_name, nat_name and registered[nat_name] or nil
+					end
 				end
 				if not mcl then
 					mcl, def = seam_name or nat_name,

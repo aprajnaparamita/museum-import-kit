@@ -3,6 +3,13 @@ from collections import defaultdict
 from PIL import Image, ImageChops, ImageStat
 
 OUTPUT_DIR = os.path.expanduser('~/dev/museum-maparts/output')
+# Owner 2026-09-25: the gallery's map art comes from the dither-review
+# sample output ("the mapart is imported from /Volumes/Dara/dev/
+# dither-review/sample_output in place of the art from full/ in
+# maparts"). Set MAPART_TILE_DIR to a <base>_<row>_<col>.png tile
+# directory to use it as the SOLE art source; empty/absent keeps the
+# museum-maparts output/final source.
+TILE_DIR_OVERRIDE = os.environ.get('MAPART_TILE_DIR') or None
 TILE_RE = re.compile(r'^(.*)_(\d+)_(\d+)\.png$')
 
 # Round 21 fix (owner live report, image showing two "rocket" tiles that
@@ -120,6 +127,34 @@ def load_final_manifest():
     return by_base
 
 def build_index(check_animated=True):
+    if TILE_DIR_OVERRIDE and os.path.isdir(TILE_DIR_OVERRIDE):
+        source = os.path.basename(TILE_DIR_OVERRIDE.rstrip('/')) or 'override'
+
+        def scan_override():
+            d = TILE_DIR_OVERRIDE
+            pieces = defaultdict(dict)
+            for fn in os.listdir(d):
+                if not fn.endswith('.png'):
+                    continue
+                m = TILE_RE.match(fn)
+                if not m:
+                    continue
+                base_id, row, col = m.group(1), int(m.group(2)), int(m.group(3))
+                pieces[base_id][(row, col)] = fn
+            return pieces
+
+        library = []
+        for base_id, tiles in scan_override().items():
+            if not tiles:
+                continue
+            rows = max(r for r, _ in tiles)
+            cols = max(c for _, c in tiles)
+            abs_tiles = {rc: os.path.join(TILE_DIR_OVERRIDE, fn) for rc, fn in tiles.items()}
+            if check_animated and has_animated_duplicate_tiles(abs_tiles, rows, cols):
+                continue
+            library.append({'source': source, 'base_id': base_id, 'rows': rows,
+                            'cols': cols, 'display_name': base_id, 'tiles': abs_tiles})
+        return library
     library = []  # list of {source, base_id, rows, cols, display_name, tiles: {(row,col): abspath}}
     final_manifest = load_final_manifest()
     n_rejected_animated = 0

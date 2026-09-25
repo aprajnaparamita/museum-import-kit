@@ -519,6 +519,13 @@ end
 function gap_fill.build_plan(job, real, entries, opts)
 	opts = opts or {}
 	local dy = job.dest_y_offset
+	-- Dest-space sea level = the SOURCE dimension's MC sea level shifted
+	-- by the placement offset: overworld 62 + (-61) = 1 == the world's own
+	-- water_level (what this always used); End placements (dy ~ -27073)
+	-- put the End's sea (0) at -27073 so no column is ever water -- with
+	-- the old world-level constant every End merge column read as water
+	-- and would have been flooded.
+	local SEA = math.min(WATER_LEVEL, 62 + dy)
 	local step = opts.step or tonumber(core.settings:get("spawnimport_gap_max_step")) or 1.0
 	local t0 = core.get_us_time()
 
@@ -670,7 +677,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 				{ step = step, aquatic = aquatic, natural = natural })
 			local new_aquatic, changed = {}, false
 			for skey in pairs(h) do
-				local is_water = h[skey] < WATER_LEVEL
+				local is_water = h[skey] < SEA
 				if is_water then new_aquatic[skey] = true end
 				if is_water ~= (aquatic[skey] or false) then changed = true end
 			end
@@ -712,7 +719,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 	-- per-chunk apply data
 	local plan = {
 		step = step,
-		sea = WATER_LEVEL,
+		sea = SEA,
 		chunk_order = {},
 		chunks = {},
 		hard = {},

@@ -1,0 +1,5177 @@
+[
+ {
+  "display_name": "Expedition Orion First Portal 2017-12",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Expedition_Orion_First_Portal_2017-12-1774219052844/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Expedition_Orion_First_Portal_2017-12-1774219052844",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -1656,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": 153152,
+  "origin_z": 14736,
+  "dest_bbox": {
+   "x_min": -1656,
+   "x_max": -41,
+   "z_min": 2128,
+   "z_max": 3599
+  },
+  "chunk_bounds": {
+   "x_min": 9572,
+   "x_max": 9672,
+   "z_min": 921,
+   "z_max": 1012
+  },
+  "sampled_block_count": 131092,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Expedition_Orion_First_Portal_2017_12_1774219052844.json"
+ },
+ {
+  "display_name": "Farm Town Offtopia Base After Grief of Rainbow Islands",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Farm_Town_Offtopia_Base_After_Grief_of_Rainbow_Islands-1774216808165/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Farm_Town_Offtopia_Base_After_Grief_of_Rainbow_Islands-1774216808165",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -7864,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 40320,
+  "origin_z": -7072,
+  "dest_bbox": {
+   "x_min": -7864,
+   "x_max": -7033,
+   "z_min": 9664,
+   "z_max": 10463
+  },
+  "chunk_bounds": {
+   "x_min": 2520,
+   "x_max": 2571,
+   "z_min": -442,
+   "z_max": -393
+  },
+  "sampled_block_count": 129735,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Farm_Town_Offtopia_Base_After_Grief_of_Rainbow_Islands_1774216808165.json"
+ },
+ {
+  "display_name": "Iacon 2025-02-20",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Iacon_2025-02-20-1774212840125/dimensions/minecraft/worlds/2b2t/2b2t_2/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Iacon_2025-02-20-1774212840125",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 6648,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": 16880,
+  "origin_z": 12240,
+  "dest_bbox": {
+   "x_min": 6648,
+   "x_max": 7991,
+   "z_min": 2128,
+   "z_max": 3695
+  },
+  "chunk_bounds": {
+   "x_min": 1055,
+   "x_max": 1138,
+   "z_min": 765,
+   "z_max": 862
+  },
+  "sampled_block_count": 253324,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Iacon_2025_02_20_1774212840125.json"
+ },
+ {
+  "display_name": "MentleFortress 2018-01-22",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/MentleFortress_2018-01-22-1774219341354/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/MentleFortress_2018-01-22-1774219341354",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -6168,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": 16224,
+  "origin_z": -9584,
+  "dest_bbox": {
+   "x_min": -6168,
+   "x_max": -5097,
+   "z_min": 7104,
+   "z_max": 8031
+  },
+  "chunk_bounds": {
+   "x_min": 1014,
+   "x_max": 1080,
+   "z_min": -599,
+   "z_max": -542
+  },
+  "sampled_block_count": 144559,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/MentleFortress_2018_01_22_1774219341354.json"
+ },
+ {
+  "display_name": "Old Town",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Old_Town-1774215157077/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Old_Town-1774215157077",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -8456,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": 7920,
+  "origin_z": -7072,
+  "dest_bbox": {
+   "x_min": -8456,
+   "x_max": -6457,
+   "z_min": 2128,
+   "z_max": 3407
+  },
+  "chunk_bounds": {
+   "x_min": 495,
+   "x_max": 619,
+   "z_min": -442,
+   "z_max": -363
+  },
+  "sampled_block_count": 133534,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Old_Town_1774215157077.json"
+ },
+ {
+  "display_name": "Ponponhead Ziggy place 2011-08-24",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Ponponhead_Ziggy_place_2011-08-24-1774219457174/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Ponponhead_Ziggy_place_2011-08-24-1774219457174",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -1880,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -7232,
+  "origin_z": -49584,
+  "dest_bbox": {
+   "x_min": -1880,
+   "x_max": -1113,
+   "z_min": 9664,
+   "z_max": 10479
+  },
+  "chunk_bounds": {
+   "x_min": -452,
+   "x_max": -405,
+   "z_min": -3099,
+   "z_max": -3049
+  },
+  "sampled_block_count": 153488,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Ponponhead_Ziggy_place_2011_08_24_1774219457174.json"
+ },
+ {
+  "display_name": "Ponponheads first base 2011-08-09",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Ponponheads_first_base_2011-08-09-1774219389591/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Ponponheads_first_base_2011-08-09-1774219389591",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -11832,
+  "dest_anchor_z": 11568,
+  "dest_y_offset": -61,
+  "origin_x": 3888,
+  "origin_z": -10816,
+  "dest_bbox": {
+   "x_min": -11832,
+   "x_max": -11433,
+   "z_min": 11568,
+   "z_max": 11951
+  },
+  "chunk_bounds": {
+   "x_min": 243,
+   "x_max": 267,
+   "z_min": -676,
+   "z_max": -653
+  },
+  "sampled_block_count": 133466,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Ponponheads_first_base_2011_08_09_1774219389591.json"
+ },
+ {
+  "display_name": "Ravenholm 2018",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Ravenholm_2018-1774216918143/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Ravenholm_2018-1774216918143",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -7176,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": 36224,
+  "origin_z": -7296,
+  "dest_bbox": {
+   "x_min": -7176,
+   "x_max": -6233,
+   "z_min": 7104,
+   "z_max": 8159
+  },
+  "chunk_bounds": {
+   "x_min": 2264,
+   "x_max": 2322,
+   "z_min": -456,
+   "z_max": -391
+  },
+  "sampled_block_count": 121313,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Ravenholm_2018_1774216918143.json"
+ },
+ {
+  "display_name": "Valley of Melons 2014",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Valley_of_Melons_2014-1774247166875/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Valley_of_Melons_2014-1774247166875",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 3096,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": 9072,
+  "origin_z": -1104,
+  "dest_bbox": {
+   "x_min": 3096,
+   "x_max": 4343,
+   "z_min": 4192,
+   "z_max": 5439
+  },
+  "chunk_bounds": {
+   "x_min": 567,
+   "x_max": 644,
+   "z_min": -69,
+   "z_max": 8
+  },
+  "sampled_block_count": 135728,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Valley_of_Melons_2014_1774247166875.json"
+ },
+ {
+  "display_name": "SquidBase 2011-12",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/SquidBase_2011-12-1774205022782/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/SquidBase_2011-12-1774205022782",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 4776,
+  "dest_anchor_z": -11952,
+  "dest_y_offset": -61,
+  "origin_x": 52032,
+  "origin_z": 43152,
+  "dest_bbox": {
+   "x_min": 4776,
+   "x_max": 7495,
+   "z_min": -11952,
+   "z_max": -9569
+  },
+  "chunk_bounds": {
+   "x_min": 3252,
+   "x_max": 3421,
+   "z_min": 2697,
+   "z_max": 2845
+  },
+  "sampled_block_count": 127576,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/SquidBase_2011_12_1774205022782.json"
+ },
+ {
+  "display_name": "x0XP spawn base 2017-06-28",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/x0XP_spawn_base_2017-06-28-1774219572074/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/x0XP_spawn_base_2017-06-28-1774219572074",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -168,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": -20160,
+  "origin_z": -1744,
+  "dest_bbox": {
+   "x_min": -168,
+   "x_max": 855,
+   "z_min": 7104,
+   "z_max": 8047
+  },
+  "chunk_bounds": {
+   "x_min": -1260,
+   "x_max": -1197,
+   "z_min": -109,
+   "z_max": -51
+  },
+  "sampled_block_count": 135616,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/x0XP_spawn_base_2017_06_28_1774219572074.json"
+ },
+ {
+  "display_name": "500k base 2016-09-13",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/500k_base_2016-09-13-1774223736243/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/500k_base_2016-09-13-1774223736243",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 616,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": 339760,
+  "origin_z": 262016,
+  "dest_bbox": {
+   "x_min": 616,
+   "x_max": 2487,
+   "z_min": -2192,
+   "z_max": -625
+  },
+  "chunk_bounds": {
+   "x_min": 21235,
+   "x_max": 21351,
+   "z_min": 16376,
+   "z_max": 16473
+  },
+  "sampled_block_count": 128900,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/500k_base_2016_09_13_1774223736243.json"
+ },
+ {
+  "display_name": "8000 base (Tugboat Base) 2015-07-08",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/8000_base_(Tugboat_Base)_2015-07-08-1774232518027/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/8000_base_(Tugboat_Base)_2015-07-08-1774232518027",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 10456,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": -896,
+  "origin_z": -8544,
+  "dest_bbox": {
+   "x_min": 10456,
+   "x_max": 11511,
+   "z_min": 5680,
+   "z_max": 6655
+  },
+  "chunk_bounds": {
+   "x_min": -56,
+   "x_max": 9,
+   "z_min": -534,
+   "z_max": -474
+  },
+  "sampled_block_count": 142657,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/8000_base_Tugboat_Base_2015_07_08_1774232518027.json"
+ },
+ {
+  "display_name": "Algul Siento 2015",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Algul_Siento_2015-1774233437695/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Algul_Siento_2015-1774233437695",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 9416,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": 3520,
+  "origin_z": -112016,
+  "dest_bbox": {
+   "x_min": 9416,
+   "x_max": 10599,
+   "z_min": 4192,
+   "z_max": 5439
+  },
+  "chunk_bounds": {
+   "x_min": 220,
+   "x_max": 293,
+   "z_min": -7001,
+   "z_max": -6924
+  },
+  "sampled_block_count": 126285,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Algul_Siento_2015_1774233437695.json"
+ },
+ {
+  "display_name": "Argonath Fortress 2017-11-16",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Argonath_Fortress_2017-11-16-1774237592695/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Argonath_Fortress_2017-11-16-1774237592695",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -12312,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -2160,
+  "origin_z": 7120,
+  "dest_bbox": {
+   "x_min": -12312,
+   "x_max": -11545,
+   "z_min": 10720,
+   "z_max": 11375
+  },
+  "chunk_bounds": {
+   "x_min": -135,
+   "x_max": -88,
+   "z_min": 445,
+   "z_max": 485
+  },
+  "sampled_block_count": 148768,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Argonath_Fortress_2017_11_16_1774237592695.json"
+ },
+ {
+  "display_name": "Assassin raptors home 2017-11-30",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Assassin_raptors_home_2017-11-30-1774237666135/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Assassin_raptors_home_2017-11-30-1774237666135",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -6968,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -31360,
+  "origin_z": 21024,
+  "dest_bbox": {
+   "x_min": -6968,
+   "x_max": -6121,
+   "z_min": 9664,
+   "z_max": 10447
+  },
+  "chunk_bounds": {
+   "x_min": -1960,
+   "x_max": -1908,
+   "z_min": 1314,
+   "z_max": 1362
+  },
+  "sampled_block_count": 127424,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Assassin_raptors_home_2017_11_30_1774237666135.json"
+ },
+ {
+  "display_name": "Atlantis 2016-08-27",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Atlantis_2016-08-27-1774235289181/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Atlantis_2016-08-27-1774235289181",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 10072,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 160352,
+  "origin_z": 3120,
+  "dest_bbox": {
+   "x_min": 10072,
+   "x_max": 10567,
+   "z_min": 10720,
+   "z_max": 11119
+  },
+  "chunk_bounds": {
+   "x_min": 10022,
+   "x_max": 10052,
+   "z_min": 195,
+   "z_max": 219
+  },
+  "sampled_block_count": 16128,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Atlantis_2016_08_27_1774235289181.json"
+ },
+ {
+  "display_name": "Beefytown 2016-07-31",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Beefytown_2016-07-31-1774234747350/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Beefytown_2016-07-31-1774234747350",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -1656,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": 41264,
+  "origin_z": 41072,
+  "dest_bbox": {
+   "x_min": -1656,
+   "x_max": -553,
+   "z_min": 5680,
+   "z_max": 6687
+  },
+  "chunk_bounds": {
+   "x_min": 2579,
+   "x_max": 2647,
+   "z_min": 2567,
+   "z_max": 2629
+  },
+  "sampled_block_count": 129803,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Beefytown_2016_07_31_1774234747350.json"
+ },
+ {
+  "display_name": "C0ntagi0n base",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/C0ntagi0n_base-1774237807887/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/C0ntagi0n_base-1774237807887",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -9992,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 61824,
+  "origin_z": 13760,
+  "dest_bbox": {
+   "x_min": -9992,
+   "x_max": -9305,
+   "z_min": 10720,
+   "z_max": 11423
+  },
+  "chunk_bounds": {
+   "x_min": 3864,
+   "x_max": 3906,
+   "z_min": 860,
+   "z_max": 903
+  },
+  "sampled_block_count": 129740,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/C0ntagi0n_base_1774237807887.json"
+ },
+ {
+  "display_name": "The Penny Dropper 2017-07-10",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/The_Penny_Dropper_2017-07-10-1774288905569/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/The_Penny_Dropper_2017-07-10-1774288905569",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -2424,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": -1648,
+  "origin_z": 416,
+  "dest_bbox": {
+   "x_min": -2424,
+   "x_max": -1545,
+   "z_min": 8448,
+   "z_max": 9327
+  },
+  "chunk_bounds": {
+   "x_min": -103,
+   "x_max": -49,
+   "z_min": 26,
+   "z_max": 80
+  },
+  "sampled_block_count": 130264,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/The_Penny_Dropper_2017_07_10_1774288905569.json"
+ },
+ {
+  "display_name": "City of Lichtenburg and zxcwbz1 2015-09-22",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/City_of_Lichtenburg_and_zxcwbz1_2015-09-22-1774235658148/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/City_of_Lichtenburg_and_zxcwbz1_2015-09-22-1774235658148",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 3928,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": -31456,
+  "origin_z": 12032,
+  "dest_bbox": {
+   "x_min": 3928,
+   "x_max": 4951,
+   "z_min": 7104,
+   "z_max": 7999
+  },
+  "chunk_bounds": {
+   "x_min": -1966,
+   "x_max": -1903,
+   "z_min": 752,
+   "z_max": 807
+  },
+  "sampled_block_count": 123116,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/City_of_Lichtenburg_and_zxcwbz1_2015_09_22_1774235658148.json"
+ },
+ {
+  "display_name": "CreamOFtheSlops XxPR3D4TORxXs base 2019-08-11",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/CreamOFtheSlops_XxPR3D4TORxXs_base_2019-08-11-1774236409672/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/CreamOFtheSlops_XxPR3D4TORxXs_base_2019-08-11-1774236409672",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -8232,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": -111120,
+  "origin_z": -7632,
+  "dest_bbox": {
+   "x_min": -8232,
+   "x_max": -7241,
+   "z_min": 7104,
+   "z_max": 8111
+  },
+  "chunk_bounds": {
+   "x_min": -6945,
+   "x_max": -6884,
+   "z_min": -477,
+   "z_max": -415
+  },
+  "sampled_block_count": 128604,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/CreamOFtheSlops_XxPR3D4TORxXs_base_2019_08_11_1774236409672.json"
+ },
+ {
+  "display_name": "Derpy Build 2019-11-22 Halloween Edition",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Derpy_Build_2019-11-22_Halloween_Edition-1774220583555/dimensions/minecraft/worlds/2b2t/2b2t_3/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Derpy_Build_2019-11-22_Halloween_Edition-1774220583555",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 8440,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -7936,
+  "origin_z": -4272,
+  "dest_bbox": {
+   "x_min": 8440,
+   "x_max": 8919,
+   "z_min": 10720,
+   "z_max": 11183
+  },
+  "chunk_bounds": {
+   "x_min": -496,
+   "x_max": -467,
+   "z_min": -267,
+   "z_max": -239
+  },
+  "sampled_block_count": 132453,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Derpy_Build_2019_11_22_Halloween_Edition_1774220583555.json"
+ },
+ {
+  "display_name": "Emeral Sand City 2016-12-26 most likely 2012 by Edark",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Emeral_Sand_City_2016-12-26_most_likely_2012_by_Edark-1774223058281/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Emeral_Sand_City_2016-12-26_most_likely_2012_by_Edark-1774223058281",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -4104,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": -36464,
+  "origin_z": -18256,
+  "dest_bbox": {
+   "x_min": -4104,
+   "x_max": -2969,
+   "z_min": 5680,
+   "z_max": 6703
+  },
+  "chunk_bounds": {
+   "x_min": -2279,
+   "x_max": -2209,
+   "z_min": -1141,
+   "z_max": -1078
+  },
+  "sampled_block_count": 129981,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Emeral_Sand_City_2016_12_26_most_likely_2012_by_Edark_1774223058281.json"
+ },
+ {
+  "display_name": "Asa Underground 2013-08-25",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Asa_Underground_2013-08-25-1774241454528/dimensions/minecraft/worlds/2b2t_spawn/2b2t_spawn_2013-07_-_2013-12/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Asa_Underground_2013-08-25-1774241454528",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 4504,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -5216,
+  "origin_z": 1584,
+  "dest_bbox": {
+   "x_min": 4504,
+   "x_max": 5031,
+   "z_min": 10720,
+   "z_max": 11247
+  },
+  "chunk_bounds": {
+   "x_min": -326,
+   "x_max": -294,
+   "z_min": 99,
+   "z_max": 131
+  },
+  "sampled_block_count": 84354,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Asa_Underground_2013_08_25_1774241454528.json"
+ },
+ {
+  "display_name": "Passies Casltes 2014-10-04",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Passies_Casltes_2014-10-04-1774245122808/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Passies_Casltes_2014-10-04-1774245122808",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -11528,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -9520,
+  "origin_z": 16352,
+  "dest_bbox": {
+   "x_min": -11528,
+   "x_max": -10681,
+   "z_min": 9664,
+   "z_max": 10463
+  },
+  "chunk_bounds": {
+   "x_min": -595,
+   "x_max": -543,
+   "z_min": 1022,
+   "z_max": 1071
+  },
+  "sampled_block_count": 136306,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Passies_Casltes_2014_10_04_1774245122808.json"
+ },
+ {
+  "display_name": "Kaamtown 2015-05-25",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Kaamtown_2015-05-25-1774233873519/dimensions/minecraft/worlds/2b2t/2b2t_3/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Kaamtown_2015-05-25-1774233873519",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 5880,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": -130176,
+  "origin_z": 81744,
+  "dest_bbox": {
+   "x_min": 5880,
+   "x_max": 7063,
+   "z_min": 4192,
+   "z_max": 5487
+  },
+  "chunk_bounds": {
+   "x_min": -8136,
+   "x_max": -8063,
+   "z_min": 5109,
+   "z_max": 5189
+  },
+  "sampled_block_count": 138278,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Kaamtown_2015_05_25_1774233873519.json"
+ },
+ {
+  "display_name": "Mentlegen Rest The 2015-05-1",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Mentlegen_Rest_The_2015-05-1-1774235378207/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Mentlegen_Rest_The_2015-05-1-1774235378207",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 5672,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 269664,
+  "origin_z": 54832,
+  "dest_bbox": {
+   "x_min": 5672,
+   "x_max": 6167,
+   "z_min": 10720,
+   "z_max": 11247
+  },
+  "chunk_bounds": {
+   "x_min": 16854,
+   "x_max": 16884,
+   "z_min": 3427,
+   "z_max": 3459
+  },
+  "sampled_block_count": 116499,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Mentlegen_Rest_The_2015_05_1_1774235378207.json"
+ },
+ {
+  "display_name": "New M 2015-12-24",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/New_M_2015-12-24-1774221106104/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/New_M_2015-12-24-1774221106104",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 5048,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": 1063248,
+  "origin_z": 203824,
+  "dest_bbox": {
+   "x_min": 5048,
+   "x_max": 6583,
+   "z_min": 2128,
+   "z_max": 3503
+  },
+  "chunk_bounds": {
+   "x_min": 66453,
+   "x_max": 66548,
+   "z_min": 12739,
+   "z_max": 12824
+  },
+  "sampled_block_count": 124467,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/New_M_2015_12_24_1774221106104.json"
+ },
+ {
+  "display_name": "Pyrobytes Palace",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Pyrobytes_Palace-1774236249191/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Pyrobytes_Palace-1774236249191",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -3928,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": 43952,
+  "origin_z": -20224,
+  "dest_bbox": {
+   "x_min": -3928,
+   "x_max": -2489,
+   "z_min": 4192,
+   "z_max": 5327
+  },
+  "chunk_bounds": {
+   "x_min": 2747,
+   "x_max": 2836,
+   "z_min": -1264,
+   "z_max": -1194
+  },
+  "sampled_block_count": 127709,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Pyrobytes_Palace_1774236249191.json"
+ },
+ {
+  "display_name": "Rapture II 2017-01-11",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Rapture_II_2017-01-11-1774233120371/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Rapture_II_2017-01-11-1774233120371",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 8168,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": 1036624,
+  "origin_z": 151728,
+  "dest_bbox": {
+   "x_min": 8168,
+   "x_max": 9143,
+   "z_min": 7104,
+   "z_max": 8015
+  },
+  "chunk_bounds": {
+   "x_min": 64789,
+   "x_max": 64849,
+   "z_min": 9483,
+   "z_max": 9539
+  },
+  "sampled_block_count": 127300,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Rapture_II_2017_01_11_1774233120371.json"
+ },
+ {
+  "display_name": "Rapture I 2017 01 07",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Rapture_I_2017_01_07/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Rapture_I_2017_01_07",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 8056,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": 1024672,
+  "origin_z": 139760,
+  "dest_bbox": {
+   "x_min": 8056,
+   "x_max": 9463,
+   "z_min": 2128,
+   "z_max": 3599
+  },
+  "chunk_bounds": {
+   "x_min": 64042,
+   "x_max": 64129,
+   "z_min": 8735,
+   "z_max": 8826
+  },
+  "sampled_block_count": 134067,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Rapture_I_2017_01_07.json"
+ },
+ {
+  "display_name": "Rhadamantis 2015",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Rhadamantis_2015-1774233287853/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Rhadamantis_2015-1774233287853",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -12312,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": 35136,
+  "origin_z": -30048,
+  "dest_bbox": {
+   "x_min": -12312,
+   "x_max": -10857,
+   "z_min": 4192,
+   "z_max": 5455
+  },
+  "chunk_bounds": {
+   "x_min": 2196,
+   "x_max": 2286,
+   "z_min": -1878,
+   "z_max": -1800
+  },
+  "sampled_block_count": 126994,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Rhadamantis_2015_1774233287853.json"
+ },
+ {
+  "display_name": "Rhodes 2017-09-02",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Rhodes_2017-09-02-1774235188855/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Rhodes_2017-09-02-1774235188855",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -2424,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": 155776,
+  "origin_z": 25568,
+  "dest_bbox": {
+   "x_min": -2424,
+   "x_max": -1065,
+   "z_min": 4192,
+   "z_max": 5391
+  },
+  "chunk_bounds": {
+   "x_min": 9736,
+   "x_max": 9820,
+   "z_min": 1598,
+   "z_max": 1672
+  },
+  "sampled_block_count": 134074,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Rhodes_2017_09_02_1774235188855.json"
+ },
+ {
+  "display_name": "La Rosa 2016-08-05",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/La_Rosa_2016-08-05-1774277964447/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/La_Rosa_2016-08-05-1774277964447",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -12312,
+  "dest_anchor_z": -11952,
+  "dest_y_offset": -61,
+  "origin_x": 998512,
+  "origin_z": 200432,
+  "dest_bbox": {
+   "x_min": -12312,
+   "x_max": -7353,
+   "z_min": -11952,
+   "z_max": -5377
+  },
+  "chunk_bounds": {
+   "x_min": 62407,
+   "x_max": 62716,
+   "z_min": 12527,
+   "z_max": 12937
+  },
+  "sampled_block_count": 81155,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/La_Rosa_2016_08_05_1774277964447.json"
+ },
+ {
+  "display_name": "Stronghold Base 2017-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Stronghold_Base_2017-q4-1774232816333/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Stronghold_Base_2017-q4-1774232816333",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 4776,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -7712,
+  "origin_z": 6224,
+  "dest_bbox": {
+   "x_min": 4776,
+   "x_max": 5495,
+   "z_min": 9664,
+   "z_max": 10447
+  },
+  "chunk_bounds": {
+   "x_min": -482,
+   "x_max": -438,
+   "z_min": 389,
+   "z_max": 437
+  },
+  "sampled_block_count": 141419,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Stronghold_Base_2017_q4_1774232816333.json"
+ },
+ {
+  "display_name": "The Eternal Gardens 2016-09-12 Preuveneers by Toxic Zombie25",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/The_Eternal_Gardens_2016-09-12_Preuveneers_by_Toxic_Zombie25-1774237310500/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/The_Eternal_Gardens_2016-09-12_Preuveneers_by_Toxic_Zombie25-1774237310500",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 7272,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 88720,
+  "origin_z": -976,
+  "dest_bbox": {
+   "x_min": 7272,
+   "x_max": 8055,
+   "z_min": 9664,
+   "z_max": 10367
+  },
+  "chunk_bounds": {
+   "x_min": 5545,
+   "x_max": 5593,
+   "z_min": -61,
+   "z_max": -18
+  },
+  "sampled_block_count": 133499,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/The_Eternal_Gardens_2016_09_12_Preuveneers_by_Toxic_Zombie25_1774237310500.json"
+ },
+ {
+  "display_name": "The Shroom by Knightvista",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/The_Shroom_by_Knightvista-1774237086935/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/The_Shroom_by_Knightvista-1774237086935",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 8920,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 86896,
+  "origin_z": -24336,
+  "dest_bbox": {
+   "x_min": 8920,
+   "x_max": 9767,
+   "z_min": 8448,
+   "z_max": 9295
+  },
+  "chunk_bounds": {
+   "x_min": 5431,
+   "x_max": 5483,
+   "z_min": -1521,
+   "z_max": -1469
+  },
+  "sampled_block_count": 122979,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/The_Shroom_by_Knightvista_1774237086935.json"
+ },
+ {
+  "display_name": "Uganda 2020-12-25 rebuild",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Uganda_2020-12-25_rebuild-1774236112878/dimensions/minecraft/worlds/2b2t/2b2t_2/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Uganda_2020-12-25_rebuild-1774236112878",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -968,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": 113184,
+  "origin_z": -91504,
+  "dest_bbox": {
+   "x_min": -968,
+   "x_max": 551,
+   "z_min": -2192,
+   "z_max": -225
+  },
+  "chunk_bounds": {
+   "x_min": 7074,
+   "x_max": 7168,
+   "z_min": -5719,
+   "z_max": -5597
+  },
+  "sampled_block_count": 114740,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Uganda_2020_12_25_rebuild_1774236112878.json"
+ },
+ {
+  "display_name": "Viking Relief Base 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Viking_Relief_Base_2018-q4-1774235257165/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Viking_Relief_Base_2018-q4-1774235257165",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -9240,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -45424,
+  "origin_z": -54080,
+  "dest_bbox": {
+   "x_min": -9240,
+   "x_max": -8537,
+   "z_min": 10720,
+   "z_max": 11391
+  },
+  "chunk_bounds": {
+   "x_min": -2839,
+   "x_max": -2796,
+   "z_min": -3380,
+   "z_max": -3339
+  },
+  "sampled_block_count": 128101,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Viking_Relief_Base_2018_q4_1774235257165.json"
+ },
+ {
+  "display_name": "Wolf Den 2018-06-19 by Parthicus",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Wolf_Den_2018-06-19_by_Parthicus-1774237759801/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Wolf_Den_2018-06-19_by_Parthicus-1774237759801",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 5016,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": 298752,
+  "origin_z": -71792,
+  "dest_bbox": {
+   "x_min": 5016,
+   "x_max": 6135,
+   "z_min": 7104,
+   "z_max": 7919
+  },
+  "chunk_bounds": {
+   "x_min": 18672,
+   "x_max": 18741,
+   "z_min": -4487,
+   "z_max": -4437
+  },
+  "sampled_block_count": 127133,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Wolf_Den_2018_06_19_by_Parthicus_1774237759801.json"
+ },
+ {
+  "display_name": "shadowmasters12 base",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/shadowmasters12_base-1774237537571/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/shadowmasters12_base-1774237537571",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -8024,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": -52784,
+  "origin_z": -10896,
+  "dest_bbox": {
+   "x_min": -8024,
+   "x_max": -6793,
+   "z_min": 4192,
+   "z_max": 5599
+  },
+  "chunk_bounds": {
+   "x_min": -3299,
+   "x_max": -3223,
+   "z_min": -681,
+   "z_max": -594
+  },
+  "sampled_block_count": 129160,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/shadowmasters12_base_1774237537571.json"
+ },
+ {
+  "display_name": "upside down pyramid 2013-01-25",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/upside_down_pyramid_2013-01-25-1774235327089/dimensions/minecraft/worlds/2b2t_spawn/2b2t_spawn_2013-01_-_2013-02/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/upside_down_pyramid_2013-01-25-1774235327089",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 6232,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 256,
+  "origin_z": 3776,
+  "dest_bbox": {
+   "x_min": 6232,
+   "x_max": 6727,
+   "z_min": 10720,
+   "z_max": 11183
+  },
+  "chunk_bounds": {
+   "x_min": 16,
+   "x_max": 46,
+   "z_min": 236,
+   "z_max": 264
+  },
+  "sampled_block_count": 124254,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/upside_down_pyramid_2013_01_25_1774235327089.json"
+ },
+ {
+  "display_name": "x1.0m outpost omaliymix dug tunnel",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/x1.0m_outpost_omaliymix_dug_tunnel-1774223142609/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/x1.0m_outpost_omaliymix_dug_tunnel-1774223142609",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 5096,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 1001712,
+  "origin_z": 126784,
+  "dest_bbox": {
+   "x_min": 5096,
+   "x_max": 5607,
+   "z_min": 10720,
+   "z_max": 11231
+  },
+  "chunk_bounds": {
+   "x_min": 62607,
+   "x_max": 62638,
+   "z_min": 7924,
+   "z_max": 7955
+  },
+  "sampled_block_count": 31241,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/x1_0m_outpost_omaliymix_dug_tunnel_1774223142609.json"
+ },
+ {
+  "display_name": "zexesl2 base 2018-02-05",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/zexesl2_base_2018-02-05-1774236668569/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/zexesl2_base_2018-02-05-1774236668569",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -3592,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 3552,
+  "origin_z": -144,
+  "dest_bbox": {
+   "x_min": -3592,
+   "x_max": -2793,
+   "z_min": 9664,
+   "z_max": 10447
+  },
+  "chunk_bounds": {
+   "x_min": 222,
+   "x_max": 271,
+   "z_min": -9,
+   "z_max": 39
+  },
+  "sampled_block_count": 132506,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/zexesl2_base_2018_02_05_1774236668569.json"
+ },
+ {
+  "display_name": "Anatolia 2013-06-01",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Anatolia_2013-06-01-1774241811900/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Anatolia_2013-06-01-1774241811900",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 9768,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 234128,
+  "origin_z": -48896,
+  "dest_bbox": {
+   "x_min": 9768,
+   "x_max": 10487,
+   "z_min": 9664,
+   "z_max": 10383
+  },
+  "chunk_bounds": {
+   "x_min": 14633,
+   "x_max": 14677,
+   "z_min": -3056,
+   "z_max": -3012
+  },
+  "sampled_block_count": 111970,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Anatolia_2013_06_01_1774241811900.json"
+ },
+ {
+  "display_name": "Asgard 2014-01-20",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Asgard_2014-01-20-1774240624040/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Asgard_2014-01-20-1774240624040",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 2744,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": 253632,
+  "origin_z": -146688,
+  "dest_bbox": {
+   "x_min": 2744,
+   "x_max": 3783,
+   "z_min": 5680,
+   "z_max": 6735
+  },
+  "chunk_bounds": {
+   "x_min": 15852,
+   "x_max": 15916,
+   "z_min": -9168,
+   "z_max": -9103
+  },
+  "sampled_block_count": 104075,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Asgard_2014_01_20_1774240624040.json"
+ },
+ {
+  "display_name": "Asia Town 2013-03-12 Offtopia",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Asia_Town_2013-03-12_Offtopia-1774242674642/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Asia_Town_2013-03-12_Offtopia-1774242674642",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 7928,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 31488,
+  "origin_z": 4480,
+  "dest_bbox": {
+   "x_min": 7928,
+   "x_max": 8855,
+   "z_min": 8448,
+   "z_max": 9231
+  },
+  "chunk_bounds": {
+   "x_min": 1968,
+   "x_max": 2025,
+   "z_min": 280,
+   "z_max": 328
+  },
+  "sampled_block_count": 122034,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Asia_Town_2013_03_12_Offtopia_1774242674642.json"
+ },
+ {
+  "display_name": "CaptainHardhat Pyramid 2015-10-25",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/CaptainHardhat_Pyramid_2015-10-25-1774240510865/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/CaptainHardhat_Pyramid_2015-10-25-1774240510865",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -1480,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": -1000416,
+  "origin_z": -1000416,
+  "dest_bbox": {
+   "x_min": -1480,
+   "x_max": -585,
+   "z_min": 8448,
+   "z_max": 9311
+  },
+  "chunk_bounds": {
+   "x_min": -62526,
+   "x_max": -62471,
+   "z_min": -62526,
+   "z_max": -62473
+  },
+  "sampled_block_count": 118609,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/CaptainHardhat_Pyramid_2015_10_25_1774240510865.json"
+ },
+ {
+  "display_name": "Castle Hatehart 2017-01-05",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Castle_Hatehart_2017-01-05-1774241366414/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Castle_Hatehart_2017-01-05-1774241366414",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -1224,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": -8832,
+  "origin_z": 976,
+  "dest_bbox": {
+   "x_min": -1224,
+   "x_max": -233,
+   "z_min": 7104,
+   "z_max": 8079
+  },
+  "chunk_bounds": {
+   "x_min": -552,
+   "x_max": -491,
+   "z_min": 61,
+   "z_max": 121
+  },
+  "sampled_block_count": 145619,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Castle_Hatehart_2017_01_05_1774241366414.json"
+ },
+ {
+  "display_name": "Dust falls-Manor 2016-03-01",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Dust_falls-Manor_2016-03-01-1774246712785/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Dust_falls-Manor_2016-03-01-1774246712785",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -4456,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 3424,
+  "origin_z": -23184,
+  "dest_bbox": {
+   "x_min": -4456,
+   "x_max": -3657,
+   "z_min": 9664,
+   "z_max": 10463
+  },
+  "chunk_bounds": {
+   "x_min": 214,
+   "x_max": 263,
+   "z_min": -1449,
+   "z_max": -1400
+  },
+  "sampled_block_count": 134210,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Dust_falls_Manor_2016_03_01_1774246712785.json"
+ },
+ {
+  "display_name": "Yiffington 2015",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Yiffington_2015-1774288659382/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Yiffington_2015-1774288659382",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -1000,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": -13536,
+  "origin_z": 9536,
+  "dest_bbox": {
+   "x_min": -1000,
+   "x_max": 375,
+   "z_min": 4192,
+   "z_max": 5375
+  },
+  "chunk_bounds": {
+   "x_min": -846,
+   "x_max": -761,
+   "z_min": 596,
+   "z_max": 669
+  },
+  "sampled_block_count": 126471,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Yiffington_2015_1774288659382.json"
+ },
+ {
+  "display_name": "Dr Cash House of Fun 2019-06-28",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Dr_Cash_House_of_Fun_2019-06-28-1774242884506/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Dr_Cash_House_of_Fun_2019-06-28-1774242884506",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 9544,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -49856,
+  "origin_z": -163888,
+  "dest_bbox": {
+   "x_min": 9544,
+   "x_max": 10007,
+   "z_min": 10720,
+   "z_max": 11183
+  },
+  "chunk_bounds": {
+   "x_min": -3116,
+   "x_max": -3088,
+   "z_min": -10243,
+   "z_max": -10215
+  },
+  "sampled_block_count": 198133,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Dr_Cash_House_of_Fun_2019_06_28_1774242884506.json"
+ },
+ {
+  "display_name": "Edark 2013 base",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Edark_2013_base-1774239432938/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Edark_2013_base-1774239432938",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 2552,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": -184144,
+  "origin_z": 133536,
+  "dest_bbox": {
+   "x_min": 2552,
+   "x_max": 5271,
+   "z_min": -2192,
+   "z_max": -1137
+  },
+  "chunk_bounds": {
+   "x_min": -11509,
+   "x_max": -11340,
+   "z_min": 8346,
+   "z_max": 8411
+  },
+  "sampled_block_count": 135180,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Edark_2013_base_1774239432938.json"
+ },
+ {
+  "display_name": "Sleepys Hollow",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Sleepys_Hollow-1774244677573/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Sleepys_Hollow-1774244677573",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 520,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 29904,
+  "origin_z": -91664,
+  "dest_bbox": {
+   "x_min": 520,
+   "x_max": 1335,
+   "z_min": 9664,
+   "z_max": 10383
+  },
+  "chunk_bounds": {
+   "x_min": 1869,
+   "x_max": 1919,
+   "z_min": -5729,
+   "z_max": -5685
+  },
+  "sampled_block_count": 127483,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Sleepys_Hollow_1774244677573.json"
+ },
+ {
+  "display_name": "Fat Leelo Mushroom Kingdom 2015-05-07",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Fat_Leelo_Mushroom_Kingdom_2015-05-07-1774242376337/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Fat_Leelo_Mushroom_Kingdom_2015-05-07-1774242376337",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 2296,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 17824,
+  "origin_z": 29568,
+  "dest_bbox": {
+   "x_min": 2296,
+   "x_max": 3063,
+   "z_min": 9664,
+   "z_max": 10415
+  },
+  "chunk_bounds": {
+   "x_min": 1114,
+   "x_max": 1161,
+   "z_min": 1848,
+   "z_max": 1894
+  },
+  "sampled_block_count": 123429,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Fat_Leelo_Mushroom_Kingdom_2015_05_07_1774242376337.json"
+ },
+ {
+  "display_name": "Flugzeug Base Mansion 2016-07-14 Rimmy93",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Flugzeug_Base_Mansion_2016-07-14_Rimmy93-1774241757564/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Flugzeug_Base_Mansion_2016-07-14_Rimmy93-1774241757564",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -4168,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -132784,
+  "origin_z": -368,
+  "dest_bbox": {
+   "x_min": -4168,
+   "x_max": -3593,
+   "z_min": 10720,
+   "z_max": 11455
+  },
+  "chunk_bounds": {
+   "x_min": -8299,
+   "x_max": -8264,
+   "z_min": -23,
+   "z_max": 22
+  },
+  "sampled_block_count": 126359,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Flugzeug_Base_Mansion_2016_07_14_Rimmy93_1774241757564.json"
+ },
+ {
+  "display_name": "Hopes Retreat 2013-11-21",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Hopes_Retreat_2013-11-21-1774241671447/dimensions/minecraft/worlds/2b2t_spawn/2b2t_spawn_2013-07_-_2013-12/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Hopes_Retreat_2013-11-21-1774241671447",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -5528,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 1568,
+  "origin_z": 2768,
+  "dest_bbox": {
+   "x_min": -5528,
+   "x_max": -4921,
+   "z_min": 10720,
+   "z_max": 11439
+  },
+  "chunk_bounds": {
+   "x_min": 98,
+   "x_max": 135,
+   "z_min": 173,
+   "z_max": 217
+  },
+  "sampled_block_count": 131278,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Hopes_Retreat_2013_11_21_1774241671447.json"
+ },
+ {
+  "display_name": "ImUnicke Tower 2017-04-26",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/ImUnicke_Tower_2017-04-26-1774241279293/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/ImUnicke_Tower_2017-04-26-1774241279293",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 10680,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": -15536,
+  "origin_z": 50080,
+  "dest_bbox": {
+   "x_min": 10680,
+   "x_max": 12311,
+   "z_min": -2192,
+   "z_max": -529
+  },
+  "chunk_bounds": {
+   "x_min": -971,
+   "x_max": -870,
+   "z_min": 3130,
+   "z_max": 3233
+  },
+  "sampled_block_count": 130963,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/ImUnicke_Tower_2017_04_26_1774241279293.json"
+ },
+ {
+  "display_name": "IsoRails 2013-02-06",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/IsoRails_2013-02-06-1774240897906/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/IsoRails_2013-02-06-1774240897906",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 4408,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": -8464,
+  "origin_z": -111328,
+  "dest_bbox": {
+   "x_min": 4408,
+   "x_max": 5815,
+   "z_min": 4192,
+   "z_max": 5295
+  },
+  "chunk_bounds": {
+   "x_min": -529,
+   "x_max": -442,
+   "z_min": -6958,
+   "z_max": -6890
+  },
+  "sampled_block_count": 129288,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/IsoRails_2013_02_06_1774240897906.json"
+ },
+ {
+  "display_name": "James Rustles House of Fun 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/James_Rustles_House_of_Fun_2018-q4-1774242508104/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/James_Rustles_House_of_Fun_2018-q4-1774242508104",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 11592,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 63632,
+  "origin_z": 37472,
+  "dest_bbox": {
+   "x_min": 11592,
+   "x_max": 12007,
+   "z_min": 10720,
+   "z_max": 11119
+  },
+  "chunk_bounds": {
+   "x_min": 3977,
+   "x_max": 4002,
+   "z_min": 2342,
+   "z_max": 2366
+  },
+  "sampled_block_count": 124158,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/James_Rustles_House_of_Fun_2018_q4_1774242508104.json"
+ },
+ {
+  "display_name": "Newbase v2 2017-10-01",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Newbase_v2_2017-10-01-1774242993969/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Newbase_v2_2017-10-01-1774242993969",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -4440,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 3680,
+  "origin_z": -3408,
+  "dest_bbox": {
+   "x_min": -4440,
+   "x_max": -3513,
+   "z_min": 8448,
+   "z_max": 9295
+  },
+  "chunk_bounds": {
+   "x_min": 230,
+   "x_max": 287,
+   "z_min": -213,
+   "z_max": -161
+  },
+  "sampled_block_count": 141006,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Newbase_v2_2017_10_01_1774242993969.json"
+ },
+ {
+  "display_name": "Oldass Outpost 2018-01-18",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Oldass_Outpost_2018-01-18-1774243141376/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Oldass_Outpost_2018-01-18-1774243141376",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -760,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 19328,
+  "origin_z": 9056,
+  "dest_bbox": {
+   "x_min": -760,
+   "x_max": -153,
+   "z_min": 10720,
+   "z_max": 11327
+  },
+  "chunk_bounds": {
+   "x_min": 1208,
+   "x_max": 1245,
+   "z_min": 566,
+   "z_max": 603
+  },
+  "sampled_block_count": 141424,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Oldass_Outpost_2018_01_18_1774243141376.json"
+ },
+ {
+  "display_name": "Purpura Longa 2019-08-28",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Purpura_Longa_2019-08-28-1774242764991/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Purpura_Longa_2019-08-28-1774242764991",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -5240,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": -36144,
+  "origin_z": -98944,
+  "dest_bbox": {
+   "x_min": -5240,
+   "x_max": -4169,
+   "z_min": 5680,
+   "z_max": 6767
+  },
+  "chunk_bounds": {
+   "x_min": -2259,
+   "x_max": -2193,
+   "z_min": -6184,
+   "z_max": -6117
+  },
+  "sampled_block_count": 123719,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Purpura_Longa_2019_08_28_1774242764991.json"
+ },
+ {
+  "display_name": "IronWeasel's underwater base 2016-08-12",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/IronWeasel's_underwater_base_2016-08-12-1774296577770/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/IronWeasel's_underwater_base_2016-08-12-1774296577770",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 11112,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -14720,
+  "origin_z": -25504,
+  "dest_bbox": {
+   "x_min": 11112,
+   "x_max": 11527,
+   "z_min": 10720,
+   "z_max": 11135
+  },
+  "chunk_bounds": {
+   "x_min": -920,
+   "x_max": -895,
+   "z_min": -1594,
+   "z_max": -1569
+  },
+  "sampled_block_count": 122050,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/IronWeasel_s_underwater_base_2016_08_12_1774296577770.json"
+ },
+ {
+  "display_name": "Spruceville 2019-07-21",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Spruceville_2019-07-21-1774242475816/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Spruceville_2019-07-21-1774242475816",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 9208,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": -1037760,
+  "origin_z": 12928,
+  "dest_bbox": {
+   "x_min": 9208,
+   "x_max": 10087,
+   "z_min": 7104,
+   "z_max": 8095
+  },
+  "chunk_bounds": {
+   "x_min": -64860,
+   "x_max": -64806,
+   "z_min": 808,
+   "z_max": 869
+  },
+  "sampled_block_count": 154517,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Spruceville_2019_07_21_1774242475816.json"
+ },
+ {
+  "display_name": "The Hudson Inn 2017-02-03 Fit",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/The_Hudson_Inn_2017-02-03_Fit-1774241857260/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/The_Hudson_Inn_2017-02-03_Fit-1774241857260",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 1272,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 1600,
+  "origin_z": -5168,
+  "dest_bbox": {
+   "x_min": 1272,
+   "x_max": 1943,
+   "z_min": 10720,
+   "z_max": 11247
+  },
+  "chunk_bounds": {
+   "x_min": 100,
+   "x_max": 141,
+   "z_min": -323,
+   "z_max": -291
+  },
+  "sampled_block_count": 138245,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/The_Hudson_Inn_2017_02_03_Fit_1774241857260.json"
+ },
+ {
+  "display_name": "Valhalla 2017-09-01",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Valhalla_2017-09-01-1774238678076/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Valhalla_2017-09-01-1774238678076",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 1848,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": 79264,
+  "origin_z": -1600,
+  "dest_bbox": {
+   "x_min": 1848,
+   "x_max": 3415,
+   "z_min": 2128,
+   "z_max": 3615
+  },
+  "chunk_bounds": {
+   "x_min": 4954,
+   "x_max": 5051,
+   "z_min": -100,
+   "z_max": -8
+  },
+  "sampled_block_count": 126930,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Valhalla_2017_09_01_1774238678076.json"
+ },
+ {
+  "display_name": "Wheat Island and Lodge",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Wheat_Island_and_Lodge-1774243056605/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Wheat_Island_and_Lodge-1774243056605",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 4344,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": -10944,
+  "origin_z": -53664,
+  "dest_bbox": {
+   "x_min": 4344,
+   "x_max": 5191,
+   "z_min": 8448,
+   "z_max": 9311
+  },
+  "chunk_bounds": {
+   "x_min": -684,
+   "x_max": -632,
+   "z_min": -3354,
+   "z_max": -3301
+  },
+  "sampled_block_count": 126177,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Wheat_Island_and_Lodge_1774243056605.json"
+ },
+ {
+  "display_name": "0.025m 0.025m 2017-02-10 25k Pyramid",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/0.025m_0.025m_2017-02-10_25k_Pyramid-1774245957161/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/0.025m_0.025m_2017-02-10_25k_Pyramid-1774245957161",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -11048,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": 25040,
+  "origin_z": 24928,
+  "dest_bbox": {
+   "x_min": -11048,
+   "x_max": -10009,
+   "z_min": 5680,
+   "z_max": 7007
+  },
+  "chunk_bounds": {
+   "x_min": 1565,
+   "x_max": 1629,
+   "z_min": 1558,
+   "z_max": 1640
+  },
+  "sampled_block_count": 133373,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/0_025m_0_025m_2017_02_10_25k_Pyramid_1774245957161.json"
+ },
+ {
+  "display_name": "0xymoron underground 2017-01-13",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/0xymoron_underground_2017-01-13-1774247219385/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/0xymoron_underground_2017-01-13-1774247219385",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -12312,
+  "dest_anchor_z": 11568,
+  "dest_y_offset": -61,
+  "origin_x": -34160,
+  "origin_z": -16832,
+  "dest_bbox": {
+   "x_min": -12312,
+   "x_max": -11897,
+   "z_min": 11568,
+   "z_max": 11951
+  },
+  "chunk_bounds": {
+   "x_min": -2135,
+   "x_max": -2110,
+   "z_min": -1052,
+   "z_max": -1029
+  },
+  "sampled_block_count": 127586,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/0xymoron_underground_2017_01_13_1774247219385.json"
+ },
+ {
+  "display_name": "Androxius Island base 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Androxius_Island_base_2018-q4-1774248030471/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Androxius_Island_base_2018-q4-1774248030471",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -10120,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 23280,
+  "origin_z": -59760,
+  "dest_bbox": {
+   "x_min": -10120,
+   "x_max": -9225,
+   "z_min": 8448,
+   "z_max": 9359
+  },
+  "chunk_bounds": {
+   "x_min": 1455,
+   "x_max": 1510,
+   "z_min": -3735,
+   "z_max": -3679
+  },
+  "sampled_block_count": 124381,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Androxius_Island_base_2018_q4_1774248030471.json"
+ },
+ {
+  "display_name": "Arnthor base 2018-01-21",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Arnthor_base_2018-01-21-1774246617495/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Arnthor_base_2018-01-21-1774246617495",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 2728,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 171872,
+  "origin_z": 89568,
+  "dest_bbox": {
+   "x_min": 2728,
+   "x_max": 3303,
+   "z_min": 10720,
+   "z_max": 11263
+  },
+  "chunk_bounds": {
+   "x_min": 10742,
+   "x_max": 10777,
+   "z_min": 5598,
+   "z_max": 5631
+  },
+  "sampled_block_count": 33704,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Arnthor_base_2018_01_21_1774246617495.json"
+ },
+ {
+  "display_name": "B4uit Berkbrein Building Inc. 2015-05",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/B4uit_Berkbrein_Building_Inc._2015-05-1774246957167/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/B4uit_Berkbrein_Building_Inc._2015-05-1774246957167",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -6728,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": -1001872,
+  "origin_z": 4336,
+  "dest_bbox": {
+   "x_min": -6728,
+   "x_max": -5321,
+   "z_min": 4192,
+   "z_max": 5423
+  },
+  "chunk_bounds": {
+   "x_min": -62617,
+   "x_max": -62530,
+   "z_min": 271,
+   "z_max": 347
+  },
+  "sampled_block_count": 81758,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/B4uit_Berkbrein_Building_Inc_2015_05_1774246957167.json"
+ },
+ {
+  "display_name": "Bayside 2017-09-05",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Bayside_2017-09-05-1774244337651/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Bayside_2017-09-05-1774244337651",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -2872,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": -280224,
+  "origin_z": 1440,
+  "dest_bbox": {
+   "x_min": -2872,
+   "x_max": -1033,
+   "z_min": -2192,
+   "z_max": -433
+  },
+  "chunk_bounds": {
+   "x_min": -17514,
+   "x_max": -17400,
+   "z_min": 90,
+   "z_max": 199
+  },
+  "sampled_block_count": 83463,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Bayside_2017_09_05_1774244337651.json"
+ },
+ {
+  "display_name": "CrashQ Village Castle 2018-02-22",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/CrashQ_Village_Castle_2018-02-22-1774245399673/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/CrashQ_Village_Castle_2018-02-22-1774245399673",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 5256,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 79584,
+  "origin_z": -28880,
+  "dest_bbox": {
+   "x_min": 5256,
+   "x_max": 6119,
+   "z_min": 8448,
+   "z_max": 9295
+  },
+  "chunk_bounds": {
+   "x_min": 4974,
+   "x_max": 5027,
+   "z_min": -1805,
+   "z_max": -1753
+  },
+  "sampled_block_count": 141872,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/CrashQ_Village_Castle_2018_02_22_1774245399673.json"
+ },
+ {
+  "display_name": "DayTown 2017-10-22",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/DayTown_2017-10-22-1774247933264/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/DayTown_2017-10-22-1774247933264",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -1048,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 8544,
+  "origin_z": 31920,
+  "dest_bbox": {
+   "x_min": -1048,
+   "x_max": -345,
+   "z_min": 9664,
+   "z_max": 10527
+  },
+  "chunk_bounds": {
+   "x_min": 534,
+   "x_max": 577,
+   "z_min": 1995,
+   "z_max": 2048
+  },
+  "sampled_block_count": 127844,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/DayTown_2017_10_22_1774247933264.json"
+ },
+ {
+  "display_name": "Fenrir 2015-02",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Fenrir_2015-02-1774244054722/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Fenrir_2015-02-1774244054722",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -12312,
+  "dest_anchor_z": -5312,
+  "dest_y_offset": -61,
+  "origin_x": 214288,
+  "origin_z": 81264,
+  "dest_bbox": {
+   "x_min": -12312,
+   "x_max": -9657,
+   "z_min": -5312,
+   "z_max": -2993
+  },
+  "chunk_bounds": {
+   "x_min": 13393,
+   "x_max": 13558,
+   "z_min": 5079,
+   "z_max": 5223
+  },
+  "sampled_block_count": 134361,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Fenrir_2015_02_1774244054722.json"
+ },
+ {
+  "display_name": "Gape 2.0 2014-10-21",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Gape_2.0_2014-10-21-1774244588659/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Gape_2.0_2014-10-21-1774244588659",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 7288,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": 485200,
+  "origin_z": -38800,
+  "dest_bbox": {
+   "x_min": 7288,
+   "x_max": 8951,
+   "z_min": -2192,
+   "z_max": -529
+  },
+  "chunk_bounds": {
+   "x_min": 30325,
+   "x_max": 30428,
+   "z_min": -2425,
+   "z_max": -2322
+  },
+  "sampled_block_count": 78634,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Gape_2_0_2014_10_21_1774244588659.json"
+ },
+ {
+  "display_name": "LazyNicker Base",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/LazyNicker_Base-1774246559013/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/LazyNicker_Base-1774246559013",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 9016,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": -5776,
+  "origin_z": -188032,
+  "dest_bbox": {
+   "x_min": 9016,
+   "x_max": 10615,
+   "z_min": -2192,
+   "z_max": -465
+  },
+  "chunk_bounds": {
+   "x_min": -361,
+   "x_max": -262,
+   "z_min": -11752,
+   "z_max": -11645
+  },
+  "sampled_block_count": 122386,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/LazyNicker_Base_1774246559013.json"
+ },
+ {
+  "display_name": "Malbork 2020-06-28",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Malbork_2020-06-28-1774245312492/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Malbork_2020-06-28-1774245312492",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -9944,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": -78656,
+  "origin_z": 176768,
+  "dest_bbox": {
+   "x_min": -9944,
+   "x_max": -8697,
+   "z_min": 5680,
+   "z_max": 6735
+  },
+  "chunk_bounds": {
+   "x_min": -4916,
+   "x_max": -4839,
+   "z_min": 11048,
+   "z_max": 11113
+  },
+  "sampled_block_count": 135974,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Malbork_2020_06_28_1774245312492.json"
+ },
+ {
+  "display_name": "Mjolnir Mansion 2015-03-31",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Mjolnir_Mansion_2015-03-31-1774246143323/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Mjolnir_Mansion_2015-03-31-1774246143323",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 11352,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -1003168,
+  "origin_z": 224,
+  "dest_bbox": {
+   "x_min": 11352,
+   "x_max": 12183,
+   "z_min": 9664,
+   "z_max": 10271
+  },
+  "chunk_bounds": {
+   "x_min": -62698,
+   "x_max": -62647,
+   "z_min": 14,
+   "z_max": 51
+  },
+  "sampled_block_count": 98312,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Mjolnir_Mansion_2015_03_31_1774246143323.json"
+ },
+ {
+  "display_name": "OreMonger and KingSplash Mesa base 2015-01-13",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/OreMonger_and_KingSplash_Mesa_base_2015-01-13-1774246811645/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/OreMonger_and_KingSplash_Mesa_base_2015-01-13-1774246811645",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 408,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": -104048,
+  "origin_z": -148736,
+  "dest_bbox": {
+   "x_min": 408,
+   "x_max": 1319,
+   "z_min": 8448,
+   "z_max": 9295
+  },
+  "chunk_bounds": {
+   "x_min": -6503,
+   "x_max": -6447,
+   "z_min": -9296,
+   "z_max": -9244
+  },
+  "sampled_block_count": 81079,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/OreMonger_and_KingSplash_Mesa_base_2015_01_13_1774246811645.json"
+ },
+ {
+  "display_name": "Paradise Island 2016-01-03",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Paradise_Island_2016-01-03-1774245217871/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Paradise_Island_2016-01-03-1774245217871",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 920,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": 6224,
+  "origin_z": -24544,
+  "dest_bbox": {
+   "x_min": 920,
+   "x_max": 1943,
+   "z_min": 7104,
+   "z_max": 8047
+  },
+  "chunk_bounds": {
+   "x_min": 389,
+   "x_max": 452,
+   "z_min": -1534,
+   "z_max": -1476
+  },
+  "sampled_block_count": 128147,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Paradise_Island_2016_01_03_1774245217871.json"
+ },
+ {
+  "display_name": "Project Unity 2017-11-04",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Project_Unity_2017-11-04-1774245531673/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Project_Unity_2017-11-04-1774245531673",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -9160,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": -208,
+  "origin_z": -5168,
+  "dest_bbox": {
+   "x_min": -9160,
+   "x_max": -8313,
+   "z_min": 8448,
+   "z_max": 9407
+  },
+  "chunk_bounds": {
+   "x_min": -13,
+   "x_max": 39,
+   "z_min": -323,
+   "z_max": -264
+  },
+  "sampled_block_count": 138163,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Project_Unity_2017_11_04_1774245531673.json"
+ },
+ {
+  "display_name": "Ravager's Alpha Base 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Ravager's_Alpha_Base_2018-q4-1774248402694/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Ravager's_Alpha_Base_2018-q4-1774248402694",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 584,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": -11424,
+  "origin_z": -33568,
+  "dest_bbox": {
+   "x_min": 584,
+   "x_max": 1399,
+   "z_min": 5680,
+   "z_max": 7039
+  },
+  "chunk_bounds": {
+   "x_min": -714,
+   "x_max": -664,
+   "z_min": -2098,
+   "z_max": -2014
+  },
+  "sampled_block_count": 146780,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Ravager_s_Alpha_Base_2018_q4_1774248402694.json"
+ },
+ {
+  "display_name": "Thepotatoman1 base 2016-12-19",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Thepotatoman1_base_2016-12-19-1774248500964/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Thepotatoman1_base_2016-12-19-1774248500964",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 600,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 507760,
+  "origin_z": -19376,
+  "dest_bbox": {
+   "x_min": 600,
+   "x_max": 1207,
+   "z_min": 10720,
+   "z_max": 11311
+  },
+  "chunk_bounds": {
+   "x_min": 31735,
+   "x_max": 31772,
+   "z_min": -1211,
+   "z_max": -1175
+  },
+  "sampled_block_count": 50164,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Thepotatoman1_base_2016_12_19_1774248500964.json"
+ },
+ {
+  "display_name": "Uber Base -+ 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Uber_Base_-+_2018-q4-1774247769584/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/Uber_Base_-+_2018-q4-1774247769584",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -5256,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": -18272,
+  "origin_z": 2944,
+  "dest_bbox": {
+   "x_min": -5256,
+   "x_max": -3993,
+   "z_min": 4192,
+   "z_max": 5519
+  },
+  "chunk_bounds": {
+   "x_min": -1142,
+   "x_max": -1064,
+   "z_min": 184,
+   "z_max": 266
+  },
+  "sampled_block_count": 124055,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Uber_Base_2018_q4_1774247769584.json"
+ },
+ {
+  "display_name": "iTristan base 2016-09-30",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/iTristan_base_2016-09-30-1774248448721/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/iTristan_base_2016-09-30-1774248448721",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -88,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 186096,
+  "origin_z": -179440,
+  "dest_bbox": {
+   "x_min": -88,
+   "x_max": 535,
+   "z_min": 10720,
+   "z_max": 11311
+  },
+  "chunk_bounds": {
+   "x_min": 11631,
+   "x_max": 11669,
+   "z_min": -11215,
+   "z_max": -11179
+  },
+  "sampled_block_count": 65837,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/iTristan_base_2016_09_30_1774248448721.json"
+ },
+ {
+  "display_name": "mrx solo base 1 2016-04-25",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/mrx_solo_base_1_2016-04-25-1774248595270/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2014/mrx_solo_base_1_2016-04-25-1774248595270",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 2008,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": 3808,
+  "origin_z": -57984,
+  "dest_bbox": {
+   "x_min": 2008,
+   "x_max": 2935,
+   "z_min": 7104,
+   "z_max": 8127
+  },
+  "chunk_bounds": {
+   "x_min": 238,
+   "x_max": 295,
+   "z_min": -3624,
+   "z_max": -3561
+  },
+  "sampled_block_count": 130786,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/mrx_solo_base_1_2016_04_25_1774248595270.json"
+ },
+ {
+  "display_name": "24's farm 2016-11-12",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/24's_farm_2016-11-12-1774296512467/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/24's_farm_2016-11-12-1774296512467",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 3000,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": -27904,
+  "origin_z": -15344,
+  "dest_bbox": {
+   "x_min": 3000,
+   "x_max": 3863,
+   "z_min": 7104,
+   "z_max": 8175
+  },
+  "chunk_bounds": {
+   "x_min": -1744,
+   "x_max": -1691,
+   "z_min": -959,
+   "z_max": -893
+  },
+  "sampled_block_count": 132316,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/24_s_farm_2016_11_12_1774296512467.json"
+ },
+ {
+  "display_name": "9k Mystery Tower 2016-01-12",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/9k_Mystery_Tower_2016-01-12-1774280799872/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/9k_Mystery_Tower_2016-01-12-1774280799872",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -10616,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 560,
+  "origin_z": 8800,
+  "dest_bbox": {
+   "x_min": -10616,
+   "x_max": -9705,
+   "z_min": 9664,
+   "z_max": 10399
+  },
+  "chunk_bounds": {
+   "x_min": 35,
+   "x_max": 91,
+   "z_min": 550,
+   "z_max": 595
+  },
+  "sampled_block_count": 139207,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/9k_Mystery_Tower_2016_01_12_1774280799872.json"
+ },
+ {
+  "display_name": "Adrian Castle 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Adrian_Castle_2018-q4-1774286573906/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Adrian_Castle_2018-q4-1774286573906",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -5416,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": -66624,
+  "origin_z": 3872,
+  "dest_bbox": {
+   "x_min": -5416,
+   "x_max": -4505,
+   "z_min": 8448,
+   "z_max": 9311
+  },
+  "chunk_bounds": {
+   "x_min": -4164,
+   "x_max": -4108,
+   "z_min": 242,
+   "z_max": 295
+  },
+  "sampled_block_count": 139547,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Adrian_Castle_2018_q4_1774286573906.json"
+ },
+ {
+  "display_name": "Aureus City 2022-08-08 rebuild",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Aureus_City_2022-08-08_rebuild-1774279141066/dimensions/minecraft/worlds/2b2t/2b2t_3/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Aureus_City_2022-08-08_rebuild-1774279141066",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 9416,
+  "dest_anchor_z": -5312,
+  "dest_y_offset": -61,
+  "origin_x": 60816,
+  "origin_z": -203904,
+  "dest_bbox": {
+   "x_min": 9416,
+   "x_max": 11703,
+   "z_min": -5312,
+   "z_max": -3521
+  },
+  "chunk_bounds": {
+   "x_min": 3801,
+   "x_max": 3943,
+   "z_min": -12744,
+   "z_max": -12633
+  },
+  "sampled_block_count": 107263,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Aureus_City_2022_08_08_rebuild_1774279141066.json"
+ },
+ {
+  "display_name": "BroBase 2016-02-04",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/BroBase_2016-02-04-1774297481968/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/BroBase_2016-02-04-1774297481968",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -11448,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": 25824,
+  "origin_z": -88640,
+  "dest_bbox": {
+   "x_min": -11448,
+   "x_max": -10425,
+   "z_min": 7104,
+   "z_max": 8095
+  },
+  "chunk_bounds": {
+   "x_min": 1614,
+   "x_max": 1677,
+   "z_min": -5540,
+   "z_max": -5479
+  },
+  "sampled_block_count": 135869,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/BroBase_2016_02_04_1774297481968.json"
+ },
+ {
+  "display_name": "Exodus",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Exodus-1774289108828/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Exodus-1774289108828",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 9480,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": -7680,
+  "origin_z": -187200,
+  "dest_bbox": {
+   "x_min": 9480,
+   "x_max": 10391,
+   "z_min": 5680,
+   "z_max": 6815
+  },
+  "chunk_bounds": {
+   "x_min": -480,
+   "x_max": -424,
+   "z_min": -11700,
+   "z_max": -11630
+  },
+  "sampled_block_count": 127851,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Exodus_1774289108828.json"
+ },
+ {
+  "display_name": "Facsimile City 2017-05",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Facsimile_City_2017-05-1774282595129/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Facsimile_City_2017-05-1774282595129",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -2504,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": -706464,
+  "origin_z": 110512,
+  "dest_bbox": {
+   "x_min": -2504,
+   "x_max": -1289,
+   "z_min": 7104,
+   "z_max": 7903
+  },
+  "chunk_bounds": {
+   "x_min": -44154,
+   "x_max": -44079,
+   "z_min": 6907,
+   "z_max": 6956
+  },
+  "sampled_block_count": 260351,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Facsimile_City_2017_05_1774282595129.json"
+ },
+ {
+  "display_name": "Farpoint 4 2017-01-18",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Farpoint_4_2017-01-18-1774285744911/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Farpoint_4_2017-01-18-1774285744911",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -10664,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": -200384,
+  "origin_z": -162992,
+  "dest_bbox": {
+   "x_min": -10664,
+   "x_max": -8521,
+   "z_min": 2128,
+   "z_max": 3327
+  },
+  "chunk_bounds": {
+   "x_min": -12524,
+   "x_max": -12391,
+   "z_min": -10187,
+   "z_max": -10113
+  },
+  "sampled_block_count": 51178,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Farpoint_4_2017_01_18_1774285744911.json"
+ },
+ {
+  "display_name": "Fort Walker 2015-11-25",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Fort_Walker_2015-11-25-1774289010380/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Fort_Walker_2015-11-25-1774289010380",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -7592,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": -1680,
+  "origin_z": -18656,
+  "dest_bbox": {
+   "x_min": -7592,
+   "x_max": -6441,
+   "z_min": 5680,
+   "z_max": 6783
+  },
+  "chunk_bounds": {
+   "x_min": -105,
+   "x_max": -34,
+   "z_min": -1166,
+   "z_max": -1098
+  },
+  "sampled_block_count": 131713,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Fort_Walker_2015_11_25_1774289010380.json"
+ },
+ {
+  "display_name": "Jerico City 2017-01-10",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Jerico_City_2017-01-10-1774282481537/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Jerico_City_2017-01-10-1774282481537",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 6184,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": 124176,
+  "origin_z": -85760,
+  "dest_bbox": {
+   "x_min": 6184,
+   "x_max": 7223,
+   "z_min": 5680,
+   "z_max": 6687
+  },
+  "chunk_bounds": {
+   "x_min": 7761,
+   "x_max": 7825,
+   "z_min": -5360,
+   "z_max": -5298
+  },
+  "sampled_block_count": 136481,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Jerico_City_2017_01_10_1774282481537.json"
+ },
+ {
+  "display_name": "King's Landing 2015-09-21",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/King's_Landing_2015-09-21-1774280279989/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/King's_Landing_2015-09-21-1774280279989",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -6392,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": 683840,
+  "origin_z": -342864,
+  "dest_bbox": {
+   "x_min": -6392,
+   "x_max": -4905,
+   "z_min": 2128,
+   "z_max": 3823
+  },
+  "chunk_bounds": {
+   "x_min": 42740,
+   "x_max": 42832,
+   "z_min": -21429,
+   "z_max": -21324
+  },
+  "sampled_block_count": 88239,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/King_s_Landing_2015_09_21_1774280279989.json"
+ },
+ {
+  "display_name": "Kinograd 2016",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Kinograd_2016-1774283867799/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Kinograd_2016-1774283867799",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 9400,
+  "dest_anchor_z": -11952,
+  "dest_y_offset": -61,
+  "origin_x": 158896,
+  "origin_z": -874928,
+  "dest_bbox": {
+   "x_min": 9400,
+   "x_max": 12039,
+   "z_min": -11952,
+   "z_max": -9617
+  },
+  "chunk_bounds": {
+   "x_min": 9931,
+   "x_max": 10095,
+   "z_min": -54683,
+   "z_max": -54538
+  },
+  "sampled_block_count": 118899,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Kinograd_2016_1774283867799.json"
+ },
+ {
+  "display_name": "La Isla 2017-08",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/La_Isla_2017-08-1774286689315/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/La_Isla_2017-08-1774286689315",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -6376,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": 28624,
+  "origin_z": -32784,
+  "dest_bbox": {
+   "x_min": -6376,
+   "x_max": -5305,
+   "z_min": 5680,
+   "z_max": 6863
+  },
+  "chunk_bounds": {
+   "x_min": 1789,
+   "x_max": 1855,
+   "z_min": -2049,
+   "z_max": -1976
+  },
+  "sampled_block_count": 126887,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/La_Isla_2017_08_1774286689315.json"
+ },
+ {
+  "display_name": "Linkgonzo's Base",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Linkgonzo's_Base-1774296714523/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Linkgonzo's_Base-1774296714523",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 9832,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 99344,
+  "origin_z": -102320,
+  "dest_bbox": {
+   "x_min": 9832,
+   "x_max": 10679,
+   "z_min": 8448,
+   "z_max": 9295
+  },
+  "chunk_bounds": {
+   "x_min": 6209,
+   "x_max": 6261,
+   "z_min": -6395,
+   "z_max": -6343
+  },
+  "sampled_block_count": 128805,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Linkgonzo_s_Base_1774296714523.json"
+ },
+ {
+  "display_name": "Methbase 2017-10-28",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Methbase_2017-10-28-1774282508320/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Methbase_2017-10-28-1774282508320",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 6792,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 190080,
+  "origin_z": 54576,
+  "dest_bbox": {
+   "x_min": 6792,
+   "x_max": 7287,
+   "z_min": 10720,
+   "z_max": 11183
+  },
+  "chunk_bounds": {
+   "x_min": 11880,
+   "x_max": 11910,
+   "z_min": 3411,
+   "z_max": 3439
+  },
+  "sampled_block_count": 32235,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Methbase_2017_10_28_1774282508320.json"
+ },
+ {
+  "display_name": "New Stalgia 2018-01-24",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/New_Stalgia_2018-01-24-1774280689978/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/New_Stalgia_2018-01-24-1774280689978",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 3832,
+  "dest_anchor_z": -5312,
+  "dest_y_offset": -61,
+  "origin_x": 137456,
+  "origin_z": 152208,
+  "dest_bbox": {
+   "x_min": 3832,
+   "x_max": 5671,
+   "z_min": -5312,
+   "z_max": -2913
+  },
+  "chunk_bounds": {
+   "x_min": 8591,
+   "x_max": 8705,
+   "z_min": 9513,
+   "z_max": 9662
+  },
+  "sampled_block_count": 137538,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/New_Stalgia_2018_01_24_1774280689978.json"
+ },
+ {
+  "display_name": "New Zion 2016-01-03",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/New_Zion_2016-01-03-1774281201618/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/New_Zion_2016-01-03-1774281201618",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 6184,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": -338608,
+  "origin_z": 268672,
+  "dest_bbox": {
+   "x_min": 6184,
+   "x_max": 6999,
+   "z_min": 8448,
+   "z_max": 9343
+  },
+  "chunk_bounds": {
+   "x_min": -21163,
+   "x_max": -21113,
+   "z_min": 16792,
+   "z_max": 16847
+  },
+  "sampled_block_count": 92679,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/New_Zion_2016_01_03_1774281201618.json"
+ },
+ {
+  "display_name": "Olympus 2016-02-01",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Olympus_2016-02-01-1774281102480/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Olympus_2016-02-01-1774281102480",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -10280,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": -215696,
+  "origin_z": 12000,
+  "dest_bbox": {
+   "x_min": -10280,
+   "x_max": -7993,
+   "z_min": -2192,
+   "z_max": -529
+  },
+  "chunk_bounds": {
+   "x_min": -13481,
+   "x_max": -13339,
+   "z_min": 750,
+   "z_max": 853
+  },
+  "sampled_block_count": 91937,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Olympus_2016_02_01_1774281102480.json"
+ },
+ {
+  "display_name": "Oremonger Savannah base 2015-06-01",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Oremonger_Savannah_base_2015-06-01-1774286089039/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Oremonger_Savannah_base_2015-06-01-1774286089039",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -5544,
+  "dest_anchor_z": -5312,
+  "dest_y_offset": -61,
+  "origin_x": -330000,
+  "origin_z": -122816,
+  "dest_bbox": {
+   "x_min": -5544,
+   "x_max": -3193,
+   "z_min": -5312,
+   "z_max": -3089
+  },
+  "chunk_bounds": {
+   "x_min": -20625,
+   "x_max": -20479,
+   "z_min": -7676,
+   "z_max": -7538
+  },
+  "sampled_block_count": 94256,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Oremonger_Savannah_base_2015_06_01_1774286089039.json"
+ },
+ {
+  "display_name": "Weeping Angel 2017-08-26",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Weeping_Angel_2017-08-26-1774330124216/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Weeping_Angel_2017-08-26-1774330124216",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -520,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": -1152,
+  "origin_z": 3456,
+  "dest_bbox": {
+   "x_min": -520,
+   "x_max": 343,
+   "z_min": 8448,
+   "z_max": 9343
+  },
+  "chunk_bounds": {
+   "x_min": -72,
+   "x_max": -19,
+   "z_min": 216,
+   "z_max": 271
+  },
+  "sampled_block_count": 129637,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Weeping_Angel_2017_08_26_1774330124216.json"
+ },
+ {
+  "display_name": "ROP Tower Base 2015-12-12",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/ROP_Tower_Base_2015-12-12-1774288767787/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/ROP_Tower_Base_2015-12-12-1774288767787",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 2296,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 22656,
+  "origin_z": 23440,
+  "dest_bbox": {
+   "x_min": 2296,
+   "x_max": 3223,
+   "z_min": 8448,
+   "z_max": 9279
+  },
+  "chunk_bounds": {
+   "x_min": 1416,
+   "x_max": 1473,
+   "z_min": 1465,
+   "z_max": 1516
+  },
+  "sampled_block_count": 128748,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/ROP_Tower_Base_2015_12_12_1774288767787.json"
+ },
+ {
+  "display_name": "The Fort 2018-01-29",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/The_Fort_2018-01-29-1774286505452/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/The_Fort_2018-01-29-1774286505452",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -6056,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -992,
+  "origin_z": -30400,
+  "dest_bbox": {
+   "x_min": -6056,
+   "x_max": -5321,
+   "z_min": 9664,
+   "z_max": 10559
+  },
+  "chunk_bounds": {
+   "x_min": -62,
+   "x_max": -17,
+   "z_min": -1900,
+   "z_max": -1845
+  },
+  "sampled_block_count": 124560,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/The_Fort_2018_01_29_1774286505452.json"
+ },
+ {
+  "display_name": "The Rocket Valley 2018-04-08",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/The_Rocket_Valley_2018-04-08-1774286308529/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/The_Rocket_Valley_2018-04-08-1774286308529",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 440,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": 15952,
+  "origin_z": 40896,
+  "dest_bbox": {
+   "x_min": 440,
+   "x_max": 1687,
+   "z_min": 4192,
+   "z_max": 5487
+  },
+  "chunk_bounds": {
+   "x_min": 997,
+   "x_max": 1074,
+   "z_min": 2556,
+   "z_max": 2636
+  },
+  "sampled_block_count": 130564,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/The_Rocket_Valley_2018_04_08_1774286308529.json"
+ },
+ {
+  "display_name": "Third Incursion Forward Operating Base (FOB) 2015-04-28",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Third_Incursion_Forward_Operating_Base_(FOB)_2015-04-28-1774289238851/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Third_Incursion_Forward_Operating_Base_(FOB)_2015-04-28-1774289238851",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 10152,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": -45216,
+  "origin_z": 19712,
+  "dest_bbox": {
+   "x_min": 10152,
+   "x_max": 11095,
+   "z_min": 7104,
+   "z_max": 8015
+  },
+  "chunk_bounds": {
+   "x_min": -2826,
+   "x_max": -2768,
+   "z_min": 1232,
+   "z_max": 1288
+  },
+  "sampled_block_count": 138975,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Third_Incursion_Forward_Operating_Base_FOB_2015_04_28_1774289238851.json"
+ },
+ {
+  "display_name": "Uber Snow Base 2018-01-24",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Uber_Snow_Base_2018-01-24-1774297274011/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Uber_Snow_Base_2018-01-24-1774297274011",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 7288,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": 126576,
+  "origin_z": 24416,
+  "dest_bbox": {
+   "x_min": 7288,
+   "x_max": 8247,
+   "z_min": 5680,
+   "z_max": 6767
+  },
+  "chunk_bounds": {
+   "x_min": 7911,
+   "x_max": 7970,
+   "z_min": 1526,
+   "z_max": 1593
+  },
+  "sampled_block_count": 130675,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Uber_Snow_Base_2018_01_24_1774297274011.json"
+ },
+ {
+  "display_name": "VargaPass 2016-04-01",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/VargaPass_2016-04-01-1774281510958/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/VargaPass_2016-04-01-1774281510958",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -6184,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": -140736,
+  "origin_z": -4464,
+  "dest_bbox": {
+   "x_min": -6184,
+   "x_max": -5337,
+   "z_min": -2192,
+   "z_max": 2063
+  },
+  "chunk_bounds": {
+   "x_min": -8796,
+   "x_max": -8744,
+   "z_min": -279,
+   "z_max": -14
+  },
+  "sampled_block_count": 98641,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/VargaPass_2016_04_01_1774281510958.json"
+ },
+ {
+  "display_name": "Veritas 2020-01-03",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Veritas_2020-01-03-1774288523312/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Veritas_2020-01-03-1774288523312",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 2312,
+  "dest_anchor_z": -11952,
+  "dest_y_offset": -61,
+  "origin_x": 126352,
+  "origin_z": 109648,
+  "dest_bbox": {
+   "x_min": 2312,
+   "x_max": 4711,
+   "z_min": -11952,
+   "z_max": -6769
+  },
+  "chunk_bounds": {
+   "x_min": 7897,
+   "x_max": 8046,
+   "z_min": 6853,
+   "z_max": 7176
+  },
+  "sampled_block_count": 118165,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Veritas_2020_01_03_1774288523312.json"
+ },
+ {
+  "display_name": "Xarviar spawnbase 2016-11-10",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Xarviar_spawnbase_2016-11-10-1774289342783/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/Xarviar_spawnbase_2016-11-10-1774289342783",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -7304,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 32960,
+  "origin_z": -54656,
+  "dest_bbox": {
+   "x_min": -7304,
+   "x_max": -6345,
+   "z_min": 8448,
+   "z_max": 9279
+  },
+  "chunk_bounds": {
+   "x_min": 2060,
+   "x_max": 2119,
+   "z_min": -3416,
+   "z_max": -3365
+  },
+  "sampled_block_count": 125719,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Xarviar_spawnbase_2016_11_10_1774289342783.json"
+ },
+ {
+  "display_name": "fr1kin Mesa Base 2016-01-07",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/fr1kin_Mesa_Base_2016-01-07-1774285412897/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/fr1kin_Mesa_Base_2016-01-07-1774285412897",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -9592,
+  "dest_anchor_z": -5312,
+  "dest_y_offset": -61,
+  "origin_x": -119424,
+  "origin_z": -111856,
+  "dest_bbox": {
+   "x_min": -9592,
+   "x_max": -7849,
+   "z_min": -5312,
+   "z_max": -2257
+  },
+  "chunk_bounds": {
+   "x_min": -7464,
+   "x_max": -7356,
+   "z_min": -6991,
+   "z_max": -6801
+  },
+  "sampled_block_count": 143354,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/fr1kin_Mesa_Base_2016_01_07_1774285412897.json"
+ },
+ {
+  "display_name": "iTristan's stash 2016",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/iTristan's_stash_2016-1774297033144/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/iTristan's_stash_2016-1774297033144",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 6200,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": 689696,
+  "origin_z": 439264,
+  "dest_bbox": {
+   "x_min": 6200,
+   "x_max": 7079,
+   "z_min": 7104,
+   "z_max": 8127
+  },
+  "chunk_bounds": {
+   "x_min": 43106,
+   "x_max": 43160,
+   "z_min": 27454,
+   "z_max": 27517
+  },
+  "sampled_block_count": 79817,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/iTristan_s_stash_2016_1774297033144.json"
+ },
+ {
+  "display_name": "iTristan Clock Tower 2021-02-23",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/iTristan_Clock_Tower_2021-02-23-1774283301861/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/iTristan_Clock_Tower_2021-02-23-1774283301861",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -5272,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": 704416,
+  "origin_z": -342592,
+  "dest_bbox": {
+   "x_min": -5272,
+   "x_max": -2937,
+   "z_min": -2192,
+   "z_max": -785
+  },
+  "chunk_bounds": {
+   "x_min": 44026,
+   "x_max": 44171,
+   "z_min": -21412,
+   "z_max": -21325
+  },
+  "sampled_block_count": 84728,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/iTristan_Clock_Tower_2021_02_23_1774283301861.json"
+ },
+ {
+  "display_name": "jared2013 and VADemon base 2018",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/jared2013_and_VADemon_base_2018-1774286435147/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/jared2013_and_VADemon_base_2018-1774286435147",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -8248,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 7920,
+  "origin_z": -29456,
+  "dest_bbox": {
+   "x_min": -8248,
+   "x_max": -7369,
+   "z_min": 8448,
+   "z_max": 9359
+  },
+  "chunk_bounds": {
+   "x_min": 495,
+   "x_max": 549,
+   "z_min": -1841,
+   "z_max": -1785
+  },
+  "sampled_block_count": 127411,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/jared2013_and_VADemon_base_2018_1774286435147.json"
+ },
+ {
+  "display_name": "mrx solo base 3 2016-04-25",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/mrx_solo_base_3_2016-04-25-1774285515933/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/mrx_solo_base_3_2016-04-25-1774285515933",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 11160,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": 67904,
+  "origin_z": -108336,
+  "dest_bbox": {
+   "x_min": 11160,
+   "x_max": 12103,
+   "z_min": 7104,
+   "z_max": 8015
+  },
+  "chunk_bounds": {
+   "x_min": 4244,
+   "x_max": 4302,
+   "z_min": -6771,
+   "z_max": -6715
+  },
+  "sampled_block_count": 137195,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/mrx_solo_base_3_2016_04_25_1774285515933.json"
+ },
+ {
+  "display_name": "uberslugcake's main base 2015-05-05",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/uberslugcake's_main_base_2015-05-05-1774297118944/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2015/uberslugcake's_main_base_2015-05-05-1774297118944",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -3448,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 1015808,
+  "origin_z": 35520,
+  "dest_bbox": {
+   "x_min": -3448,
+   "x_max": -2489,
+   "z_min": 8448,
+   "z_max": 9263
+  },
+  "chunk_bounds": {
+   "x_min": 63488,
+   "x_max": 63547,
+   "z_min": 2220,
+   "z_max": 2270
+  },
+  "sampled_block_count": 57676,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/uberslugcake_s_main_base_2015_05_05_1774297118944.json"
+ },
+ {
+  "display_name": "60Neiner's base 2021-12-31",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/60Neiner's_base_2021-12-31-1774332169574/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/60Neiner's_base_2021-12-31-1774332169574",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 3128,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 2752,
+  "origin_z": -565808,
+  "dest_bbox": {
+   "x_min": 3128,
+   "x_max": 3863,
+   "z_min": 9664,
+   "z_max": 10447
+  },
+  "chunk_bounds": {
+   "x_min": 172,
+   "x_max": 217,
+   "z_min": -35363,
+   "z_max": -35315
+  },
+  "sampled_block_count": 65798,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/60Neiner_s_base_2021_12_31_1774332169574.json"
+ },
+ {
+  "display_name": "Acacia - City of Melons 2017-01-29",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Acacia_-_City_of_Melons_2017-01-29-1774300104200/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Acacia_-_City_of_Melons_2017-01-29-1774300104200",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -6280,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 3600,
+  "origin_z": -80736,
+  "dest_bbox": {
+   "x_min": -6280,
+   "x_max": -5481,
+   "z_min": 8448,
+   "z_max": 9439
+  },
+  "chunk_bounds": {
+   "x_min": 225,
+   "x_max": 274,
+   "z_min": -5046,
+   "z_max": -4985
+  },
+  "sampled_block_count": 139466,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Acacia_City_of_Melons_2017_01_29_1774300104200.json"
+ },
+ {
+  "display_name": "Acheron 2021-06-07",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Acheron_2021-06-07-1774328116892/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Acheron_2021-06-07-1774328116892",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -7288,
+  "dest_anchor_z": -11952,
+  "dest_y_offset": -61,
+  "origin_x": 857200,
+  "origin_z": 1175040,
+  "dest_bbox": {
+   "x_min": -7288,
+   "x_max": -1865,
+   "z_min": -11952,
+   "z_max": -7841
+  },
+  "chunk_bounds": {
+   "x_min": 53575,
+   "x_max": 53913,
+   "z_min": 73440,
+   "z_max": 73696
+  },
+  "sampled_block_count": 121710,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Acheron_2021_06_07_1774328116892.json"
+ },
+ {
+  "display_name": "Anvil Base 2020-04-21",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Anvil_Base_2020-04-21-1774332340876/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Anvil_Base_2020-04-21-1774332340876",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -2152,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 496880,
+  "origin_z": 361488,
+  "dest_bbox": {
+   "x_min": -2152,
+   "x_max": -1545,
+   "z_min": 10720,
+   "z_max": 11343
+  },
+  "chunk_bounds": {
+   "x_min": 31055,
+   "x_max": 31092,
+   "z_min": 22593,
+   "z_max": 22631
+  },
+  "sampled_block_count": 63027,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Anvil_Base_2020_04_21_1774332340876.json"
+ },
+ {
+  "display_name": "Baghdad 2018-q4 Fourth Incursion",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Baghdad_2018-q4_Fourth_Incursion-1774332908185/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Baghdad_2018-q4_Fourth_Incursion-1774332908185",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -10360,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": 41744,
+  "origin_z": -37728,
+  "dest_bbox": {
+   "x_min": -10360,
+   "x_max": -9337,
+   "z_min": 7104,
+   "z_max": 8095
+  },
+  "chunk_bounds": {
+   "x_min": 2609,
+   "x_max": 2672,
+   "z_min": -2358,
+   "z_max": -2297
+  },
+  "sampled_block_count": 132301,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Baghdad_2018_q4_Fourth_Incursion_1774332908185.json"
+ },
+ {
+  "display_name": "Borealis",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Borealis-1774333458669/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Borealis-1774333458669",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -280,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 132000,
+  "origin_z": -55456,
+  "dest_bbox": {
+   "x_min": -280,
+   "x_max": 455,
+   "z_min": 9664,
+   "z_max": 10463
+  },
+  "chunk_bounds": {
+   "x_min": 8250,
+   "x_max": 8295,
+   "z_min": -3466,
+   "z_max": -3417
+  },
+  "sampled_block_count": 80055,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Borealis_1774333458669.json"
+ },
+ {
+  "display_name": "Calagurris 2016-11-06",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Calagurris_2016-11-06-1774330634053/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Calagurris_2016-11-06-1774330634053",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 7560,
+  "dest_anchor_z": -11952,
+  "dest_y_offset": -61,
+  "origin_x": 343008,
+  "origin_z": 262928,
+  "dest_bbox": {
+   "x_min": 7560,
+   "x_max": 9335,
+   "z_min": -11952,
+   "z_max": -8353
+  },
+  "chunk_bounds": {
+   "x_min": 21438,
+   "x_max": 21548,
+   "z_min": 16433,
+   "z_max": 16657
+  },
+  "sampled_block_count": 100155,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Calagurris_2016_11_06_1774330634053.json"
+ },
+ {
+  "display_name": "Camp Wanabee 2017",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Camp_Wanabee_2017-1774326985427/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Camp_Wanabee_2017-1774326985427",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 8984,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -1022112,
+  "origin_z": 31696,
+  "dest_bbox": {
+   "x_min": 8984,
+   "x_max": 9703,
+   "z_min": 9664,
+   "z_max": 10399
+  },
+  "chunk_bounds": {
+   "x_min": -63882,
+   "x_max": -63838,
+   "z_min": 1981,
+   "z_max": 2026
+  },
+  "sampled_block_count": 51428,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Camp_Wanabee_2017_1774326985427.json"
+ },
+ {
+  "display_name": "Cape Concord 2018-04-10",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Cape_Concord_2018-04-10-1774332474741/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Cape_Concord_2018-04-10-1774332474741",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 1400,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -16912,
+  "origin_z": -11056,
+  "dest_bbox": {
+   "x_min": 1400,
+   "x_max": 2231,
+   "z_min": 9664,
+   "z_max": 10367
+  },
+  "chunk_bounds": {
+   "x_min": -1057,
+   "x_max": -1006,
+   "z_min": -691,
+   "z_max": -648
+  },
+  "sampled_block_count": 136715,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Cape_Concord_2018_04_10_1774332474741.json"
+ },
+ {
+  "display_name": "Castle Galifrey 2018-11-12",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Castle_Galifrey_2018-11-12-1774329611048/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Castle_Galifrey_2018-11-12-1774329611048",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 7144,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": -10000,
+  "origin_z": 3920,
+  "dest_bbox": {
+   "x_min": 7144,
+   "x_max": 8103,
+   "z_min": 7104,
+   "z_max": 8031
+  },
+  "chunk_bounds": {
+   "x_min": -625,
+   "x_max": -566,
+   "z_min": 245,
+   "z_max": 302
+  },
+  "sampled_block_count": 136835,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Castle_Galifrey_2018_11_12_1774329611048.json"
+ },
+ {
+  "display_name": "Cloudsdale 2018-08-20@Spawnmasons",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Cloudsdale_2018-08-20@Spawnmasons-1774329851003/dimensions/minecraft/worlds/2b2t/2b2t_2/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Cloudsdale_2018-08-20@Spawnmasons-1774329851003",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -3528,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 76080,
+  "origin_z": 11664,
+  "dest_bbox": {
+   "x_min": -3528,
+   "x_max": -2889,
+   "z_min": 10720,
+   "z_max": 11359
+  },
+  "chunk_bounds": {
+   "x_min": 4755,
+   "x_max": 4794,
+   "z_min": 729,
+   "z_max": 768
+  },
+  "sampled_block_count": 77670,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Cloudsdale_2018_08_20_Spawnmasons_1774329851003.json"
+ },
+ {
+  "display_name": "CrateOfBoxes' base 2018-01-08",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/CrateOfBoxes'_base_2018-01-08-1774298927234/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/CrateOfBoxes'_base_2018-01-08-1774298927234",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -8632,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": 98336,
+  "origin_z": 100928,
+  "dest_bbox": {
+   "x_min": -8632,
+   "x_max": -7657,
+   "z_min": 5680,
+   "z_max": 7023
+  },
+  "chunk_bounds": {
+   "x_min": 6146,
+   "x_max": 6206,
+   "z_min": 6308,
+   "z_max": 6391
+  },
+  "sampled_block_count": 133739,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/CrateOfBoxes_base_2018_01_08_1774298927234.json"
+ },
+ {
+  "display_name": "Dumps 2017-01-06",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Dumps_2017-01-06-1774333109545/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Dumps_2017-01-06-1774333109545",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 10632,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 322944,
+  "origin_z": -53600,
+  "dest_bbox": {
+   "x_min": 10632,
+   "x_max": 11047,
+   "z_min": 10720,
+   "z_max": 11151
+  },
+  "chunk_bounds": {
+   "x_min": 20184,
+   "x_max": 20209,
+   "z_min": -3350,
+   "z_max": -3324
+  },
+  "sampled_block_count": 17196,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Dumps_2017_01_06_1774333109545.json"
+ },
+ {
+  "display_name": "Dunes 2021-08-12 Peacekeepers",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Dunes_2021-08-12_Peacekeepers-1774329986986/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Dunes_2021-08-12_Peacekeepers-1774329986986",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 7064,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 83600,
+  "origin_z": -44416,
+  "dest_bbox": {
+   "x_min": 7064,
+   "x_max": 7863,
+   "z_min": 8448,
+   "z_max": 9359
+  },
+  "chunk_bounds": {
+   "x_min": 5225,
+   "x_max": 5274,
+   "z_min": -2776,
+   "z_max": -2720
+  },
+  "sampled_block_count": 142794,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Dunes_2021_08_12_Peacekeepers_1774329986986.json"
+ },
+ {
+  "display_name": "Eastmarch 2023-02-03",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Eastmarch_2023-02-03-1774331847961/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Eastmarch_2023-02-03-1774331847961",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -1800,
+  "dest_anchor_z": -11952,
+  "dest_y_offset": -61,
+  "origin_x": 7277264,
+  "origin_z": -1671392,
+  "dest_bbox": {
+   "x_min": -1800,
+   "x_max": 2247,
+   "z_min": -11952,
+   "z_max": -7697
+  },
+  "chunk_bounds": {
+   "x_min": 454829,
+   "x_max": 455081,
+   "z_min": -104462,
+   "z_max": -104197
+  },
+  "sampled_block_count": 120073,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Eastmarch_2023_02_03_1774331847961.json"
+ },
+ {
+  "display_name": "Epsilon 2017-08-31",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Epsilon_2017-08-31-1774334014687/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Epsilon_2017-08-31-1774334014687",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -12312,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 66432,
+  "origin_z": -233328,
+  "dest_bbox": {
+   "x_min": -12312,
+   "x_max": -11593,
+   "z_min": 9664,
+   "z_max": 10655
+  },
+  "chunk_bounds": {
+   "x_min": 4152,
+   "x_max": 4196,
+   "z_min": -14583,
+   "z_max": -14522
+  },
+  "sampled_block_count": 65361,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Epsilon_2017_08_31_1774334014687.json"
+ },
+ {
+  "display_name": "Equilibrium 2018-05-21",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Equilibrium_2018-05-21-1774329027523/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Equilibrium_2018-05-21-1774329027523",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 1656,
+  "dest_anchor_z": -5312,
+  "dest_y_offset": -61,
+  "origin_x": -21264,
+  "origin_z": -1338000,
+  "dest_bbox": {
+   "x_min": 1656,
+   "x_max": 3767,
+   "z_min": -5312,
+   "z_max": -3025
+  },
+  "chunk_bounds": {
+   "x_min": -1329,
+   "x_max": -1198,
+   "z_min": -83625,
+   "z_max": -83483
+  },
+  "sampled_block_count": 106374,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Equilibrium_2018_05_21_1774329027523.json"
+ },
+ {
+  "display_name": "Exodus City 2017-11-11",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Exodus_City_2017-11-11-1774332770058/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Exodus_City_2017-11-11-1774332770058",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -9640,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 86048,
+  "origin_z": 41184,
+  "dest_bbox": {
+   "x_min": -9640,
+   "x_max": -8729,
+   "z_min": 9664,
+   "z_max": 10399
+  },
+  "chunk_bounds": {
+   "x_min": 5378,
+   "x_max": 5434,
+   "z_min": 2574,
+   "z_max": 2619
+  },
+  "sampled_block_count": 130513,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Exodus_City_2017_11_11_1774332770058.json"
+ },
+ {
+  "display_name": "Fifth Incursion Forward Base (FOB) 2018-01-09",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Fifth_Incursion_Forward_Base_(FOB)_2018-01-09-1774332047746/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Fifth_Incursion_Forward_Base_(FOB)_2018-01-09-1774332047746",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 8312,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": -15808,
+  "origin_z": -57216,
+  "dest_bbox": {
+   "x_min": 8312,
+   "x_max": 9415,
+   "z_min": 5680,
+   "z_max": 6623
+  },
+  "chunk_bounds": {
+   "x_min": -988,
+   "x_max": -920,
+   "z_min": -3576,
+   "z_max": -3518
+  },
+  "sampled_block_count": 126983,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Fifth_Incursion_Forward_Base_FOB_2018_01_09_1774332047746.json"
+ },
+ {
+  "display_name": "Fort Hossemburg 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Fort_Hossemburg_2018-q4-1774328544153/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Fort_Hossemburg_2018-q4-1774328544153",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -12312,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": 101536,
+  "origin_z": 70592,
+  "dest_bbox": {
+   "x_min": -12312,
+   "x_max": -11513,
+   "z_min": 7104,
+   "z_max": 8383
+  },
+  "chunk_bounds": {
+   "x_min": 6346,
+   "x_max": 6395,
+   "z_min": 4412,
+   "z_max": 4491
+  },
+  "sampled_block_count": 141811,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Fort_Hossemburg_2018_q4_1774328544153.json"
+ },
+ {
+  "display_name": "Frontline Base 2017",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Frontline_Base_2017-1774298727167/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Frontline_Base_2017-1774298727167",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -12312,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 72288,
+  "origin_z": -9200,
+  "dest_bbox": {
+   "x_min": -12312,
+   "x_max": -11273,
+   "z_min": 8448,
+   "z_max": 9247
+  },
+  "chunk_bounds": {
+   "x_min": 4518,
+   "x_max": 4582,
+   "z_min": -575,
+   "z_max": -526
+  },
+  "sampled_block_count": 127375,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Frontline_Base_2017_1774298727167.json"
+ },
+ {
+  "display_name": "Genex base 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Genex_base_2018-q4-1774333757502/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Genex_base_2018-q4-1774333757502",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 3848,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": 88960,
+  "origin_z": 40032,
+  "dest_bbox": {
+   "x_min": 3848,
+   "x_max": 4983,
+   "z_min": 5680,
+   "z_max": 6639
+  },
+  "chunk_bounds": {
+   "x_min": 5560,
+   "x_max": 5630,
+   "z_min": 2502,
+   "z_max": 2561
+  },
+  "sampled_block_count": 145087,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Genex_base_2018_q4_1774333757502.json"
+ },
+ {
+  "display_name": "Gomorrah 2017-03",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Gomorrah_2017-03-1774327018119/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Gomorrah_2017-03-1774327018119",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 3368,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -244064,
+  "origin_z": -48816,
+  "dest_bbox": {
+   "x_min": 3368,
+   "x_max": 3863,
+   "z_min": 10720,
+   "z_max": 11311
+  },
+  "chunk_bounds": {
+   "x_min": -15254,
+   "x_max": -15224,
+   "z_min": -3051,
+   "z_max": -3015
+  },
+  "sampled_block_count": 36874,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Gomorrah_2017_03_1774327018119.json"
+ },
+ {
+  "display_name": "Goodwill Trading Outpost 1 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Goodwill_Trading_Outpost_1_2018-q4-1774333387734/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Goodwill_Trading_Outpost_1_2018-q4-1774333387734",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 6472,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 55152,
+  "origin_z": -6864,
+  "dest_bbox": {
+   "x_min": 6472,
+   "x_max": 7207,
+   "z_min": 9664,
+   "z_max": 10415
+  },
+  "chunk_bounds": {
+   "x_min": 3447,
+   "x_max": 3492,
+   "z_min": -429,
+   "z_max": -383
+  },
+  "sampled_block_count": 127428,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Goodwill_Trading_Outpost_1_2018_q4_1774333387734.json"
+ },
+ {
+  "display_name": "Graveyard 2017-10-08",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Graveyard_2017-10-08-1774329882321/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Graveyard_2017-10-08-1774329882321",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 7352,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -4864,
+  "origin_z": 1055744,
+  "dest_bbox": {
+   "x_min": 7352,
+   "x_max": 7799,
+   "z_min": 10720,
+   "z_max": 11231
+  },
+  "chunk_bounds": {
+   "x_min": -304,
+   "x_max": -277,
+   "z_min": 65984,
+   "z_max": 66015
+  },
+  "sampled_block_count": 30655,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Graveyard_2017_10_08_1774329882321.json"
+ },
+ {
+  "display_name": "Invictus II 2017-04-26",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Invictus_II_2017-04-26-1774326394028/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Invictus_II_2017-04-26-1774326394028",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -4840,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": 1031872,
+  "origin_z": 249584,
+  "dest_bbox": {
+   "x_min": -4840,
+   "x_max": -3321,
+   "z_min": 2128,
+   "z_max": 3727
+  },
+  "chunk_bounds": {
+   "x_min": 64492,
+   "x_max": 64586,
+   "z_min": 15599,
+   "z_max": 15698
+  },
+  "sampled_block_count": 101203,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Invictus_II_2017_04_26_1774326394028.json"
+ },
+ {
+  "display_name": "Ireton 2018-06-02",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Ireton_2018-06-02-1774328710548/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Ireton_2018-06-02-1774328710548",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 9528,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": 158240,
+  "origin_z": 94400,
+  "dest_bbox": {
+   "x_min": 9528,
+   "x_max": 10647,
+   "z_min": 2128,
+   "z_max": 3967
+  },
+  "chunk_bounds": {
+   "x_min": 9890,
+   "x_max": 9959,
+   "z_min": 5900,
+   "z_max": 6014
+  },
+  "sampled_block_count": 85201,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Ireton_2018_06_02_1774328710548.json"
+ },
+ {
+  "display_name": "Island base 2020-01-17",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Island_base_2020-01-17-1774299925165/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Island_base_2020-01-17-1774299925165",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 1384,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": -2000,
+  "origin_z": -63440,
+  "dest_bbox": {
+   "x_min": 1384,
+   "x_max": 2231,
+   "z_min": 8448,
+   "z_max": 9359
+  },
+  "chunk_bounds": {
+   "x_min": -125,
+   "x_max": -73,
+   "z_min": -3965,
+   "z_max": -3909
+  },
+  "sampled_block_count": 125106,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Island_base_2020_01_17_1774299925165.json"
+ },
+ {
+  "display_name": "Jalanda, City of, late 2018",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Jalanda,_City_of,_late_2018-1774300653715/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Jalanda,_City_of,_late_2018-1774300653715",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -712,
+  "dest_anchor_z": -5312,
+  "dest_y_offset": -61,
+  "origin_x": 59296,
+  "origin_z": -2015952,
+  "dest_bbox": {
+   "x_min": -712,
+   "x_max": 1591,
+   "z_min": -5312,
+   "z_max": -3153
+  },
+  "chunk_bounds": {
+   "x_min": 3706,
+   "x_max": 3849,
+   "z_min": -125997,
+   "z_max": -125863
+  },
+  "sampled_block_count": 98389,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Jalanda_City_of_late_2018_1774300653715.json"
+ },
+ {
+  "display_name": "Jalanda City Outpost 2017-07-01",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Jalanda_City_Outpost_2017-07-01-1774332996538/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Jalanda_City_Outpost_2017-07-01-1774332996538",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -7080,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 320,
+  "origin_z": -79472,
+  "dest_bbox": {
+   "x_min": -7080,
+   "x_max": -6361,
+   "z_min": 10720,
+   "z_max": 11343
+  },
+  "chunk_bounds": {
+   "x_min": 20,
+   "x_max": 64,
+   "z_min": -4967,
+   "z_max": -4929
+  },
+  "sampled_block_count": 126775,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Jalanda_City_Outpost_2017_07_01_1774332996538.json"
+ },
+ {
+  "display_name": "Kerak",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Kerak-1774329483035/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Kerak-1774329483035",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -12312,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": 108880,
+  "origin_z": 10432,
+  "dest_bbox": {
+   "x_min": -12312,
+   "x_max": -11113,
+   "z_min": 5680,
+   "z_max": 6847
+  },
+  "chunk_bounds": {
+   "x_min": 6805,
+   "x_max": 6879,
+   "z_min": 652,
+   "z_max": 724
+  },
+  "sampled_block_count": 124981,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Kerak_1774329483035.json"
+ },
+ {
+  "display_name": "Korriban 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Korriban_2018-q4-1774327268055/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Korriban_2018-q4-1774327268055",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 5560,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 62512,
+  "origin_z": 88016,
+  "dest_bbox": {
+   "x_min": 5560,
+   "x_max": 6407,
+   "z_min": 9664,
+   "z_max": 10319
+  },
+  "chunk_bounds": {
+   "x_min": 3907,
+   "x_max": 3959,
+   "z_min": 5501,
+   "z_max": 5541
+  },
+  "sampled_block_count": 146016,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Korriban_2018_q4_1774327268055.json"
+ },
+ {
+  "display_name": "Lagruda 2019-10-06",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Lagruda_2019-10-06-1774299185975/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Lagruda_2019-10-06-1774299185975",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 5736,
+  "dest_anchor_z": -5312,
+  "dest_y_offset": -61,
+  "origin_x": -347856,
+  "origin_z": 412656,
+  "dest_bbox": {
+   "x_min": 5736,
+   "x_max": 7431,
+   "z_min": -5312,
+   "z_max": -2737
+  },
+  "chunk_bounds": {
+   "x_min": -21741,
+   "x_max": -21636,
+   "z_min": 25791,
+   "z_max": 25951
+  },
+  "sampled_block_count": 47547,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Lagruda_2019_10_06_1774299185975.json"
+ },
+ {
+  "display_name": "LavaCastle 2019-03-14",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/LavaCastle_2019-03-14-1774327359086/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/LavaCastle_2019-03-14-1774327359086",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -5256,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -14768,
+  "origin_z": 21888,
+  "dest_bbox": {
+   "x_min": -5256,
+   "x_max": -4521,
+   "z_min": 9664,
+   "z_max": 10543
+  },
+  "chunk_bounds": {
+   "x_min": -923,
+   "x_max": -878,
+   "z_min": 1368,
+   "z_max": 1422
+  },
+  "sampled_block_count": 135111,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/LavaCastle_2019_03_14_1774327359086.json"
+ },
+ {
+  "display_name": "Mansion and farm 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Mansion_and_farm_2018-q4-1774332291050/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Mansion_and_farm_2018-q4-1774332291050",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -8664,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": 49136,
+  "origin_z": -13296,
+  "dest_bbox": {
+   "x_min": -8664,
+   "x_max": -7929,
+   "z_min": 9664,
+   "z_max": 10575
+  },
+  "chunk_bounds": {
+   "x_min": 3071,
+   "x_max": 3116,
+   "z_min": -831,
+   "z_max": -775
+  },
+  "sampled_block_count": 135928,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Mansion_and_farm_2018_q4_1774332291050.json"
+ },
+ {
+  "display_name": "McButchertown 2019-11-08",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/McButchertown_2019-11-08-1774328401843/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/McButchertown_2019-11-08-1774328401843",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 8248,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": 19648,
+  "origin_z": 123568,
+  "dest_bbox": {
+   "x_min": 8248,
+   "x_max": 9351,
+   "z_min": 4192,
+   "z_max": 5535
+  },
+  "chunk_bounds": {
+   "x_min": 1228,
+   "x_max": 1296,
+   "z_min": 7723,
+   "z_max": 7806
+  },
+  "sampled_block_count": 156505,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/McButchertown_2019_11_08_1774328401843.json"
+ },
+ {
+  "display_name": "Medina 2016",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Medina_2016-1774329275257/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Medina_2016-1774329275257",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 10664,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": 63712,
+  "origin_z": -117856,
+  "dest_bbox": {
+   "x_min": 10664,
+   "x_max": 12007,
+   "z_min": 4192,
+   "z_max": 5247
+  },
+  "chunk_bounds": {
+   "x_min": 3982,
+   "x_max": 4065,
+   "z_min": -7366,
+   "z_max": -7301
+  },
+  "sampled_block_count": 130027,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Medina_2016_1774329275257.json"
+ },
+ {
+  "display_name": "Melon Town, Pumpkinville 2016-11-11",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Melon_Town,_Pumpkinville_2016-11-11-1774332090909/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Melon_Town,_Pumpkinville_2016-11-11-1774332090909",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 3928,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -728032,
+  "origin_z": 386704,
+  "dest_bbox": {
+   "x_min": 3928,
+   "x_max": 4439,
+   "z_min": 10720,
+   "z_max": 11279
+  },
+  "chunk_bounds": {
+   "x_min": -45502,
+   "x_max": -45471,
+   "z_min": 24169,
+   "z_max": 24203
+  },
+  "sampled_block_count": 34594,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Melon_Town_Pumpkinville_2016_11_11_1774332090909.json"
+ },
+ {
+  "display_name": "Melopia 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Melopia_2018-q4-1774332651898/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Melopia_2018-q4-1774332651898",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -8472,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -70240,
+  "origin_z": -19888,
+  "dest_bbox": {
+   "x_min": -8472,
+   "x_max": -7817,
+   "z_min": 10720,
+   "z_max": 11439
+  },
+  "chunk_bounds": {
+   "x_min": -4390,
+   "x_max": -4350,
+   "z_min": -1243,
+   "z_max": -1199
+  },
+  "sampled_block_count": 137830,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Melopia_2018_q4_1774332651898.json"
+ },
+ {
+  "display_name": "Mesa Mountain HQ 2020-11-22",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Mesa_Mountain_HQ_2020-11-22-1774333938957/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Mesa_Mountain_HQ_2020-11-22-1774333938957",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -4856,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -161104,
+  "origin_z": -1389744,
+  "dest_bbox": {
+   "x_min": -4856,
+   "x_max": -4233,
+   "z_min": 10720,
+   "z_max": 11407
+  },
+  "chunk_bounds": {
+   "x_min": -10069,
+   "x_max": -10031,
+   "z_min": -86859,
+   "z_max": -86817
+  },
+  "sampled_block_count": 93196,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Mesa_Mountain_HQ_2020_11_22_1774333938957.json"
+ },
+ {
+  "display_name": "Mushroom Base 2018-q4",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Mushroom_Base_2018-q4-1774333064787/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Mushroom_Base_2018-q4-1774333064787",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -6296,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -36176,
+  "origin_z": -11776,
+  "dest_bbox": {
+   "x_min": -6296,
+   "x_max": -5593,
+   "z_min": 10720,
+   "z_max": 11343
+  },
+  "chunk_bounds": {
+   "x_min": -2261,
+   "x_max": -2218,
+   "z_min": -736,
+   "z_max": -698
+  },
+  "sampled_block_count": 123733,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Mushroom_Base_2018_q4_1774333064787.json"
+ },
+ {
+  "display_name": "Negative Entropy's first base and stash 2020-06-21",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Negative_Entropy's_first_base_and_stash_2020-06-21-1774330713420/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Negative_Entropy's_first_base_and_stash_2020-06-21-1774330713420",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -10776,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 313936,
+  "origin_z": 271328,
+  "dest_bbox": {
+   "x_min": -10776,
+   "x_max": -10057,
+   "z_min": 10720,
+   "z_max": 11407
+  },
+  "chunk_bounds": {
+   "x_min": 19621,
+   "x_max": 19665,
+   "z_min": 16958,
+   "z_max": 17000
+  },
+  "sampled_block_count": 64271,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Negative_Entropy_s_first_base_and_stash_2020_06_21_1774330713420.json"
+ },
+ {
+  "display_name": "Nether Fortress in the overworld 2018-03-29",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Nether_Fortress_in_the_overworld_2018-03-29-1774299539454/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Nether_Fortress_in_the_overworld_2018-03-29-1774299539454",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 10744,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 41568,
+  "origin_z": 80272,
+  "dest_bbox": {
+   "x_min": 10744,
+   "x_max": 11591,
+   "z_min": 8448,
+   "z_max": 9295
+  },
+  "chunk_bounds": {
+   "x_min": 2598,
+   "x_max": 2650,
+   "z_min": 5017,
+   "z_max": 5069
+  },
+  "sampled_block_count": 132429,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Nether_Fortress_in_the_overworld_2018_03_29_1774299539454.json"
+ },
+ {
+  "display_name": "Nether Warts Base (part 1)",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Nether_Warts_Base_(part_1)-1774298428754/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Nether_Warts_Base_(part_1)-1774298428754",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -2904,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": 24032,
+  "origin_z": -29664,
+  "dest_bbox": {
+   "x_min": -2904,
+   "x_max": -1721,
+   "z_min": 5680,
+   "z_max": 6655
+  },
+  "chunk_bounds": {
+   "x_min": 1502,
+   "x_max": 1575,
+   "z_min": -1854,
+   "z_max": -1794
+  },
+  "sampled_block_count": 129407,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Nether_Warts_Base_part_1_1774298428754.json"
+ },
+ {
+  "display_name": "North Haverbrook 2017-02-01",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/North_Haverbrook_2017-02-01-1774298547509/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/North_Haverbrook_2017-02-01-1774298547509",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 5048,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": 32944,
+  "origin_z": -849280,
+  "dest_bbox": {
+   "x_min": 5048,
+   "x_max": 6119,
+   "z_min": 5680,
+   "z_max": 6687
+  },
+  "chunk_bounds": {
+   "x_min": 2059,
+   "x_max": 2125,
+   "z_min": -53080,
+   "z_max": -53018
+  },
+  "sampled_block_count": 84890,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/North_Haverbrook_2017_02_01_1774298547509.json"
+ },
+ {
+  "display_name": "Numenor",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Numenor-1774301623376/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Numenor-1774301623376",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -7784,
+  "dest_anchor_z": -5312,
+  "dest_y_offset": -61,
+  "origin_x": -97360,
+  "origin_z": 318176,
+  "dest_bbox": {
+   "x_min": -7784,
+   "x_max": -5609,
+   "z_min": -5312,
+   "z_max": -2881
+  },
+  "chunk_bounds": {
+   "x_min": -6085,
+   "x_max": -5950,
+   "z_min": 19886,
+   "z_max": 20037
+  },
+  "sampled_block_count": 63045,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Numenor_1774301623376.json"
+ },
+ {
+  "display_name": "Oasis 2017-05",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Oasis_2017-05-1774328238831/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Oasis_2017-05-1774328238831",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -9272,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": -24048,
+  "origin_z": 68432,
+  "dest_bbox": {
+   "x_min": -9272,
+   "x_max": -8297,
+   "z_min": 7104,
+   "z_max": 8143
+  },
+  "chunk_bounds": {
+   "x_min": -1503,
+   "x_max": -1443,
+   "z_min": 4277,
+   "z_max": 4341
+  },
+  "sampled_block_count": 126979,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Oasis_2017_05_1774328238831.json"
+ },
+ {
+  "display_name": "Omega City 2017-06-10",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Omega_City_2017-06-10-1774326754004/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Omega_City_2017-06-10-1774326754004",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 24,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": -106736,
+  "origin_z": 17792,
+  "dest_bbox": {
+   "x_min": 24,
+   "x_max": 1783,
+   "z_min": 2128,
+   "z_max": 3455
+  },
+  "chunk_bounds": {
+   "x_min": -6671,
+   "x_max": -6562,
+   "z_min": 1112,
+   "z_max": 1194
+  },
+  "sampled_block_count": 129156,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Omega_City_2017_06_10_1774326754004.json"
+ },
+ {
+  "display_name": "Outpost Fit",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Outpost_Fit-1774332586076/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Outpost_Fit-1774332586076",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 11656,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": -12000,
+  "origin_z": -5968,
+  "dest_bbox": {
+   "x_min": 11656,
+   "x_max": 12279,
+   "z_min": 8448,
+   "z_max": 9599
+  },
+  "chunk_bounds": {
+   "x_min": -750,
+   "x_max": -712,
+   "z_min": -373,
+   "z_max": -302
+  },
+  "sampled_block_count": 133223,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Outpost_Fit_1774332586076.json"
+ },
+ {
+  "display_name": "Pacific Heights 2017-01-10",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Pacific_Heights_2017-01-10-1774332383639/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Pacific_Heights_2017-01-10-1774332383639",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 2008,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -41280,
+  "origin_z": -256160,
+  "dest_bbox": {
+   "x_min": 2008,
+   "x_max": 2663,
+   "z_min": 10720,
+   "z_max": 11247
+  },
+  "chunk_bounds": {
+   "x_min": -2580,
+   "x_max": -2540,
+   "z_min": -16010,
+   "z_max": -15978
+  },
+  "sampled_block_count": 100452,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Pacific_Heights_2017_01_10_1774332383639.json"
+ },
+ {
+  "display_name": "Portem Keep 2017-09-02",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Portem_Keep_2017-09-02-1774299659760/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Portem_Keep_2017-09-02-1774299659760",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -5032,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": 5696,
+  "origin_z": 23904,
+  "dest_bbox": {
+   "x_min": -5032,
+   "x_max": -3993,
+   "z_min": 7104,
+   "z_max": 8047
+  },
+  "chunk_bounds": {
+   "x_min": 356,
+   "x_max": 420,
+   "z_min": 1494,
+   "z_max": 1552
+  },
+  "sampled_block_count": 132284,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Portem_Keep_2017_09_02_1774299659760.json"
+ },
+ {
+  "display_name": "Spawn Pepe",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Spawn_Pepe-1774333884843/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Spawn_Pepe-1774333884843",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -2728,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -8272,
+  "origin_z": -8288,
+  "dest_bbox": {
+   "x_min": -2728,
+   "x_max": -1945,
+   "z_min": 9664,
+   "z_max": 10463
+  },
+  "chunk_bounds": {
+   "x_min": -517,
+   "x_max": -469,
+   "z_min": -518,
+   "z_max": -469
+  },
+  "sampled_block_count": 133113,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Spawn_Pepe_1774333884843.json"
+ },
+ {
+  "display_name": "StneCaverns 2019-05-06",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/StneCaverns_2019-05-06-1774326932787/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/StneCaverns_2019-05-06-1774326932787",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -9432,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": 60128,
+  "origin_z": 152064,
+  "dest_bbox": {
+   "x_min": -9432,
+   "x_max": -8089,
+   "z_min": 4192,
+   "z_max": 5519
+  },
+  "chunk_bounds": {
+   "x_min": 3758,
+   "x_max": 3841,
+   "z_min": 9504,
+   "z_max": 9586
+  },
+  "sampled_block_count": 17331,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/StneCaverns_2019_05_06_1774326932787.json"
+ },
+ {
+  "display_name": "Temple of the Talion 2017-03-06",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Temple_of_the_Talion_2017-03-06-1774301919628/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Temple_of_the_Talion_2017-03-06-1774301919628",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 5336,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": -170704,
+  "origin_z": 311152,
+  "dest_bbox": {
+   "x_min": 5336,
+   "x_max": 7223,
+   "z_min": -2192,
+   "z_max": -705
+  },
+  "chunk_bounds": {
+   "x_min": -10669,
+   "x_max": -10552,
+   "z_min": 19447,
+   "z_max": 19539
+  },
+  "sampled_block_count": 122728,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Temple_of_the_Talion_2017_03_06_1774301919628.json"
+ },
+ {
+  "display_name": "The Bastion 2019-03-17",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/The_Bastion_2019-03-17-1774298101802/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/The_Bastion_2019-03-17-1774298101802",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 3288,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": 235664,
+  "origin_z": 53136,
+  "dest_bbox": {
+   "x_min": 3288,
+   "x_max": 4279,
+   "z_min": 8448,
+   "z_max": 9199
+  },
+  "chunk_bounds": {
+   "x_min": 14729,
+   "x_max": 14790,
+   "z_min": 3321,
+   "z_max": 3367
+  },
+  "sampled_block_count": 62170,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/The_Bastion_2019_03_17_1774298101802.json"
+ },
+ {
+  "display_name": "The Drain 2016-11-09",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/The_Drain_2016-11-09-1774301245039/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/The_Drain_2016-11-09-1774301245039",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 7128,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": 56928,
+  "origin_z": 69280,
+  "dest_bbox": {
+   "x_min": 7128,
+   "x_max": 8183,
+   "z_min": 4192,
+   "z_max": 5615
+  },
+  "chunk_bounds": {
+   "x_min": 3558,
+   "x_max": 3623,
+   "z_min": 4330,
+   "z_max": 4418
+  },
+  "sampled_block_count": 125720,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/The_Drain_2016_11_09_1774301245039.json"
+ },
+ {
+  "display_name": "The Menders' Base",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/The_Menders'_Base-1774333304039/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/The_Menders'_Base-1774333304039",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -1480,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -1069152,
+  "origin_z": -32048,
+  "dest_bbox": {
+   "x_min": -1480,
+   "x_max": -825,
+   "z_min": 10720,
+   "z_max": 11295
+  },
+  "chunk_bounds": {
+   "x_min": -66822,
+   "x_max": -66782,
+   "z_min": -2003,
+   "z_max": -1968
+  },
+  "sampled_block_count": 64517,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/The_Menders_Base_1774333304039.json"
+ },
+ {
+  "display_name": "The Order Base 2017-07-04",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/The_Order_Base_2017-07-04-1774326200915/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/The_Order_Base_2017-07-04-1774326200915",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 8120,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -1168,
+  "origin_z": 38176,
+  "dest_bbox": {
+   "x_min": 8120,
+   "x_max": 8919,
+   "z_min": 9664,
+   "z_max": 10335
+  },
+  "chunk_bounds": {
+   "x_min": -73,
+   "x_max": -24,
+   "z_min": 2386,
+   "z_max": 2427
+  },
+  "sampled_block_count": 149447,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/The_Order_Base_2017_07_04_1774326200915.json"
+ },
+ {
+  "display_name": "Tortellini City 2 2020-03-21",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Tortellini_City_2_2020-03-21-1774332216106/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Tortellini_City_2_2020-03-21-1774332216106",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -11480,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 314064,
+  "origin_z": -257088,
+  "dest_bbox": {
+   "x_min": -11480,
+   "x_max": -10841,
+   "z_min": 10720,
+   "z_max": 11503
+  },
+  "chunk_bounds": {
+   "x_min": 19629,
+   "x_max": 19668,
+   "z_min": -16068,
+   "z_max": -16020
+  },
+  "sampled_block_count": 81562,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Tortellini_City_2_2020_03_21_1774332216106.json"
+ },
+ {
+  "display_name": "Turrim City of tower 2019-12",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Turrim_City_of_tower_2019-12-1774325705055/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Turrim_City_of_tower_2019-12-1774325705055",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -10792,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": 1036016,
+  "origin_z": -49664,
+  "dest_bbox": {
+   "x_min": -10792,
+   "x_max": -9497,
+   "z_min": 4192,
+   "z_max": 5583
+  },
+  "chunk_bounds": {
+   "x_min": 64751,
+   "x_max": 64831,
+   "z_min": -3104,
+   "z_max": -3018
+  },
+  "sampled_block_count": 80175,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Turrim_City_of_tower_2019_12_1774325705055.json"
+ },
+ {
+  "display_name": "Two Temples 2018-01-16",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Two_Temples_2018-01-16-1774333237697/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Two_Temples_2018-01-16-1774333237697",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 10552,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -7312,
+  "origin_z": -10736,
+  "dest_bbox": {
+   "x_min": 10552,
+   "x_max": 11287,
+   "z_min": 9664,
+   "z_max": 10351
+  },
+  "chunk_bounds": {
+   "x_min": -457,
+   "x_max": -412,
+   "z_min": -671,
+   "z_max": -629
+  },
+  "sampled_block_count": 133998,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Two_Temples_2018_01_16_1774333237697.json"
+ },
+ {
+  "display_name": "Wintermelon 2017-07-03",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Wintermelon_2017-07-03-1774325957386/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Wintermelon_2017-07-03-1774325957386",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -7928,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": 72736,
+  "origin_z": -147200,
+  "dest_bbox": {
+   "x_min": -7928,
+   "x_max": -6249,
+   "z_min": -2192,
+   "z_max": 63
+  },
+  "chunk_bounds": {
+   "x_min": 4546,
+   "x_max": 4650,
+   "z_min": -9200,
+   "z_max": -9060
+  },
+  "sampled_block_count": 122010,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Wintermelon_2017_07_03_1774325957386.json"
+ },
+ {
+  "display_name": "Wintermelon gold farm",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Wintermelon_gold_farm-1774330040098/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Wintermelon_gold_farm-1774330040098",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 7864,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 75296,
+  "origin_z": -148560,
+  "dest_bbox": {
+   "x_min": 7864,
+   "x_max": 8375,
+   "z_min": 10720,
+   "z_max": 11167
+  },
+  "chunk_bounds": {
+   "x_min": 4706,
+   "x_max": 4737,
+   "z_min": -9285,
+   "z_max": -9258
+  },
+  "sampled_block_count": 48528,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Wintermelon_gold_farm_1774330040098.json"
+ },
+ {
+  "display_name": "Yggdrasil 2019-07-23",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Yggdrasil_2019-07-23-1774298023693/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/Yggdrasil_2019-07-23-1774298023693",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -3256,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": -1077440,
+  "origin_z": 30848,
+  "dest_bbox": {
+   "x_min": -3256,
+   "x_max": -1721,
+   "z_min": 2128,
+   "z_max": 3679
+  },
+  "chunk_bounds": {
+   "x_min": -67340,
+   "x_max": -67245,
+   "z_min": 1928,
+   "z_max": 2024
+  },
+  "sampled_block_count": 88622,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Yggdrasil_2019_07_23_1774298023693.json"
+ },
+ {
+  "display_name": "gRiNdLoRd's base 2018-07-16",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/gRiNdLoRd's_base_2018-07-16-1774327113398/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/gRiNdLoRd's_base_2018-07-16-1774327113398",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -488,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": -2080,
+  "origin_z": 1501328,
+  "dest_bbox": {
+   "x_min": -488,
+   "x_max": 519,
+   "z_min": 5680,
+   "z_max": 6783
+  },
+  "chunk_bounds": {
+   "x_min": -130,
+   "x_max": -68,
+   "z_min": 93833,
+   "z_max": 93901
+  },
+  "sampled_block_count": 51218,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/gRiNdLoRd_s_base_2018_07_16_1774327113398.json"
+ },
+ {
+  "display_name": "mrwalker4 base 5 2017-01-14",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/mrwalker4_base_5_2017-01-14-1774299448203/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/mrwalker4_base_5_2017-01-14-1774299448203",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -12312,
+  "dest_anchor_z": -2192,
+  "dest_y_offset": -61,
+  "origin_x": 154944,
+  "origin_z": -12080,
+  "dest_bbox": {
+   "x_min": -12312,
+   "x_max": -10345,
+   "z_min": -2192,
+   "z_max": -241
+  },
+  "chunk_bounds": {
+   "x_min": 9684,
+   "x_max": 9806,
+   "z_min": -755,
+   "z_max": -634
+  },
+  "sampled_block_count": 82123,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/mrwalker4_base_5_2017_01_14_1774299448203.json"
+ },
+ {
+  "display_name": "skelli-base 2019-03-14",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/skelli-base_2019-03-14-1774326061599/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/skelli-base_2019-03-14-1774326061599",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 1464,
+  "dest_anchor_z": 5680,
+  "dest_y_offset": -61,
+  "origin_x": -305024,
+  "origin_z": -174256,
+  "dest_bbox": {
+   "x_min": 1464,
+   "x_max": 2679,
+   "z_min": 5680,
+   "z_max": 6591
+  },
+  "chunk_bounds": {
+   "x_min": -19064,
+   "x_max": -18989,
+   "z_min": -10891,
+   "z_max": -10835
+  },
+  "sampled_block_count": 90813,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/skelli_base_2019_03_14_1774326061599.json"
+ },
+ {
+  "display_name": "x-0.039m 2016 01-03 x-39k Island",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/x-0.039m_2016_01-03_x-39k_Island-1774298234264/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/x-0.039m_2016_01-03_x-39k_Island-1774298234264",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 3928,
+  "dest_anchor_z": 9664,
+  "dest_y_offset": -61,
+  "origin_x": -39632,
+  "origin_z": -400,
+  "dest_bbox": {
+   "x_min": 3928,
+   "x_max": 4711,
+   "z_min": 9664,
+   "z_max": 10399
+  },
+  "chunk_bounds": {
+   "x_min": -2477,
+   "x_max": -2429,
+   "z_min": -25,
+   "z_max": 20
+  },
+  "sampled_block_count": 128727,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/x_0_039m_2016_01_03_x_39k_Island_1774298234264.json"
+ },
+ {
+  "display_name": "xcc2 passie05 last build 2016-11-16",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/xcc2_passie05_last_build_2016-11-16-1774299740775/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2016/xcc2_passie05_last_build_2016-11-16-1774299740775",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -2824,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": -5728,
+  "origin_z": 25312,
+  "dest_bbox": {
+   "x_min": -2824,
+   "x_max": -2217,
+   "z_min": 10720,
+   "z_max": 11359
+  },
+  "chunk_bounds": {
+   "x_min": -358,
+   "x_max": -321,
+   "z_min": 1582,
+   "z_max": 1621
+  },
+  "sampled_block_count": 140073,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/xcc2_passie05_last_build_2016_11_16_1774299740775.json"
+ },
+ {
+  "display_name": "AnimeTown2018",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2018/AnimeTown2018/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2018/AnimeTown2018",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 3480,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": 69728,
+  "origin_z": -27072,
+  "dest_bbox": {
+   "x_min": 3480,
+   "x_max": 4983,
+   "z_min": 2128,
+   "z_max": 3583
+  },
+  "chunk_bounds": {
+   "x_min": 4358,
+   "x_max": 4451,
+   "z_min": -1692,
+   "z_max": -1602
+  },
+  "sampled_block_count": 112839,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/AnimeTown2018.json"
+ },
+ {
+  "display_name": "Space Valkyria III (End)",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2020/Space Valkyria III/DIM1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2020/Space Valkyria III",
+  "dimension_type": "end",
+  "dest_anchor_x": 4096,
+  "dest_anchor_z": 0,
+  "dest_y_offset": -27073,
+  "origin_x": 65680,
+  "origin_z": -114208,
+  "dest_bbox": {
+   "x_min": 4096,
+   "x_max": 14207,
+   "z_min": 0,
+   "z_max": 5951
+  },
+  "chunk_bounds": {
+   "x_min": 4105,
+   "x_max": 4736,
+   "z_min": -7138,
+   "z_max": -6767
+  },
+  "sampled_block_count": 12305,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Space_Valkyria_III_End.json"
+ },
+ {
+  "display_name": "Endhaven 2024-11-24 (est. 2022-03-13) (End)",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2022/Endhaven 2024-11-24 (est. 2022-03-13)/DIM1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2022/Endhaven 2024-11-24 (est. 2022-03-13)",
+  "dimension_type": "end",
+  "dest_anchor_x": 4096,
+  "dest_anchor_z": 6016,
+  "dest_y_offset": -27073,
+  "origin_x": -4647024,
+  "origin_z": 1802624,
+  "dest_bbox": {
+   "x_min": 4096,
+   "x_max": 7487,
+   "z_min": 6016,
+   "z_max": 9167
+  },
+  "chunk_bounds": {
+   "x_min": -290439,
+   "x_max": -290228,
+   "z_min": 112664,
+   "z_max": 112860
+  },
+  "sampled_block_count": 34209,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Endhaven_2024_11_24_est_2022_03_13_End.json"
+ },
+ {
+  "display_name": "UnNamed Base 2023-12-16 (est. 2022-03-15)",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2022/UnNamed Base 2023-12-16 (est. 2022-03-15)/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2022/UnNamed Base 2023-12-16 (est. 2022-03-15)",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -12312,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": -283536,
+  "origin_z": 458112,
+  "dest_bbox": {
+   "x_min": -12312,
+   "x_max": -10729,
+   "z_min": 2128,
+   "z_max": 3759
+  },
+  "chunk_bounds": {
+   "x_min": -17721,
+   "x_max": -17623,
+   "z_min": 28632,
+   "z_max": 28733
+  },
+  "sampled_block_count": 245671,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/UnNamed_Base_2023_12_16_est_2022_03_15.json"
+ },
+ {
+  "display_name": "Fort Alcazar 2024-04-22 (Th3_L1nk download)",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2024/Fort Alcazar 2024-04-22 (Th3_L1nk download)/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2024/Fort Alcazar 2024-04-22 (Th3_L1nk download)",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 10712,
+  "dest_anchor_z": 2128,
+  "dest_y_offset": -61,
+  "origin_x": 137760,
+  "origin_z": 1833696,
+  "dest_bbox": {
+   "x_min": 10712,
+   "x_max": 11735,
+   "z_min": 2128,
+   "z_max": 4127
+  },
+  "chunk_bounds": {
+   "x_min": 8610,
+   "x_max": 8673,
+   "z_min": 114606,
+   "z_max": 114730
+  },
+  "sampled_block_count": 256327,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Fort_Alcazar_2024_04_22_Th3_L1nk_download.json"
+ },
+ {
+  "display_name": "The Citadel Aug 1st 2024-Mewlificent",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2024/The Citadel Aug 1st 2024-Mewlificent/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2024/The Citadel Aug 1st 2024-Mewlificent",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -3928,
+  "dest_anchor_z": 7104,
+  "dest_y_offset": -61,
+  "origin_x": -135152,
+  "origin_z": -135920,
+  "dest_bbox": {
+   "x_min": -3928,
+   "x_max": -2569,
+   "z_min": 7104,
+   "z_max": 7823
+  },
+  "chunk_bounds": {
+   "x_min": -8447,
+   "x_max": -8363,
+   "z_min": -8495,
+   "z_max": -8451
+  },
+  "sampled_block_count": 258910,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/The_Citadel_Aug_1st_2024_Mewlificent.json"
+ },
+ {
+  "display_name": "midnight 2024-2025",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2024/midnight 2024-2025-1740645096472/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2024/midnight 2024-2025-1740645096472",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 1752,
+  "dest_anchor_z": 4192,
+  "dest_y_offset": -61,
+  "origin_x": 743856,
+  "origin_z": 152944,
+  "dest_bbox": {
+   "x_min": 1752,
+   "x_max": 3031,
+   "z_min": 4192,
+   "z_max": 5439
+  },
+  "chunk_bounds": {
+   "x_min": 46491,
+   "x_max": 46570,
+   "z_min": 9559,
+   "z_max": 9636
+  },
+  "sampled_block_count": 286485,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/midnight_2024_2025_1740645096472.json"
+ },
+ {
+  "display_name": "2b2t Doomer14yearsold and PentaKing base-1751895161293(1)",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2025/2b2t Doomer14yearsold and PentaKing base-1751895161293(1)/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2025/2b2t Doomer14yearsold and PentaKing base-1751895161293(1)",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 8984,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 4076656,
+  "origin_z": 857136,
+  "dest_bbox": {
+   "x_min": 8984,
+   "x_max": 9479,
+   "z_min": 10720,
+   "z_max": 11167
+  },
+  "chunk_bounds": {
+   "x_min": 254791,
+   "x_max": 254821,
+   "z_min": 53571,
+   "z_max": 53598
+  },
+  "sampled_block_count": 266441,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/2b2t_Doomer14yearsold_and_PentaKing_base_1751895161293_1.json"
+ },
+ {
+  "display_name": "Viltrum Emperium Zeta base by Grim3169",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2025/Viltrum Emperium Zeta base by Grim3169-1762294553901/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2025/Viltrum Emperium Zeta base by Grim3169-1762294553901",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -7752,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 347024,
+  "origin_z": -5293312,
+  "dest_bbox": {
+   "x_min": -7752,
+   "x_max": -7145,
+   "z_min": 10720,
+   "z_max": 11487
+  },
+  "chunk_bounds": {
+   "x_min": 21689,
+   "x_max": 21726,
+   "z_min": -330832,
+   "z_max": -330785
+  },
+  "sampled_block_count": 265408,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Viltrum_Emperium_Zeta_base_by_Grim3169_1762294553901.json"
+ },
+ {
+  "display_name": "cutecurly's City",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2025/cutecurly's City/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2025/cutecurly's City",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -11208,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": -2386224,
+  "origin_z": 460272,
+  "dest_bbox": {
+   "x_min": -11208,
+   "x_max": -10185,
+   "z_min": 8448,
+   "z_max": 9247
+  },
+  "chunk_bounds": {
+   "x_min": -149139,
+   "x_max": -149076,
+   "z_min": 28767,
+   "z_max": 28816
+  },
+  "sampled_block_count": 278810,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/cutecurly_s_City.json"
+ },
+ {
+  "display_name": "2026",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2026/2026-1769546887465/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2026/2026-1769546887465",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -3128,
+  "dest_anchor_z": -5312,
+  "dest_y_offset": -61,
+  "origin_x": -54448,
+  "origin_z": 321664,
+  "dest_bbox": {
+   "x_min": -3128,
+   "x_max": -777,
+   "z_min": -5312,
+   "z_max": -3089
+  },
+  "chunk_bounds": {
+   "x_min": -3403,
+   "x_max": -3257,
+   "z_min": 20104,
+   "z_max": 20242
+  },
+  "sampled_block_count": 261448,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/2026_1769546887465.json"
+ },
+ {
+  "display_name": "The 2b2t museum",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/unspecified/The 2b2t museum/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/unspecified/The 2b2t museum",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 7496,
+  "dest_anchor_z": -5312,
+  "dest_y_offset": -61,
+  "origin_x": 2684960,
+  "origin_z": 2282016,
+  "dest_bbox": {
+   "x_min": 7496,
+   "x_max": 9351,
+   "z_min": -5312,
+   "z_max": -3073
+  },
+  "chunk_bounds": {
+   "x_min": 167810,
+   "x_max": 167925,
+   "z_min": 142626,
+   "z_max": 142765
+  },
+  "sampled_block_count": 130149,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/The_2b2t_museum.json"
+ },
+ {
+  "display_name": "Tactical Nuke 2023-09",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/l23w35 Tactical Nuke 2023-09-02_2247 remap2 (_2309 merge)/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/l23w35 Tactical Nuke 2023-09-02_2247 remap2 (_2309 merge)",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 15207,
+  "dest_anchor_z": -11952,
+  "dest_y_offset": -61,
+  "origin_x": 31232,
+  "origin_z": 4096,
+  "dest_bbox": {
+   "x_min": 15207,
+   "z_min": -11952,
+   "x_max": 16231,
+   "z_max": -10416
+  },
+  "chunk_bounds": {
+   "x_min": 1952,
+   "x_max": 2015,
+   "z_min": 256,
+   "z_max": 351
+  },
+  "sampled_block_count": 0,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Tactical_Nuke_2023_09.json"
+ },
+ {
+  "display_name": "Dark Souls Castle 2015-10-26",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Dark_Souls_Castle_2015-10-26-1774238754381/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/Dark_Souls_Castle_2015-10-26-1774238754381",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 15207,
+  "dest_anchor_z": -9916,
+  "dest_y_offset": -61,
+  "origin_x": -12944,
+  "origin_z": 8752,
+  "dest_bbox": {
+   "x_min": 15207,
+   "z_min": -9916,
+   "x_max": 16167,
+   "z_max": -8972
+  },
+  "chunk_bounds": {
+   "x_min": -809,
+   "x_max": -750,
+   "z_min": 547,
+   "z_max": 605
+  },
+  "sampled_block_count": 0,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Dark_Souls_Castle_2015_10_26.json"
+ }
+]

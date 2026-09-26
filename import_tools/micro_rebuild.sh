@@ -71,6 +71,12 @@ else
 fi
 
 log "pass 1: import + gap-fill + loot"
+# Truncate the run logs: the engine APPENDS to --logfile, and the
+# ServerError scan below would trip over a PREVIOUS run's error
+# (2026-09-27: exactly that -- a stale v7 crash aborted a perfectly good
+# v8 pass 1).
+: > "$LOGDIR/micro_pass1.log"
+: > "$LOGDIR/micro_pass2.log"
 "$LUANTI_BIN" --server --config "$LUANTI_CONF" --world "$STAGING" --gameid mineclonia \
     --logfile "$LOGDIR/micro_pass1.log" > "$LOGDIR/micro_pass1.stdout" 2>&1
 if grep -qi "ServerError" "$LOGDIR/micro_pass1.log"; then

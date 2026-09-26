@@ -4,3 +4,10 @@
 tools/harness_world/
 __pycache__/
 *.pyc
+
+# Regenerable per-build outputs (recomputed by import_tools/placement_fit).
+# Each file is 1–170 MB; see /Volumes/Dara/dev/_mik_backup/footprints_backup/
+# for the set captured before they were untracked.
+import_tools/placement_fit/footprints/
+import_tools/placement_fit/footprints/*.json
+

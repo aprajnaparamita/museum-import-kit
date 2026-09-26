@@ -1,27 +1,32 @@
 #!/bin/bash
 # Creates the import world, installs the mods, rewrites manifest paths and
-# writes the settings that matter. Run after setup_remote.sh, once
-# Mineclonia + the WDL archive are in place.
+# writes the settings that matter. Run AFTER setup_remote.sh, as the
+# regular user (no sudo) -- everything under MUSEUM_ROOT is already yours.
 set -euo pipefail
 
-PREFIX="${PREFIX:-$HOME}"
-KIT="${KIT:-$PREFIX/museum-import-kit}"
-LUANTI="${LUANTI:-$PREFIX/luanti}"
+MUSEUM_ROOT="${MUSEUM_ROOT:-/srv/museum}"
+KIT="${KIT:-$MUSEUM_ROOT/museum-import-kit}"
+LUANTI="${LUANTI:-$MUSEUM_ROOT/luanti}"
 WORLD="${WORLD:-$LUANTI/worlds/2b2t-museum}"
-WDL="${WDL:-$PREFIX/2b2tmuseum-WDL}"
+WDL="${WDL:-$MUSEUM_ROOT/2b2tmuseum-WDL}"
+# The manifest JSONs store source paths from the Mac rig; rewrite them to
+# wherever the archive lives here.
 WDL_OLD_PREFIX="${WDL_OLD_PREFIX:-/Users/dara/dev/2b2tmuseum-WDL}"
+MANIFEST="${MANIFEST:-museum_manifest_full.json}"
+TARGET="${TARGET:-208}"
 
 [ -d "$LUANTI/games/mineclonia" ] || { echo "ERROR: Mineclonia not at $LUANTI/games/mineclonia"; exit 1; }
 [ -d "$WDL" ] || { echo "ERROR: WDL archive not at $WDL"; exit 1; }
 [ -x "$LUANTI/bin/luantiserver" ] || { echo "ERROR: no luantiserver built"; exit 1; }
+[ -f "$KIT/manifest/$MANIFEST" ] || { echo "ERROR: manifest $KIT/manifest/$MANIFEST missing"; exit 1; }
 
 echo "=== world + mods ==="
 mkdir -p "$WORLD/worldmods"
 cp -R "$KIT/mods/"* "$WORLD/worldmods/"
 cp "$KIT/world_template/world.mt" "$WORLD/world.mt"
 
-echo "=== manifest paths -> $WDL ==="
-cp "$KIT/manifest/museum_manifest.json" "$WORLD/museum_manifest.json"
+echo "=== manifest ($MANIFEST, $TARGET bases) paths -> $WDL ==="
+cp "$KIT/manifest/$MANIFEST" "$WORLD/museum_manifest.json"
 python3 "$KIT/tools/rewrite_manifest_paths.py" "$WORLD/museum_manifest.json" \
   "$WDL_OLD_PREFIX" "$WDL"
 
@@ -32,7 +37,7 @@ server_announce = false
 max_users = 1
 spawnimport_lua_import_path = $KIT/lua_import/
 museum_manifest_path = $WORLD/museum_manifest.json
-museum_target_bases = 205
+museum_target_bases = $TARGET
 CONF
 
 echo "=== first boot, to generate map_meta.txt ==="
@@ -62,4 +67,4 @@ echo
 echo "Ready. Start the import with:"
 echo "  screen -dmS import env LUANTI_BIN=$LUANTI/bin/luantiserver \\"
 echo "    IMPORT_CONF=$KIT/tools/import.conf \\"
-echo "    $KIT/tools/supervise.sh $WORLD /tmp/fullimport.log 205 300"
+echo "    $KIT/tools/supervise.sh $WORLD /tmp/fullimport.log $TARGET 300"

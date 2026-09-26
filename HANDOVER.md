@@ -43,7 +43,7 @@ tools/prepare_world.sh creates the world, rewrites paths, writes settings
 tools/rewrite_manifest_paths.py  repoint the manifest at a new archive path
 world_template/       world.mt, import.conf, map_meta settings + why
 README.md             kit overview
-GUIDE-vastai.md       end-to-end remote run guide
+GUIDE-vps.md          end-to-end remote run guide (dedicated VPS)
 FEATURE-warp-ui.md    spec: warp browser UI (not implemented)
 FEATURE-loot.md       spec: container loot (not implemented)
 HANDOVER.md           this file
@@ -54,8 +54,8 @@ HANDOVER.md           this file
 - **Full 205-base import: incomplete.** Reached 189/205 locally before the
   external drive's cable failed and corrupted the map twice. The world was
   salvaged with SQLite `.recover` both times.
-- **The plan** is to re-run the full import from scratch on a vast.ai
-  instance — see `GUIDE-vastai.md`. The kit is ready for that.
+- **The plan** is to re-run the full import from scratch on a dedicated
+  VPS — see `GUIDE-vps.md`. The kit is ready for that.
 - **Two features specced, neither implemented**: the warp browser UI and
   container loot.
 - **2026-09-23 session (Luanti 5.17.0 + Mineclonia git):** upgraded the
@@ -230,7 +230,7 @@ Harnesses exist and should stay green:
 
 ## Next steps
 
-1. **Run the full import on vast.ai** — `GUIDE-vastai.md`. It must use the
+1. **Run the full import on a dedicated VPS** — `GUIDE-vps.md`. It must use the
    current `dest_y_offset = −61` manifest and the rewritten gap-fill.
 2. **Loot pass** — `FEATURE-loot.md` (revised: structure-matched chests use
    Mineclonia loot tables; the rest are themed by an LLM from nearby sign

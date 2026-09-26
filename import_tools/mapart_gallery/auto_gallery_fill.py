@@ -46,8 +46,8 @@ import argparse, json, os, re, subprocess, sys, time, random
 from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-LUANTI_BIN = os.path.expanduser("~/dev/luanti/bin/luanti")
-LUANTI_CONF = os.path.expanduser("~/dev/museum-testrig/conf/tactical.conf")
+LUANTI_BIN = os.path.expanduser(os.environ.get("GALLERY_LUANTI_BIN", "~/dev/luanti/bin/luanti"))
+LUANTI_CONF = os.path.expanduser(os.environ.get("GALLERY_LUANTI_CONF", "~/dev/museum-testrig/conf/tactical.conf"))
 REGISTRY_PATH = os.path.join(HERE, "used_pieces_registry.json")
 SCRATCH = "/tmp/auto_gallery_fill"
 os.makedirs(SCRATCH, exist_ok=True)

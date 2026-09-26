@@ -1,85 +1,80 @@
-# Running the 2b2t museum import on vast.ai
+# Running the 2b2t museum import on a dedicated VPS
 
-End-to-end guide. Assumes the kit at `~/dev/museum-import-kit` and the WDL
-archive at `~/dev/2b2tmuseum-WDL` on your Mac.
+End-to-end guide for a fresh Debian (or Ubuntu) box with a sudo user.
+Everything except the maparts is cloned from public remotes by the setup
+script -- no rsync of the 13 GB archive from the Mac.
 
-## 1. Pick an instance
+| what | remote | notes |
+|---|---|---|
+| museum-import-kit | `git@github.com:aprajnaparamita/museum-import-kit.git` | private; needs a read-only deploy key |
+| 2b2t WDL archive | `https://github.com/TwinkNet/2b2tmuseum-WDL.git` | ~13 GB, the long step |
+| mineclonia | `https://codeberg.org/mineclonia/mineclonia.git` | + 1 small headless patch (see "The two patches") |
+| luanti | `https://github.com/luanti-org/luanti` tag `5.17.0` | + museum engine patch |
+| maparts | **scp only** | 121 PNGs, `~/dev/museum-maparts/output/final/` on the Mac |
 
-This job is **CPU-bound on single-core performance** — the time goes into
-Lua decoding of Minecraft chunks, which does not parallelise across cores.
-A GPU is irrelevant; rent the cheapest instance that has a fast core.
+Everything lives under one private root, default **`/srv/museum`** (mode
+700, owned by the sudo user -- nothing world-readable, nothing runs as
+root). The deploy key is read-only and stays on the box.
 
-| what | why |
-|---|---|
-| **High single-core clock** | placement is ~0.043 s/chunk × 1.13M chunks |
-| **Cores: 4–8 is plenty** | only the emerge threads use extra cores |
-| **RAM: 16 GB+** | the server holds a large block cache |
-| **Disk: 60 GB** | 13 GB archive + ~15 GB world + ~3 GB build + headroom |
-| **NVMe** | avoids the I/O wall that made the local run slow |
+## Sizing
 
-Disk is allocated **at rental time** on vast.ai and can't easily grow
-later — ask for 60 GB even though ~35 GB is the true need.
+The job is **CPU-bound on single-core performance** (Lua chunk decoding);
+GPU is irrelevant. Expect **14–20 hours** for the full 208-base import and
+a world of ~13–15 GB. Disk: archive 13 GB + world ~15 GB + build ~3 GB +
+maparts ~0.5 GB → **60 GB free** is comfortable. NVMe strongly preferred.
 
-Image: any plain `ubuntu:22.04`. You don't need a CUDA image.
+## 0. Deploy key (only because the kit repo is private)
 
-**Check the price of interruptible vs on-demand.** This run takes 14–20
-hours; an interruptible instance that gets reclaimed halfway is fine —
-the import is checkpointed and resumes — but only if the *disk* survives,
-so on-demand is the safer choice for an overnight run.
+`setup_remote.sh` generates a dedicated ed25519 key at
+`/srv/museum/.ssh/museum_deploy_ed25519` and prints the public key. Add
+it on GitHub → repo Settings → Deploy keys, **read-only**.
 
-## 2. Transfer the data
-
-The archive is the slow part: ~13 GB up. Start it first and let it run
-while you do everything else.
+## 1. Bootstrap
 
 ```bash
-# from your Mac. get HOST/PORT from the vast.ai instance page
-export VAST="root@HOST -p PORT"
+# clone the kit first (it carries the setup script + patches)
+sudo mkdir -p /srv/museum && sudo chown "$USER" /srv/museum
+git clone git@github.com:aprajnaparamita/museum-import-kit.git /srv/museum/museum-import-kit
+# (if the deploy key isn't set up yet, the script below generates one and
+#  clones the kit itself -- both flows work)
 
-# the kit (tiny)
-rsync -avz -e "ssh -p PORT" ~/dev/museum-import-kit/ root@HOST:~/museum-import-kit/
-
-# Mineclonia -- use YOUR copy, not a fresh clone (see note below)
-rsync -avz -e "ssh -p PORT" \
-  ~/Library/Application\ Support/minetest/games/mineclonia/ \
-  root@HOST:~/mineclonia/
-
-# the archive (~13 GB, the long one)
-rsync -avz --partial --progress -e "ssh -p PORT" \
-  ~/dev/2b2tmuseum-WDL/ root@HOST:~/2b2tmuseum-WDL/
+sudo MUSEUM_ROOT=/srv/museum /srv/museum/museum-import-kit/tools/setup_remote.sh
 ```
 
-`--partial` matters: if the transfer drops, rerunning resumes instead of
-restarting.
+The script: installs build packages, clones the archive / mineclonia /
+luanti `5.17.0`, applies both museum patches, builds a **server-only**
+Luanti (with leveldb), and locks `$MUSEUM_ROOT` to mode 700.
 
-**Why your Mineclonia and not a fresh clone:** the block palette maps
-Minecraft names to *exact* Mineclonia node names, verified against the
-3,180 nodes your install actually registers. A newer Mineclonia can rename
-or drop nodes, and the failure mode is silent — unmapped blocks become
-plain stone rather than erroring.
+## 2. Maparts (the only copy step)
 
-## 3. Build and prepare
+From the Mac:
 
 ```bash
-ssh root@HOST -p PORT
-~/museum-import-kit/tools/setup_remote.sh          # ~10 min
-mkdir -p ~/luanti/games && mv ~/mineclonia ~/luanti/games/mineclonia
-~/museum-import-kit/tools/prepare_world.sh
+scp -r ~/dev/museum-maparts/output/final VPS:/srv/museum/museum-maparts/output/
 ```
 
-`prepare_world.sh` creates the world, installs the mods, rewrites the
-manifest's absolute paths to point at the archive's new location, boots
-once to generate `map_meta.txt`, and writes the mapgen settings into it.
+121 pre-quantized map-sized PNGs (`<piece>_<row>_<col>.png`). Only needed
+for the mapart gallery fill (chore: the gallery tooling still has its own
+pending migration, see `BRIEF-2026-09-26.md` §6.3). The gallery fill
+respects `GALLERY_LUANTI_BIN` / `GALLERY_LUANTI_CONF` env overrides so it
+can run against the VPS build + conf.
 
-## 4. Run it
+## 3. Prepare and run
 
 ```bash
+# as the regular user, no sudo
+/srv/museum/museum-import-kit/tools/prepare_world.sh
+
 screen -dmS import env \
-  LUANTI_BIN=$HOME/luanti/bin/luantiserver \
-  IMPORT_CONF=$HOME/museum-import-kit/tools/import.conf \
-  $HOME/museum-import-kit/tools/supervise.sh \
-  $HOME/luanti/worlds/2b2t-museum /tmp/fullimport.log 205 300
+  LUANTI_BIN=/srv/museum/luanti/bin/luantiserver \
+  IMPORT_CONF=/srv/museum/museum-import-kit/tools/import.conf \
+  /srv/museum/museum-import-kit/tools/supervise.sh \
+  /srv/museum/luanti/worlds/2b2t-museum /tmp/fullimport.log 208 300
 ```
+
+`prepare_world.sh` creates the world, installs the worldmods, rewrites
+the manifest's stored source paths to the archive location, boots once to
+generate `map_meta.txt`, and writes the mapgen settings into it.
 
 Watch it:
 
@@ -89,33 +84,38 @@ tail -f /tmp/fullimport.log | grep -E "progress:|done\. Placed|ALL DONE"
 
 The supervisor restarts the server through Luanti's SQLite abort, resuming
 from the registry (a base is recorded only once fully placed). It gives up
-only after three consecutive attempts with no progress.
-
-Expect **14–20 hours** and a world around 13–15 GB.
-
-## 5. Consider leveldb
-
-`setup_remote.sh` builds with leveldb support. If you want to avoid the
+only after three consecutive attempts with no progress. To avoid the
 SQLite abort entirely, set `backend = leveldb` in the world's `world.mt`
-**before the first import run** (you cannot switch a populated world by
-editing this). The workload is write-heavy enough that it may also be
-faster. The supervisor stays useful either way.
+**before the first import run** (you cannot switch a populated world).
 
-## 6. Bring it home
+## 4. Verify before trusting it
 
 ```bash
-# on the instance
-cd ~/luanti/worlds && tar -c 2b2t-museum | zstd -3 -T0 -o museum.tar.zst
+grep -c "done\. Placed" /tmp/fullimport.log        # should be 208
+grep "chunk(s) skipped" /tmp/fullimport.log | grep -v "(0 chunk"
+```
 
-# on your Mac
-rsync -avP -e "ssh -p PORT" root@HOST:~/luanti/worlds/museum.tar.zst .
+Only **Space Valkyria III** should report skips (~7,138 pre-1.18 legacy
+chunks mixed into an otherwise-modern capture, ~2% of that base). Any
+other base reporting skips is worth investigating.
+
+Then in-game: `/warp list` should show all bases and warps should land
+inside builds, not empty terrain (warp targets come from each base's
+densest cluster of containers and signs).
+
+## 5. Bring it home
+
+```bash
+# on the VPS
+cd /srv/museum/luanti/worlds && tar -c 2b2t-museum | zstd -3 -T0 -o museum.tar.zst
+
+# on the Mac
+rsync -avP VPS:/srv/museum/luanti/worlds/museum.tar.zst .
 tar --use-compress-program=unzstd -xf museum.tar.zst
 ```
 
-Put the extracted world wherever you want it and symlink it into
-`~/Library/Application Support/minetest/worlds/`.
-
-To browse it you also need, in your `minetest.conf`:
+Symlink the extracted world into `~/Library/Application Support/minetest/worlds/`.
+To browse it you also need in `minetest.conf`:
 
 ```
 secure.enable_security = false
@@ -125,33 +125,51 @@ spawnimport_lua_import_path = /path/to/museum-import-kit/lua_import/
 Both are required because `museumwarp` reads its warp data through
 `spawnimport`, which needs filesystem access to load its chunk decoder.
 
-## 7. Verify before trusting it
+## The two patches (not the same thing -- easy to conflate)
 
-```bash
-grep -c "done\. Placed" /tmp/fullimport.log        # should be 205
-grep "chunk(s) skipped" /tmp/fullimport.log | grep -v "(0 chunk"
-```
+1. **`mcl_maps-load_map-headless.patch`** (mineclonia, `mods/ITEMS/mcl_maps/init.lua`)
+   -- a **game-mod** fix, needed on the server. With zero players
+   connected, `dynamic_add_media`'s callback never fires, so mcl_itemframes
+   retries `update_entity` every step and spawns a NEW display entity each
+   time. Observed during the 2026-09-25 museum import: one mapblock with
+   50 map frames ended up with **50,050 entities**. Still unfixed upstream
+   (checked `mineclonia/mineclonia@main`) -- `setup_remote.sh` applies it
+   and warns loudly if it ever stops applying. `SKIP_MCL_MAPS_PATCH=1`
+   opts out (e.g. after upstream merges it).
+2. **`luanti-5.17.0-museum-import.patch`** (engine) -- two unrelated
+   things in one patch file: `core.generate_decorations_with_inputs` in
+   `l_mapgen` (server-side; gap-fill places trees/plants on merged terrain
+   with it -- the code degrades gracefully without it, merged areas just
+   lose decoration), and client-side extensions (`set_fullbright`,
+   `send_interact` -- the fullbright/xray client-mod API). The client
+   hunks are inert in a server-only build; they matter only for the Mac
+   client.
 
-Only **Space Valkyria III** should report skips (~7,138 chunks of pre-1.18
-legacy format mixed into an otherwise-modern capture — about 2% of that
-base). Any other base reporting skips is worth investigating.
+## Security notes
 
-Then in-game: `/warp list` should show 205, and warps should land you
-inside a build rather than in empty terrain — warp targets are computed
-from each base's densest cluster of containers and signs.
+- `$MUSEUM_ROOT` is mode 700, owned by the sudo user; the run happens as
+  that user, never root.
+- The only credential on the box is the **read-only deploy key** for the
+  private kit repo.
+- Recommended: `ufw allow OpenSSH && ufw enable`, key-only `sshd`
+  (`PasswordAuthentication no`), `unattended-upgrades` for a box that
+  will sit unattended for a day-long import.
+- **Back the finished world off the box** (step 5) rather than leaving it
+  as the only copy.
 
 ## Gotchas that cost hours locally
 
 - **`mcl_singlenode_mapgen = false` must sit BEFORE `[end_of_params]`** in
   `map_meta.txt`. Settings after that marker are silently ignored. Worth a
   23× speedup on pre-generation (178.7 s → 7.6 s per base-sized volume).
+  `prepare_world.sh` handles it -- but re-check if you hand-edit the file.
 - **Never set `mapgen_limit = 0`.** It stops mapgen overwriting imports,
   but also stops the server ever sending those blocks to a client, and the
   world renders as empty sky.
 - **Don't skip pre-generation.** A VoxelManip write doesn't mark blocks
   generated; ungenerated blocks are both regenerated over *and* never sent
   to clients.
-- **Watch your storage.** Every corruption locally came from a flaky USB
-  cable. On a rented box the equivalent risk is the instance being
-  reclaimed — snapshot or download the world once it finishes rather than
-  leaving it there.
+- **Mineclonia version drift is silent.** The palette maps to exact node
+  names; if a node vanishes, blocks become plain stone instead of erroring.
+  That is why the setup clones a known Mineclonia rather than whatever
+  ships with a Luanti release.

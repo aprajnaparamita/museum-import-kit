@@ -216,7 +216,7 @@ the project owner. When you do:
 - The real corpus is at `~/dev/2b2tmuseum-WDL/` (13GB, 205 bases across the
   full manifest — `~/dev/museum-import-kit/manifest/museum_manifest.json`
   has all 205, not just the 3-base test set).
-- `GUIDE-vastai.md` has the original plan for running this on a rented box
+- `GUIDE-vps.md` (formerly GUIDE-vastai.md) has the original plan for running this on a rented box
   (full run was ~22h on USB 2.0 previously; should be much faster on a
   real machine/SSD, and this session's fixes don't change placement
   performance).

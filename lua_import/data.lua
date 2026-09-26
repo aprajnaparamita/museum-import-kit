@@ -434,6 +434,13 @@ return {
 		["infested_deepslate"] = "mcl_monster_eggs:monster_egg_deepslate",
 		["shroomlight"] = "mcl_crimson:shroomlight",
 		["polished_blackstone"] = "mcl_blackstone:blackstone_polished",
+		["dispenser"] = "mcl_dispensers:dispenser",
+		["dropper"] = "mcl_dispensers:dropper",
+		["nether_portal"] = "mcl_portals:portal",
+		["end_portal"] = "mcl_portals:portal_end",
+		["end_portal_frame"] = "mcl_portals:end_portal_frame",
+		["air"] = "air",
+		["end_gateway"] = "mcl_portals:portal_gateway",
 	},
 	["unmapped_known_gaps"] = {
 		["petrified_oak_slab"] = "Vestigial pre-Beta 1.8 Minecraft block (old oak slab, kept only for old-world compatibility). No Mineclonia equivalent expected to exist; falls back to the oak slab family.",

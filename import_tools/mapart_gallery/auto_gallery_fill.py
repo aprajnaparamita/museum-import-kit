@@ -73,7 +73,12 @@ def log(msg):
     print(f"[auto_gallery_fill] {msg}", flush=True)
 
 
-def run_luanti(world, logfile, timeout=600):
+# Per-run engine timeout (2026-09-27: the survey pass outgrew the old
+# 600s default as the worlds got heavier -- it was still actively
+# scanning when cut off, not hung). Override with GALLERY_RUN_TIMEOUT.
+def run_luanti(world, logfile, timeout=None):
+    if timeout is None:
+        timeout = int(os.environ.get("GALLERY_RUN_TIMEOUT", "1800"))
     logpath = os.path.join(SCRATCH, logfile)
     if os.path.exists(logpath):
         os.remove(logpath)

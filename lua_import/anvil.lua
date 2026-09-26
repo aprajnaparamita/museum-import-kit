@@ -31,6 +31,7 @@ end
 
 local _dofile = _G.__spawnimport_dofile or dofile
 local nbt = _dofile((_G.__spawnimport_lua_import_path or script_dir()) .. "nbt.lua")
+local legacy = _dofile((_G.__spawnimport_lua_import_path or script_dir()) .. "legacy.lua")
 
 local anvil = {}
 anvil.script_dir = script_dir
@@ -305,15 +306,70 @@ anvil.decode_section_biomes = decode_section_biomes
 -- non-air block in a chunk table (as returned by nbt.parse_buffer via
 -- iter_region_chunks). Errors clearly for pre-1.18 chunks instead of
 -- misparsing them (see IMPORT_SPEC.md).
+-- Legacy (pre-1.18, e.g. the 1.12 Nether captures) chunks keep
+-- everything one level down under `Level` -- lift the fields the other
+-- decoders read so the sign/frame/mob paths work unchanged. Idempotent.
+function anvil.normalize_chunk(chunk)
+	local lvl = chunk.Level
+	if not lvl then return chunk end
+	chunk.xPos = chunk.xPos or lvl.xPos
+	chunk.zPos = chunk.zPos or lvl.zPos
+	chunk.Entities = chunk.Entities or lvl.Entities
+	chunk.block_entities = chunk.block_entities or lvl.TileEntities
+	return chunk
+end
+
 function anvil.decode_chunk_blocks(chunk, callback)
-	if not chunk.sections then
-		error(string.format(
-			"chunk has no 'sections' tag (DataVersion=%s); pre-1.18 chunk formats are not supported",
-			tostring(chunk.DataVersion)))
-	end
+	anvil.normalize_chunk(chunk)
 	local chunk_x, chunk_z = chunk.xPos, chunk.zPos
 	if not chunk_x or not chunk_z then
 		error("chunk missing xPos/zPos")
+	end
+	if chunk.Level then
+		-- 1.12 format: per-section Blocks byte array + Data nibbles,
+		-- numeric ids -> names via legacy.lua (2026-09-25: the museum's
+		-- only Nether captures are 1.12 WDLs and the owner asked for a
+		-- Nether base in the test world)
+		local base_x, base_z = chunk_x * SECTION_EDGE, chunk_z * SECTION_EDGE
+		local warned = {}
+		for _, section in ipairs(chunk.Level.Sections or {}) do
+			local blocks = section.Blocks
+			if blocks and section.Y then
+				local base_y = section.Y * SECTION_EDGE
+				local data = section.Data
+				for i = 0, 4095 do
+					local id = blocks[i + 1] or 0
+					if id ~= 0 then
+						if id < 0 then id = id + 256 end
+						local meta = 0
+						if data and #data > 0 then
+							local b = data[math.floor(i / 2) + 1] or 0
+							if b < 0 then b = b + 256 end
+							meta = (i % 2 == 0) and (b % 16) or (math.floor(b / 16) % 16)
+						end
+						local name, props = legacy.block(id, meta)
+						if not name then
+							name = "minecraft:stone"
+							if not warned[id] then
+								warned[id] = true
+								core.log("warning", string.format(
+									"[anvil] legacy block id %d meta %d unmapped -- using stone", id, meta))
+							end
+						end
+						local lx = i % 16
+						local lz = math.floor(i / 16) % 16
+						local ly = math.floor(i / 256)
+						callback(base_x + lx, base_y + ly, base_z + lz, name, props)
+					end
+				end
+			end
+		end
+		return
+	end
+	if not chunk.sections then
+		error(string.format(
+			"chunk has no 'sections' tag (DataVersion=%s) and no legacy 'Level' wrapper",
+			tostring(chunk.DataVersion)))
 	end
 	local base_x = chunk_x * SECTION_EDGE
 	local base_z = chunk_z * SECTION_EDGE
@@ -417,6 +473,7 @@ end
 -- pre-1.20.5 flat Text1..Text4 fields and the modern front_text.messages
 -- shape (see extract_text_component's comment for why both exist).
 function anvil.decode_chunk_signs(chunk)
+	anvil.normalize_chunk(chunk)
 	local out = {}
 	for _, be in ipairs(chunk.block_entities or {}) do
 		local id = be.id
@@ -543,6 +600,7 @@ end
 anvil.extract_map_display_name = extract_map_display_name
 
 function anvil.decode_chunk_item_frames(chunk)
+	anvil.normalize_chunk(chunk)
 	local out = {}
 
 	-- Post-1.14: item frames are block entities. NOTE: real vanilla
@@ -714,6 +772,7 @@ end
 -- sample in this corpus (none happened to be found while building this),
 -- flagged here rather than silently presented as confirmed.
 function anvil.decode_chunk_mobs(chunk)
+	anvil.normalize_chunk(chunk)
 	local out = {}
 	for _, ent in ipairs(chunk.Entities or {}) do
 		local pos = ent.Pos

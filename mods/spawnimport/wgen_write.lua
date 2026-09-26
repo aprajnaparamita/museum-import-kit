@@ -200,7 +200,11 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 						end
 					end
 				end
-				if not top and not is_water and col.smat and col.sdist
+				-- water columns INCLUDED (2026-09-25 owner report: "the
+				-- ocean floor has a hard transition between minecraft
+				-- ocean floor and mineclonia gravel" -- the floor geology
+				-- must continue outward like the land's does)
+				if not top and col.smat and col.sdist
 					and col.sdist > 1 and col.sdist <= SCREE_FADE
 					and is_natural_ground(cname(col.smat)) then
 					local p = 1 - (col.sdist - 1) / SCREE_FADE

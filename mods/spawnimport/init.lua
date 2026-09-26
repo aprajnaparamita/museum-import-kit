@@ -929,9 +929,13 @@ end
 function Job:place_one_chunk(entry)
 	local payload = anvil.read_chunk_payload(self.current_region_data, entry.offset)
 	local chunk = nbt.parse_buffer(payload)
+	-- legacy (1.12) chunks keep everything under `Level`; normalize_chunk
+	-- lifts xPos/zPos/Entities/TileEntities so both format families pass
+	-- the guards below and share the sign/frame/mob paths
+	anvil.normalize_chunk(chunk)
 
-	if not chunk.sections or not chunk.xPos or not chunk.zPos then
-		error("chunk has no sections/xPos/zPos (unsupported format?)")
+	if (not chunk.sections and not chunk.Level) or not chunk.xPos or not chunk.zPos then
+		error("chunk has no sections/Level/xPos/zPos (unsupported format?)")
 	end
 
 	-- Deterministic full chunk footprint -- NOT just where non-air blocks
@@ -946,7 +950,7 @@ function Job:place_one_chunk(entry)
 	local base_x = self.anchor_x + (chunk.xPos * 16 - self.origin_x)
 	local base_z = self.anchor_z + (chunk.zPos * 16 - self.origin_z)
 	local sec_y_min, sec_y_max = nil, nil
-	for _, section in ipairs(chunk.sections) do
+	for _, section in ipairs(chunk.sections or (chunk.Level and chunk.Level.Sections) or {}) do
 		if section.Y then
 			if not sec_y_min or section.Y < sec_y_min then sec_y_min = section.Y end
 			if not sec_y_max or section.Y > sec_y_max then sec_y_max = section.Y end
@@ -1557,6 +1561,74 @@ function Job:maybe_report_progress()
 end
 
 function Job:finish()
+	-- Per-base post patches (owner-maintained, 2026-09-25: fountain
+	-- water sources that overflow in Mineclonia's fluid physics get
+	-- replaced with river water / trimmed -- "we should make that a
+	-- normal patch for this base"). Boxes are dest-space AABBs applied
+	-- after the gap-fill so they survive re-imports of the same base.
+	do
+		local pp = core.settings:get("museum_base_patches_path")
+		if not pp and core.get_worldpath then
+			pp = core.get_worldpath() .. "/base_patches.json"
+		end
+		local pf = pp and io.open(pp, "r")
+		if pf then
+			local praw = pf:read("*a")
+			pf:close()
+			local pok, pdata = pcall(core.parse_json, praw)
+			if pok and type(pdata) == "table" then
+				local patches = pdata[self.name]
+				if type(patches) == "table" then
+					for _, pt in ipairs(patches) do
+						-- exact per-node sets (a recorded hand-fix)
+						if type(pt.nodes) == "table" then
+							local nn = 0
+							for _, spec in ipairs(pt.nodes) do
+								local q = spec.pos
+								if type(q) == "table" and #q == 3 and spec.set then
+									core.set_node(vector.new(q[1], q[2], q[3]),
+										{ name = spec.set })
+									nn = nn + 1
+								end
+							end
+							core.log("action", string.format(
+								"[spawnimport] base patch %s: %d explicit node fixes",
+								self.name, nn))
+						end
+						local b = pt.box
+						if type(b) == "table" and #b == 6 then
+							local nrep, nrem = 0, 0
+							for x = math.min(b[1], b[4]), math.max(b[1], b[4]) do
+								for z = math.min(b[3], b[6]), math.max(b[3], b[6]) do
+									for y = math.min(b[2], b[5]), math.max(b[2], b[5]) do
+										local pos = vector.new(x, y, z)
+										local n = core.get_node(pos)
+										local rep = pt.replace and pt.replace[n.name]
+										if rep then
+											core.set_node(pos, { name = rep, param2 = n.param2 })
+											nrep = nrep + 1
+										elseif type(pt.remove) == "table" then
+											for _, nm in ipairs(pt.remove) do
+												if nm == n.name then
+													core.remove_node(pos)
+													nrem = nrem + 1
+													break
+												end
+											end
+										end
+									end
+								end
+							end
+							core.log("action", string.format(
+								"[spawnimport] base patch %s: replaced %d, removed %d",
+								self.name, nrep, nrem))
+						end
+					end
+				end
+			end
+		end
+	end
+
 	self.status = "done"
 	local summary = string.format(
 		"[spawnimport] %s: done. Placed %d blocks across %d chunks (%d chunk(s) skipped) in %ds.",

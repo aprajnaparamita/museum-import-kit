@@ -46,6 +46,7 @@ local LUA_IMPORT = HERE .. "../../lua_import/"
 
 local gzip = dofile(LUA_IMPORT .. "gzip.lua")
 local anvil = dofile(LUA_IMPORT .. "anvil.lua")
+local LEGACY = dofile(LUA_IMPORT .. "legacy.lua")
 
 anvil.decompress = gzip.decompress
 anvil.list_dir = function(dir)
@@ -139,6 +140,20 @@ end
 -- every section of a chunk carries the same palette[1]), so the surface
 -- biome is just the biome of the highest section that has one.
 local function chunk_surface_biome(chunk)
+	-- legacy (1.12) chunks carry a per-chunk biome id array under Level
+	if chunk.Level and chunk.Level.Biomes then
+		local counts = {}
+		local best, bestn = nil, 0
+		for _, id in ipairs(chunk.Level.Biomes) do
+			local n = (counts[id] or 0) + 1
+			counts[id] = n
+			if n > bestn then bestn, best = n, id end
+		end
+		if best then
+			return LEGACY.biome(best) or nil
+		end
+		return nil
+	end
 	if not chunk.sections then return nil end
 	for i = #chunk.sections, 1, -1 do
 		local s = chunk.sections[i]

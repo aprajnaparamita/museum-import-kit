@@ -1,0 +1,352 @@
+{
+ "Farm Town Offtopia Base After Grief of Rainbow Islands": [
+  {
+   "note": "owner 2026-09-25: fountain overpowered - river water tames the flow",
+   "nodes": [
+    {
+     "pos": [
+      -7556,
+      18,
+      10194
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -7555,
+      18,
+      10193
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -7555,
+      18,
+      10194
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -7555,
+      18,
+      10195
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -7554,
+      17,
+      10194
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -7554,
+      18,
+      10192
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -7554,
+      18,
+      10193
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -7554,
+      18,
+      10194
+     ],
+     "set": "mclx_core:river_water_source"
+    },
+    {
+     "pos": [
+      -7554,
+      18,
+      10195
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -7554,
+      18,
+      10196
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -7553,
+      18,
+      10193
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -7553,
+      18,
+      10194
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -7553,
+      18,
+      10195
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -7552,
+      18,
+      10194
+     ],
+     "set": "mclx_core:river_water_flowing"
+    }
+   ]
+  }
+ ],
+ "Expedition Orion First Portal 2017-12": [
+  {
+   "note": "owner 2026-09-25: fountain overflow - river sources + demoted overflow sources",
+   "nodes": [
+    {
+     "pos": [
+      -928,
+      -28,
+      2915
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -928,
+      -28,
+      2916
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -927,
+      -28,
+      2914
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -927,
+      -28,
+      2915
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -927,
+      -28,
+      2916
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -926,
+      -28,
+      2914
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -926,
+      -28,
+      2915
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -926,
+      -27,
+      2912
+     ],
+     "set": "mclx_core:river_water_source"
+    },
+    {
+     "pos": [
+      -926,
+      -27,
+      2913
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -926,
+      -27,
+      2914
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -925,
+      -27,
+      2912
+     ],
+     "set": "mclx_core:river_water_source"
+    },
+    {
+     "pos": [
+      -925,
+      -27,
+      2913
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -925,
+      -27,
+      2914
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -924,
+      -27,
+      2912
+     ],
+     "set": "mclx_core:river_water_source"
+    },
+    {
+     "pos": [
+      -924,
+      -27,
+      2913
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -924,
+      -27,
+      2914
+     ],
+     "set": "mclx_core:river_water_flowing"
+    },
+    {
+     "pos": [
+      -923,
+      -28,
+      2914
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -923,
+      -28,
+      2915
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -923,
+      -28,
+      2916
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -922,
+      -28,
+      2915
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -922,
+      -28,
+      2916
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -921,
+      -29,
+      2916
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -921,
+      -29,
+      2917
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -921,
+      -29,
+      2918
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -921,
+      -29,
+      2919
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -920,
+      -29,
+      2916
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -920,
+      -29,
+      2917
+     ],
+     "set": "mcl_core:water_flowing"
+    },
+    {
+     "pos": [
+      -920,
+      -29,
+      2918
+     ],
+     "set": "mcl_core:water_flowing"
+    }
+   ]
+  }
+ ]
+}

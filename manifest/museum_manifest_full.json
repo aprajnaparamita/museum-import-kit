@@ -1,5 +1,80 @@
 [
  {
+  "display_name": "Hausemaster Base 2012 (Nether)",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Base (by Hausemaster, friends, 2012) 2019-08-26 (123fly123 download)/DIM-1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Base (by Hausemaster, friends, 2012) 2019-08-26 (123fly123 download)",
+  "dimension_type": "nether",
+  "origin_x": -263408,
+  "origin_z": 88800,
+  "dest_anchor_x": 15207,
+  "dest_anchor_z": -7880,
+  "dest_y_offset": -29072,
+  "chunk_bounds": {
+   "x_min": -16463,
+   "x_max": -16408,
+   "z_min": 5550,
+   "z_max": 5589
+  },
+  "dest_bbox": {
+   "x_min": 15207,
+   "x_max": 16102,
+   "z_min": -7880,
+   "z_max": -7241
+  },
+  "sampled_block_count": 0,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Hausemaster_Base_2012_Nether.json"
+ },
+ {
+  "display_name": "Endhaven 2024-11-24 (est. 2022-03-13) (End)",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2022/Endhaven 2024-11-24 (est. 2022-03-13)/DIM1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2022/Endhaven 2024-11-24 (est. 2022-03-13)",
+  "dimension_type": "end",
+  "dest_anchor_x": 4096,
+  "dest_anchor_z": 6016,
+  "dest_y_offset": -26880,
+  "origin_x": -4647024,
+  "origin_z": 1802624,
+  "dest_bbox": {
+   "x_min": 4096,
+   "x_max": 7487,
+   "z_min": 6016,
+   "z_max": 9167
+  },
+  "chunk_bounds": {
+   "x_min": -290439,
+   "x_max": -290228,
+   "z_min": 112664,
+   "z_max": 112860
+  },
+  "sampled_block_count": 34209,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Endhaven_2024_11_24_est_2022_03_13_End.json"
+ },
+ {
+  "display_name": "Space Valkyria III (End)",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2020/Space Valkyria III/DIM1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2020/Space Valkyria III",
+  "dimension_type": "end",
+  "dest_anchor_x": 4096,
+  "dest_anchor_z": 0,
+  "dest_y_offset": -26880,
+  "origin_x": 65680,
+  "origin_z": -114208,
+  "dest_bbox": {
+   "x_min": 4096,
+   "x_max": 14207,
+   "z_min": 0,
+   "z_max": 5951
+  },
+  "chunk_bounds": {
+   "x_min": 4105,
+   "x_max": 4736,
+   "z_min": -7138,
+   "z_max": -6767
+  },
+  "sampled_block_count": 12305,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Space_Valkyria_III_End.json"
+ },
+ {
   "display_name": "Expedition Orion First Portal 2017-12",
   "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Expedition_Orion_First_Portal_2017-12-1774219052844/dimensions/minecraft/worlds/2b2t/2b2t_1/region",
   "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2011/Expedition_Orion_First_Portal_2017-12-1774219052844",
@@ -4848,56 +4923,6 @@
   },
   "sampled_block_count": 112839,
   "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/AnimeTown2018.json"
- },
- {
-  "display_name": "Space Valkyria III (End)",
-  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2020/Space Valkyria III/DIM1/region",
-  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2020/Space Valkyria III",
-  "dimension_type": "end",
-  "dest_anchor_x": 4096,
-  "dest_anchor_z": 0,
-  "dest_y_offset": -27073,
-  "origin_x": 65680,
-  "origin_z": -114208,
-  "dest_bbox": {
-   "x_min": 4096,
-   "x_max": 14207,
-   "z_min": 0,
-   "z_max": 5951
-  },
-  "chunk_bounds": {
-   "x_min": 4105,
-   "x_max": 4736,
-   "z_min": -7138,
-   "z_max": -6767
-  },
-  "sampled_block_count": 12305,
-  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Space_Valkyria_III_End.json"
- },
- {
-  "display_name": "Endhaven 2024-11-24 (est. 2022-03-13) (End)",
-  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2022/Endhaven 2024-11-24 (est. 2022-03-13)/DIM1/region",
-  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2022/Endhaven 2024-11-24 (est. 2022-03-13)",
-  "dimension_type": "end",
-  "dest_anchor_x": 4096,
-  "dest_anchor_z": 6016,
-  "dest_y_offset": -27073,
-  "origin_x": -4647024,
-  "origin_z": 1802624,
-  "dest_bbox": {
-   "x_min": 4096,
-   "x_max": 7487,
-   "z_min": 6016,
-   "z_max": 9167
-  },
-  "chunk_bounds": {
-   "x_min": -290439,
-   "x_max": -290228,
-   "z_min": 112664,
-   "z_max": 112860
-  },
-  "sampled_block_count": 34209,
-  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Endhaven_2024_11_24_est_2022_03_13_End.json"
  },
  {
   "display_name": "UnNamed Base 2023-12-16 (est. 2022-03-15)",

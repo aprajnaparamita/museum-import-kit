@@ -173,7 +173,15 @@ function inputs.height_targets(field, natural)
 	for skey, s in pairs(natural) do
 		local d = field.dist[skey]
 		if d then
-			local w = weights(d)
+			-- jittered like the biome fade (2026-09-25 owner report:
+			-- "right angles, like a pyramid", square coastline steps) --
+			-- the raw distance fade is chunk-quantized geometry around a
+			-- chunk-quantized seam; a few columns of noise on the ramp
+			-- position turns it into natural-looking slopes (the solver's
+			-- slope cap still applies afterwards)
+			local x, z = skey:match("^(%-?%d+),(%-?%d+)$")
+			local jit = wdl.jitter(tonumber(x), tonumber(z)) * 0.6
+			local w = weights(d, jit)
 			t[skey] = w * field.level[skey] + (1 - w) * s
 		else
 			t[skey] = s

@@ -486,8 +486,12 @@ end
 local function add_seam_tints(real, plan)
 	local tint_of = {}
 	for _, r in pairs(real) do
-		if tint_of[r.biome] == nil then
-			tint_of[r.biome] = biome_palette(r.biome) or false
+		-- corpus robustness (2026-09-25, Expedition Orion: a captured
+		-- chunk with NO biome tag -- tint_of[nil] = ... is a hard Lua
+		-- error and killed the whole import at plan time)
+		local biome = r.biome
+		if biome and tint_of[biome] == nil then
+			tint_of[biome] = biome_palette(biome) or false
 		end
 	end
 	for key, chunk in pairs(plan.chunks) do
@@ -525,7 +529,16 @@ function gap_fill.build_plan(job, real, entries, opts)
 	-- put the End's sea (0) at -27073 so no column is ever water -- with
 	-- the old world-level constant every End merge column read as water
 	-- and would have been flooded.
-	local SEA = math.min(WATER_LEVEL, 62 + dy)
+	local SEA
+	if dy <= -20000 then
+		-- End / Nether placements (y bands near -26880 / -29072): these
+		-- dimensions have NO water (the End's and Nether's liquids are
+		-- lava, which is terrain here) -- never classify any column as
+		-- water or the merge floods it
+		SEA = -31000
+	else
+		SEA = math.min(WATER_LEVEL, 62 + dy)
+	end
 	local step = opts.step or tonumber(core.settings:get("spawnimport_gap_max_step")) or 1.0
 	local t0 = core.get_us_time()
 

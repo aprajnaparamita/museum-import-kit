@@ -54,7 +54,7 @@ fi
 
 log "syncing kit -> world (worldmods, manifest, base_patches)"
 mkdir -p "$STAGING/worldmods"
-for mod in spawnimport museumloot museumwarp; do
+for mod in spawnimport museumloot museumwarp museumportals; do
     rm -rf "$STAGING/worldmods/$mod"
     cp -R "$KIT/mods/$mod" "$STAGING/worldmods/"
 done

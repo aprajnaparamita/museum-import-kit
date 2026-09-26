@@ -575,7 +575,7 @@ check("job reported done", finished)
 -- logged-and-skipped chunk, not a hard test failure -- confirmed the hard
 -- way (a missing core.get_item_group mock silently zeroed out this exact
 -- test's placed-block count while every other check still read "ok").
-check("no chunks were skipped", finished_msg and finished_msg:match("%(0 chunk%(s%) skipped%)") ~= nil,
+check("no chunks were skipped", finished_msg and finished_msg:match("%(0 chunk%(s%) skipped") ~= nil,
 	tostring(finished_msg))
 
 -- Every chunk in the scoped region file decodes to tens of thousands of
@@ -755,9 +755,9 @@ for _, m in ipairs(museum_msgs) do
 end
 check("museumimport-driven job (museumtest1) reported done", museum1_finished)
 check("museumimport-driven job (museumtest2, chunk_bounds) reported done", museum2_finished)
-check("museumtest1: no chunks were skipped", museum1_msg and museum1_msg:match("%(0 chunk%(s%) skipped%)") ~= nil,
+check("museumtest1: no chunks were skipped", museum1_msg and museum1_msg:match("%(0 chunk%(s%) skipped") ~= nil,
 	tostring(museum1_msg))
-check("museumtest2: no chunks were skipped", museum2_msg and museum2_msg:match("%(0 chunk%(s%) skipped%)") ~= nil,
+check("museumtest2: no chunks were skipped", museum2_msg and museum2_msg:match("%(0 chunk%(s%) skipped") ~= nil,
 	tostring(museum2_msg))
 
 local reg_entries = simple_deserialize(storage_data["placed_bases"])

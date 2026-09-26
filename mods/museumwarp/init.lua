@@ -103,6 +103,18 @@ local function standing_spot(x, z, near_y, band)
 	local top = SCAN_TOP[band] or 300
 	local bottom = SCAN_BOTTOM[band] or -64
 	local function empty(n) return n == "air" or n == "mcl_core:void" or n == "ignore" end
+	-- Portal blocks are airlike-but-dangerous: they are NOT ground (the
+	-- player falls through) yet the old "not empty(below)" test counted
+	-- them as solid -- so a warp over a portal placed the player on top of
+	-- it, they fell straight in and got teleported out of the base (owner
+	-- 2026-09-26: Taylo's /warp lands inside a nether portal). Same for
+	-- liquids: "not empty" counted lava as ground. Ground must be WALKABLE
+	-- and not a portal; the feet/head space must not be a portal either.
+	local function portal(n) return n:find("^mcl_portals:") ~= nil end
+	local function ground(n)
+		local def = core.registered_nodes[n]
+		return def ~= nil and def.walkable == true and not portal(n)
+	end
 	core.get_voxel_manip():read_from_map(
 		{ x = x - 1, y = math.max(bottom, near_y - 48), z = z - 1 },
 		{ x = x + 1, y = math.min(top, near_y + 48), z = z + 1 })
@@ -112,7 +124,9 @@ local function standing_spot(x, z, near_y, band)
 				local at = core.get_node({ x = x, y = y, z = z }).name
 				local above = core.get_node({ x = x, y = y + 1, z = z }).name
 				local below = core.get_node({ x = x, y = y - 1, z = z }).name
-				if empty(at) and empty(above) and not empty(below) then
+				if empty(at) and not portal(at)
+					and empty(above) and not portal(above)
+					and ground(below) then
 					return y
 				end
 			end

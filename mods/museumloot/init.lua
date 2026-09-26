@@ -1690,6 +1690,48 @@ end
 -- whether it's a single pool ("get_loot") or an array of pools
 -- ("get_multi_loot") -- see that file's per-table comments. Otherwise we
 -- fall back to the existing THEMES[theme_key] path, unchanged.
+-- Owner explicit 2026-09-26 (walk of Endhaven): "the single chest in
+-- the end city near the main base only had basic loot in it like a
+-- normal end ship chest. i think loot should be OP in these bases."
+-- These are LEGENDARY 2b2t bases in a museum -- their loot should read
+-- like a jackpot, not a vanilla structure-table roll. The boost keeps
+-- every theme/structure identity (an end-city chest still reads as an
+-- end-city chest) but triples quantities toward real stacks and sprinkles
+-- 1-2 jackpot items. Names below are all already used by pvpkits.lua's
+-- real-kit reference (verified against registered items -- never guess
+-- names). Controllable: museumloot_op = false restores vanilla-ish loot.
+local OP_JACKPOT = {
+	"mcl_core:apple_gold_enchanted",
+	"mcl_totems:totem",
+	"mcl_tools:sword_netherite",
+	"mcl_tools:pick_netherite",
+	"mcl_tools:axe_netherite",
+	"mcl_tridents:trident",
+	"mcl_tools:mace",
+	"mcl_nether:netheriteblock",
+	"mcl_core:goldblock",
+	"mcl_core:ironblock",
+	"mcl_throwing:ender_pearl",
+	"mcl_experience:bottle",
+	"mcl_fireworks:rocket_1",
+}
+
+local function boost_loot(items, pr)
+	if not items or #items == 0 then return items end
+	for _, st in ipairs(items) do
+		if st and not st:is_empty() then
+			local def = core.registered_items[st:get_name()]
+			local maxn = (def and def.stack_max) or 64
+			local n = math.min(maxn, st:get_count() * 3)
+			if n > st:get_count() then st:set_count(n) end
+		end
+	end
+	for _ = 1, pr:next(1, 2) do
+		items[#items + 1] = ItemStack(OP_JACKPOT[pr:next(1, #OP_JACKPOT)])
+	end
+	return items
+end
+
 local function fill_inv_from_theme(pos, kind, theme_key, nearby_signs_blob, structure_loot, structure_loot_use, structure_match, force_novelty, pair_pos)
 	-- Use a position-seeded RNG so reruns are deterministic. The extra
 	-- term folds in either the theme_key or the structure name so two
@@ -1867,6 +1909,13 @@ local function fill_inv_from_theme(pos, kind, theme_key, nearby_signs_blob, stru
 				end
 			end
 		end
+	end
+
+	-- OP loot policy (owner explicit 2026-09-26: "loot should be OP in
+	-- these bases") -- runs on every finished list, same choke point as
+	-- the potion upgrade above.
+	if core.settings:get_bool("museumloot_op", true) then
+		all_items = boost_loot(all_items, pr)
 	end
 
 	-- Apply to inventory. Mineclonia containers name their list "main"

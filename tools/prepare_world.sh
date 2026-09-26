@@ -32,9 +32,12 @@ python3 "$KIT/tools/rewrite_manifest_paths.py" "$WORLD/museum_manifest.json" \
 
 echo "=== import.conf ==="
 cat > "$KIT/tools/import.conf" <<CONF
+fixed_map_seed = 16532709774040603227
 secure.enable_security = false
 server_announce = false
 max_users = 1
+max_objects_per_block = 50000
+mcl_disabled_structures = large_dripstone_column,large_dripstone_stalagmite,large_dripstone_stalagtite,basalt_column,basalt_pillar,small_end_city,end_shipwreck,end_boat
 spawnimport_lua_import_path = $KIT/lua_import/
 museum_manifest_path = $WORLD/museum_manifest.json
 museum_target_bases = $TARGET

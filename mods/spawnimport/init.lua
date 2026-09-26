@@ -1084,6 +1084,21 @@ function Job:place_one_chunk(entry)
 		end
 	end
 	local clear_y_max = sec_y_max * 16 + 15
+	if self.dest_y_offset ~= OVERWORLD_Y_CORRECTION then
+		-- Nether/End bands: clear the FULL pregen y range too, not just
+		-- the capture's own section span (2026-09-26, the End double-island
+		-- bug the owner found: Endhaven's capture spans source y 0..255,
+		-- but Mineclonia's end mapgen puts its islands at source y ~ -120
+		-- -- BELOW the capture's span -- so every captured chunk kept a
+		-- foreign island layer under it, with a generated end CITY on it
+		-- and a 130-block air gap between the layers). Same class as the
+		-- overworld's clear_y_min extension above. The pregen y range is
+		-- band-relative (PREGEN_Y_MIN/MAX + dest_y_offset) and the bands
+		-- sit thousands of blocks apart, so this cannot spill into a
+		-- neighbouring dimension band (the old objection here).
+		if PREGEN_Y_MIN < clear_y_min then clear_y_min = PREGEN_Y_MIN end
+		if PREGEN_Y_MAX > clear_y_max then clear_y_max = PREGEN_Y_MAX end
+	end
 	if self.dest_y_offset == OVERWORLD_Y_CORRECTION and PREGEN_Y_MAX then
 		-- 2026-09-23 (owner-directed): clear all the way to SKY LIMIT
 		-- (the full pregen range), not just to sea level. Mineclonia's

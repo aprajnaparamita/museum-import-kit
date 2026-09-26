@@ -273,6 +273,26 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 				-- untouched (caves/ores preserved).
 				local rewrite_lo = math.min(skin_lo, (col.S or B)) - 1
 
+				-- End island model (2026-09-26 owner findings): a raised
+				-- merge column continues the ISLAND -- a slab at the
+				-- merged level, at most ISLAND_SLAB deep -- instead of
+				-- pouring a pillar down to Mineclonia's own island layer
+				-- ~175 blocks below (the capture sits at y -26825, the
+				-- mapgen's islands at -27000; the pillars + the air gap
+				-- between layers were the "large gap"). When the slab
+				-- floats clear of the natural island, everything below it
+				-- is cleared to void too -- no second island layer under
+				-- the base. Columns merged at their natural level (no
+				-- raise) keep the natural island as their ground.
+				local ISLAND_SLAB = 52 -- ~= the captured island's thickness at Endhaven
+				local island_slab_lo = nil
+				if band(job) == "end" and col.S and B > col.S + 8 then
+					island_slab_lo = math.max(B - ISLAND_SLAB, col.S + 1)
+					if island_slab_lo > col.S + 1 then
+						rewrite_lo = GAP_Y_MIN + dy -- floats: clear the layer below
+					end
+				end
+
 				-- Nether ceiling band (2026-09-26, owner: "do the fill and
 				-- then re-generate the nether roof"): the capture's roof
 				-- profile is bedrock at dy+127/126 over netherrack (source
@@ -307,8 +327,15 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 					elseif y > B - depth_top - depth_filler then
 						c = filler
 					else
-						-- raise-fill gap: stone under the soil skin
-						c = c_stone
+						-- raise-fill gap: stone under the soil skin (End
+						-- island model caps it at island_slab_lo -- air
+						-- below, so the island floats over void instead of
+						-- pouring down to the mapgen's island layer)
+						if island_slab_lo and y <= island_slab_lo then
+							c = c_air
+						else
+							c = c_stone
+						end
 					end
 					data[idx] = c
 					p2data[idx] = 0

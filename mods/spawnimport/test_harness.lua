@@ -1211,6 +1211,26 @@ do
 		end
 	end
 end
+-- synthetic CEILING: a nether roof band over the whole area (netherrack
+-- at source y 122..127). The surface scan must treat it as CEILING, not
+-- ground -- if the height model ever reads the roof as the surface again,
+-- the merged surfaces jump to ~source 125 and the floor check below
+-- fails (the owner-visible symptoms were skinned roofs + netherrack
+-- pillars at ceiling height, 2026-09-26).
+for cz = MIN_CZ - 3, MIN_CZ + 3 do
+	for cx = MIN_CX - 3, MAX_CX + 3 do
+		local bx, bz = ngap_dest(cx, cz)
+		for lz = 0, 15 do
+			for lx = 0, 15 do
+				local x, z = bx + lx, bz + lz
+				for y = 122, 127 do
+					fake_map[x .. "," .. (y + NDY) .. "," .. z] =
+						core.get_content_id("mcl_nether:netherrack")
+				end
+			end
+		end
+	end
+end
 
 -- synthetic footprint: flat capture ground at NTARGET (source space)
 local nfp_path = os.tmpname()
@@ -1277,6 +1297,7 @@ end
 local roof_bad, roof_n = 0, 0
 local lava_hi, lava_at_sea = nil, 0
 local stone_fill, nether_fill = 0, 0
+local floor_max = {}
 for x = NW0x, NW1x do
 	for z = NW0z, NW1z do
 		if is_merge_col(x, z) then
@@ -1302,6 +1323,13 @@ for key, cid in pairs(fake_map) do
 			if name == "mcl_core:stone" then stone_fill = stone_fill + 1 end
 			if name == "mcl_nether:netherrack" then nether_fill = nether_fill + 1 end
 		end
+		-- merged surface = topmost solid below the ceiling band (the
+		-- floor-vs-roof model check)
+		if y < NDY + 122 and name ~= "mcl_nether:nether_lava_source"
+			and name ~= "air" and name ~= "mcl_core:bedrock" then
+			local skey = x .. "," .. z
+			if not floor_max[skey] or y > floor_max[skey] then floor_max[skey] = y end
+		end
 	end
 end
 check("nether roof regenerated over fill chunks (bedrock plate at dy+126/127)",
@@ -1311,6 +1339,14 @@ check("lava never rises above the nether lava sea (dy+36)",
 check("lava pool fills up to the sea surface", lava_at_sea > 0, tostring(lava_at_sea))
 check("no overworld stone in the nether raise fill", stone_fill == 0, tostring(stone_fill))
 check("nether raise fill uses netherrack", nether_fill > 0, tostring(nether_fill))
+local floor_worst = nil
+for _, y in pairs(floor_max) do
+	if not floor_worst or y > floor_worst then floor_worst = y end
+end
+check("merged surfaces track the FLOOR, not the ceiling (floor-vs-roof model)",
+	floor_worst ~= nil and floor_worst <= NDY + 60,
+	string.format("worst merged surface at source y %s (ceiling is 122+)",
+		floor_worst and tostring(floor_worst - NDY) or "nil"))
 
 local n_audit_line, n_audit_failed = nil, false
 for _, m in ipairs(log_messages) do

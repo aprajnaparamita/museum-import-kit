@@ -352,6 +352,19 @@ local function scan_chunk_columns(job, cx, cz)
 	local base_x = job.anchor_x + (cx * C - job.origin_x)
 	local base_z = job.anchor_z + (cz * C - job.origin_z)
 	local ymin, ymax = GAP_Y_MIN + job.dest_y_offset, GAP_Y_MAX + job.dest_y_offset
+	-- Nether ceiling band: the merge's "surface" is the FLOOR. At the
+	-- nether band the topmost terrain run is the CEILING (the capture's
+	-- roof / the mapgen's bedrock plate), and treating it as the surface
+	-- skinned roofs, grew netherrack pillars at ceiling height and made
+	-- chunk-edge material jumps (owner findings 2026-09-26). Tops at or
+	-- above dy+122 (the vanilla ceiling band bottom, matching the
+	-- writer's roof regen band) are therefore excluded from the surface
+	-- scan -- the topmost run BELOW them is the walkable ground.
+	local ceil_y = nil
+	local btype = job.dimension_type
+	if btype == "nether" or (not btype and (job.dest_y_offset or 0) <= -28000) then
+		ceil_y = (job.dest_y_offset or 0) + 122
+	end
 
 	local vm = core.get_voxel_manip()
 	local emin, emax = vm:read_from_map({ x = base_x, y = ymin, z = base_z },
@@ -370,7 +383,7 @@ local function scan_chunk_columns(job, cx, cz)
 				local cid = data[area:index(x, y, z)]
 				if cid ~= core.CONTENT_AIR and cid ~= core.CONTENT_IGNORE then
 					if not top then top = y end
-					if is_terrain(cid) then
+					if is_terrain(cid) and (not ceil_y or y < ceil_y) then
 						top_count = top_count + 1
 						if top_count <= 4 then tops[top_count] = y end
 						if top_count >= 4 then break end

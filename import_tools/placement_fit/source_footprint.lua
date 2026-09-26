@@ -166,8 +166,15 @@ end
 
 local region_dir = arg[1]
 local out_path = arg[2]
+-- Optional band hint: "nether" makes the surface scan treat the vanilla
+-- ceiling band (y >= 122: the flat bedrock roof of a 1.12 nether capture)
+-- as ceiling, not ground -- the merge's surface must be the FLOOR there
+-- (owner findings 2026-09-26: skinned roofs / netherrack pillars came
+-- from roof heights entering the height field). Pass it for NETHER
+-- captures only: overworld terrain legitimately tops out above 122.
+local CEIL_Y = (arg[3] == "nether") and 122 or nil
 if not region_dir or not out_path then
-	io.stderr:write("usage: luajit source_footprint.lua <source_region_dir> <output_json_path>\n")
+	io.stderr:write("usage: luajit source_footprint.lua <source_region_dir> <output_json_path> [nether]\n")
 	os.exit(1)
 end
 
@@ -222,7 +229,7 @@ for _, fpath in ipairs(files) do
 						local cur2 = solid_y[idx]
 						if not cur2 or y > cur2 then solid_y[idx] = y end
 					end
-					if is_terrain_name(name) then
+					if is_terrain_name(name) and (not CEIL_Y or y < CEIL_Y) then
 						local tops = terrain_tops[idx]
 						if not tops then
 							tops = {}

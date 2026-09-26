@@ -169,10 +169,15 @@ blk(139, { default={name="minecraft:cobblestone_wall"}, [1]={name="minecraft:mos
 blk(145, { default={name="minecraft:anvil"} }) -- meta 5 seen
 blk(146, { default={name="minecraft:trapped_chest"} }) -- meta 2 seen
 for m, f in pairs(H_CHEST) do P[146][m] = {name="minecraft:trapped_chest", props={facing=f}} end
-blk(152, { default={name="minecraft:nether_quartz_ore"} }) -- seen
-blk(153, { default={name="minecraft:hopper"} })            -- 16k seen!
-for m, f in pairs(H_CHEST) do P[153][m] = {name="minecraft:hopper", props={facing=f}} end
-P[153][0] = {name="minecraft:hopper", props={facing="down"}}
+blk(152, { default={name="minecraft:redstone_block"} })  -- 13 seen, meta 0
+blk(153, { default={name="minecraft:nether_quartz_ore"} }) -- 16k seen, meta 0 (ore signature: never facing metas)
+-- 2026-09-26 fix: 153 was labelled hopper, which made 16k quartz-ore
+-- blocks import as hoppers (owner: "thousands of hoppers"). Real 1.12 ids:
+-- 152 redstone_block, 153 nether_quartz_ore, 154 hopper. Hopper meta 0 =
+-- facing down, 1 = up, 2-5 = the H_CHEST horizontal facings.
+blk(154, { default={name="minecraft:hopper", props={facing="down"}},
+	[1]={name="minecraft:hopper", props={facing="up"}} })
+for m, f in pairs(H_CHEST) do P[154][m] = {name="minecraft:hopper", props={facing=f}} end
 blk(155, { default={name="minecraft:quartz_block"}, [1]={name="minecraft:chiseled_quartz_block"},
 	[2]={name="minecraft:quartz_pillar"} }) -- 0,2 seen
 blk(156, { default={name="minecraft:quartz_stairs"} }) -- metas 0,2,3 seen

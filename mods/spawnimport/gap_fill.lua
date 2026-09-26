@@ -300,14 +300,19 @@ end
 -- (see HANDOVER.md). Returns { {cx=, cz=}, ... }.
 gap_fill.RING = 2
 
-function gap_fill.ring_chunks(chunk_bounds, real)
+-- `placed` (optional, cx_cz -> true): chunks the importer will place.
+-- They are NEVER fill chunks even when the footprint lacks them (a
+-- footprint can be incomplete -- legacy_skipped etc. -- and merging over
+-- an already-placed captured chunk destroys it; 2026-09-26).
+function gap_fill.ring_chunks(chunk_bounds, real, placed)
 	local R = gap_fill.RING
 	local ring = {}
 	-- the scan window must grow with the ring radius or edge chunks of a
 	-- wide base never see their second-ring neighbours
 	for cx = chunk_bounds.x_min - R, chunk_bounds.x_max + R do
 		for cz = chunk_bounds.z_min - R, chunk_bounds.z_max + R do
-			if not real[cx .. "_" .. cz] then
+			local key = cx .. "_" .. cz
+			if not real[key] and not (placed and placed[key]) then
 				local touched = false
 				for ox = -R, R do
 					for oz = -R, R do
@@ -720,6 +725,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 				local nx, nz = cx + d[1], cz + d[2]
 				local nkey = nx .. "_" .. nz
 				if not domain[nkey] and not real[nkey] and not grow[nkey]
+					and not (job.gap_placed and job.gap_placed[nkey])
 					and not is_foreign(nx, nz) then
 					grow[nkey] = { cx = nx, cz = nz }
 				end

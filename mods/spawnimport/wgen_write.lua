@@ -139,6 +139,34 @@ end
 -- to rock ... should be more natural looking", 2026-09-25).
 local SCREE_FADE = 7
 
+-- Dimension-aware fallback materials (2026-09-26 audit): the old default
+-- was overworld dirt_with_grass/dirt (sand under water) for every band --
+-- grass skins over the nether lava sea, grass/stone columns into the End
+-- void (AUDIT-2026-09-26.md #3/#4). job.dimension_type is authoritative;
+-- the dest_y_offset fallback keeps synthetic test jobs working.
+local function band(job)
+	local b = job.dimension_type
+	if b == "nether" or b == "end" or b == "overworld" then return b end
+	local dy = job.dest_y_offset or 0
+	if dy <= -28000 then return "nether" end
+	if dy <= -20000 then return "end" end
+	return "overworld"
+end
+
+local function default_top(job, is_water)
+	local b = band(job)
+	if b == "nether" then return "mcl_nether:netherrack" end
+	if b == "end" then return "mcl_end:end_stone" end
+	return is_water and "mcl_core:sand" or "mcl_core:dirt_with_grass"
+end
+
+local function default_filler(job, is_water)
+	local b = band(job)
+	if b == "nether" then return "mcl_nether:netherrack" end
+	if b == "end" then return "mcl_end:end_stone" end
+	return is_water and "mcl_core:sand" or "mcl_core:dirt"
+end
+
 -- ---------------------------------------------------------------------
 -- WRITE: rebuild one merge chunk
 -- ---------------------------------------------------------------------
@@ -213,10 +241,8 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 						filler = col.smat
 					end
 				end
-				top = top or cid(surf.node_top
-					or (is_water and "mcl_core:sand" or "mcl_core:dirt_with_grass"))
-				filler = filler or cid(surf.node_filler
-					or (is_water and "mcl_core:sand" or "mcl_core:dirt"))
+				top = top or cid(surf.node_top or default_top(job, is_water))
+				filler = filler or cid(surf.node_filler or default_filler(job, is_water))
 				depth_top = surf.depth_top or 1
 				depth_filler = surf.depth_filler or 3
 

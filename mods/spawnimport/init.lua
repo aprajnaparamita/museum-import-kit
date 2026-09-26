@@ -593,6 +593,9 @@ local function new_job(p)
 	-- no separate dimensions -- Nether/End are just other Y ranges in the
 	-- same coordinate space (mods/CORE/mcl_init/init.lua).
 	self.dest_y_offset = p.dest_y_offset or 0
+	-- "overworld"/"nether"/"end" -- the merge writer picks fallback
+	-- materials per band from this (see wgen_write.band)
+	self.dimension_type = p.dimension_type
 	self.status = "running"
 	self.started_at = os.time()
 
@@ -606,6 +609,15 @@ local function new_job(p)
 	self.chunk_bounds = p.chunk_bounds
 
 	self.cursor_list = {}
+	-- Every chunk this job will PLACE (cx_cz -> true). The gap-fill ring
+	-- must never write one of these -- the footprint can legitimately
+	-- disagree with the placement list (2026-09-26: Hausemaster's
+	-- footprint had legacy_skipped=8, and the merge happily re-wrote the
+	-- top zone of those 8 already-placed captured chunks, eating the
+	-- nether roof and skinning it -- "the chunks above the base have no
+	-- bedrock"). The PLACEMENT LIST is the source of truth for "is this
+	-- chunk captured", not the footprint.
+	self.gap_placed = {}
 	-- p.region_dir lets a caller that already resolved the exact region
 	-- directory (a survey pass that's already handled WorldTools-nested vs.
 	-- flat-vanilla vs. DIM-1/DIM1 layouts) skip reconstruction here.
@@ -639,14 +651,15 @@ local function new_job(p)
 			local locations = anvil.read_region_locations(header)
 			for _, loc in ipairs(locations) do
 				local include = true
+				local chunk_x = region_x * 32 + loc.local_x
+				local chunk_z = region_z * 32 + loc.local_z
 				if self.chunk_bounds then
-					local chunk_x = region_x * 32 + loc.local_x
-					local chunk_z = region_z * 32 + loc.local_z
 					include = chunk_x >= self.chunk_bounds.x_min and chunk_x <= self.chunk_bounds.x_max
 						and chunk_z >= self.chunk_bounds.z_min and chunk_z <= self.chunk_bounds.z_max
 				end
 				if include then
 					self.cursor_list[#self.cursor_list + 1] = { region_path = fpath, offset = loc.offset }
+					self.gap_placed[chunk_x .. "_" .. chunk_z] = true
 				end
 			end
 		else
@@ -671,7 +684,7 @@ local function new_job(p)
 		if real then
 			local t0 = core.get_us_time()
 			self.gap_real = real
-			self.gap_fill_chunks = gap_fill.ring_chunks(self.chunk_bounds, real)
+			self.gap_fill_chunks = gap_fill.ring_chunks(self.chunk_bounds, real, self.gap_placed)
 			local elapsed_s = (core.get_us_time() - t0) / 1e6
 			core.log("action", string.format(
 				"[spawnimport] gap-fill: %d merge (ring) chunks in %.2fs (%s)",

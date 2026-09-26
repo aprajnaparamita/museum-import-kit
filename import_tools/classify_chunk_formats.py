@@ -24,7 +24,8 @@ def peek(region_dir):
         if len(data) < 4096:
             continue
         for i in range(1024):
-            off = struct.unpack(">I", b"\x00" + data[i * 3:i * 3 + 3])[0]
+            o = i * 4  # region header: 1024 entries x 4 bytes (3-byte BE sector offset + 1-byte count)
+            off = struct.unpack(">I", b"\x00" + data[o:o + 3])[0]
             if off == 0 or off * 4096 + 5 > len(data):
                 continue
             start = off * 4096

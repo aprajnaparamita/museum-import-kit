@@ -109,15 +109,27 @@ fi
 BACKUP="/tmp/micro_deploy_backup_$$"
 mkdir -p "$BACKUP"
 log "backing up deployed auth/players"
-cp "$DEPLOYED/auth.sqlite" "$BACKUP/auth.sqlite" 2>/dev/null || true
-cp "$DEPLOYED/players.sqlite" "$BACKUP/players.sqlite" 2>/dev/null || true
+# Player state can live in auth.sqlite + players.sqlite (older layout) OR
+# in a players/ directory (what the client writes for THIS world) -- back
+# up all three or the owner's position/inventory silently resets every
+# deploy (2026-09-26: caught the empty players/ dir being copied over the
+# real one).
+for f in auth.sqlite players.sqlite players; do
+    if [ -e "$DEPLOYED/$f" ]; then
+        cp -R "$DEPLOYED/$f" "$BACKUP/$f"
+    fi
+done
 
 log "deploying staging -> live world"
 rm -rf "$DEPLOYED"
 mkdir -p "$DEPLOYED"
 cp -R "$STAGING/." "$DEPLOYED/"
-[ -f "$BACKUP/auth.sqlite" ] && cp "$BACKUP/auth.sqlite" "$DEPLOYED/auth.sqlite"
-[ -f "$BACKUP/players.sqlite" ] && cp "$BACKUP/players.sqlite" "$DEPLOYED/players.sqlite"
+for f in auth.sqlite players.sqlite players; do
+    if [ -e "$BACKUP/$f" ]; then
+        rm -rf "$DEPLOYED/$f"
+        cp -R "$BACKUP/$f" "$DEPLOYED/$f"
+    fi
+done
 rm -rf "$DEPLOYED/worldmods/museumloot"
 
 log "done -- deployed to '2b2t Museum TEST'"

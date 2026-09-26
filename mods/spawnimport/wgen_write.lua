@@ -289,10 +289,12 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 				local end_void_col = false
 				if band(job) == "end" then
 					if col.S and B > col.S + 8 then
-						island_slab_lo = math.max(B - ISLAND_SLAB, col.S + 1)
-						if island_slab_lo > col.S + 1 then
-							rewrite_lo = GAP_Y_MIN + dy -- floats: clear the layer below
-						end
+						-- island continuation: slab at the merged level,
+						-- ALWAYS void below (even a mild raise must not
+						-- keep the mapgen's own island layer -- the owner's
+						-- "end stone still spawning far below")
+						island_slab_lo = B - ISLAND_SLAB
+						rewrite_lo = GAP_Y_MIN + dy
 					else
 						-- Natural-level column (Mineclonia's own end
 						-- islands/carpet generated FAR below the captured

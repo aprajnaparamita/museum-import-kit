@@ -1360,6 +1360,142 @@ os.remove(nfp_path)
 os.remove(n_manifest_path)
 
 -- -----------------------------------------------------------------
+-- Test 6c: End band merge -- island slabs over void, void stays void
+-- (2026-09-27: the first End-void build CRASHED the audit with
+-- area:index(x, nil, z) on fully-cleared columns -- green harness let
+-- it through because no test produced a written void column. This runs
+-- a real End job that does.) Wrapped in its own function scope: the
+-- harness main chunk hit LuaJIT's 200-locals limit otherwise.
+-- -----------------------------------------------------------------
+local function test_6c()
+print("")
+print("=== Test 6c: End island slabs + void columns ===")
+
+mock_registered_nodes["mcl_end:end_stone"] = {}
+
+local EDY = -26880               -- the real End band offset
+local EGAP_X, EGAP_Z = GAP_X, GAP_Z + 12000
+local ETARGET = 60               -- the captured island's surface (source y)
+local function egap_dest(cx, cz)
+	return EGAP_X + (cx * 16 - ORIGIN_X), EGAP_Z + (cz * 16 - ORIGIN_Z)
+end
+-- natural terrain = Mineclonia's own end islands FAR below (source y
+-- ~-120), on half the columns; the rest is pure void. Both must end as
+-- clean void below the merged island (the owner's "end stone ... still
+-- spawning far below" / "it's all still spawning far below").
+for cz = MIN_CZ - 3, MIN_CZ + 3 do
+	for cx = MIN_CX - 3, MAX_CX + 3 do
+		local bx, bz = egap_dest(cx, cz)
+		for lz = 0, 15 do
+			for lx = 0, 15 do
+				local x, z = bx + lx, bz + lz
+				if (cx + cz) % 2 == 0 then
+					for y = -124, -120 do
+						-- seeded as a MARKER material (stone): the End fill
+						-- writes end_stone only, so any surviving stone in a
+						-- merge column is un-cleared generated layer
+						fake_map[x .. "," .. (y + EDY) .. "," .. z] =
+							core.get_content_id("mcl_core:stone")
+					end
+				end
+			end
+		end
+	end
+end
+
+local efp_path = os.tmpname()
+do
+	local chunks = {}
+	for _, c in ipairs(CHUNKS) do
+		local cols = {}
+		for i = 1, 256 do cols[i] = ETARGET end
+		chunks[#chunks + 1] = {
+			cx = c.cx, cz = c.cz, height = ETARGET, is_water = false,
+			biome = "minecraft:the_end",
+			cols = cols, solid_cols = cols, terrain_cols = cols,
+		}
+	end
+	local f = io.open(efp_path, "w")
+	f:write(simple_json_encode({ chunks = chunks }))
+	f:close()
+end
+local e_manifest = {
+	{
+		display_name = "endtest",
+		source_region_dir = REGION_DIR,
+		source_base_folder = WORLD_FOLDER,
+		dimension_type = "end",
+		dest_anchor_x = EGAP_X,
+		dest_anchor_z = EGAP_Z,
+		dest_y_offset = EDY,
+		origin_x = ORIGIN_X,
+		origin_z = ORIGIN_Z,
+		dest_bbox = { x_min = EGAP_X, x_max = EGAP_X + EXT_W, z_min = EGAP_Z, z_max = EGAP_Z + EXT_D },
+		chunk_bounds = {
+			x_min = MIN_CX - 1, x_max = MAX_CX + 1,
+			z_min = MIN_CZ - 1, z_max = MIN_CZ + 1,
+		},
+		footprint_path = efp_path,
+	},
+}
+local e_manifest_path = os.tmpname()
+do
+	local f = io.open(e_manifest_path, "w")
+	f:write(simple_json_encode(e_manifest))
+	f:close()
+end
+local ok_e, msg_e = run_museumimport_command("start " .. e_manifest_path .. " 5")
+check("endtest import accepted", ok_e == true, tostring(msg_e))
+run_job_to_completion(400)
+local e_finished = false
+for _, m in ipairs(chat_messages["tester"] or {}) do
+	if m:match("^%[spawnimport%] endtest: done%.") then e_finished = true end
+end
+-- job reported done == finish() ran the AUDIT over written void columns
+-- without crashing (the exact 2026-09-27 crash)
+check("endtest job reported done (audit survives void columns)", e_finished)
+
+local EW0x = EGAP_X + ((MIN_CX - 1) * 16 - ORIGIN_X)
+local EW0z = EGAP_Z + ((MIN_CZ - 1) * 16 - ORIGIN_Z)
+local EW1x = EGAP_X + ((MAX_CX + 1) * 16 + 15 - ORIGIN_X)
+local EW1z = EGAP_Z + ((MIN_CZ + 1) * 16 + 15 - ORIGIN_Z)
+local deep_endstone, slab_endstone = 0, 0
+for key, cid in pairs(fake_map) do
+	local x, y, z = key:match("^(%-?%d+),(%-?%d+),(%-?%d+)$")
+	x, y, z = tonumber(x), tonumber(y), tonumber(z)
+	if x and x >= EW0x and x <= EW1x and z >= EW0z and z <= EW1z then
+		local cx = math.floor((x - EGAP_X + ORIGIN_X) / 16)
+		local cz = math.floor((z - EGAP_Z + ORIGIN_Z) / 16)
+		if not CHUNK_SET[cx .. "," .. cz] then
+			-- deep-only: the real capture's own stone legitimately seam-copies
+			-- into surface/fill positions, but nothing writes stone DEEP
+			if content_name_of[cid] == "mcl_core:stone" and y < EDY - 30 then
+				deep_endstone = deep_endstone + 1
+				if deep_endstone <= 3 then
+					print(string.format("  [uncleared layer sample] (%d,%d,%d)", x, y, z))
+				end
+			end
+			if content_name_of[cid] == "mcl_end:end_stone"
+				and y > EDY and y <= EDY + ETARGET then slab_endstone = slab_endstone + 1 end
+		end
+	end
+end
+check("no generated end stone far below the island (deep layer cleared)",
+	deep_endstone == 0, tostring(deep_endstone))
+check("island slab written at the merged level", slab_endstone > 0, tostring(slab_endstone))
+
+local e_audit_failed = false
+for _, m in ipairs(log_messages) do
+	if m.msg:match("audit FAILED") and m.msg:match("endtest") then e_audit_failed = true end
+end
+check("endtest gap_fill.audit did not fail", not e_audit_failed)
+
+os.remove(efp_path)
+os.remove(e_manifest_path)
+end
+test_6c()
+
+-- -----------------------------------------------------------------
 
 print("")
 if failures == 0 then

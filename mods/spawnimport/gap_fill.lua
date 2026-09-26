@@ -968,7 +968,14 @@ function gap_fill.audit(job, plan)
 					end
 				end
 				surface[skey] = S or top
-				surface_name[skey] = cid_name(data[area:index(x, surface[skey], z)])
+				-- End island model: a cleared void column legitimately has
+				-- NO surface at all (end_void_col writes pure air) -- the
+				-- audit must skip it, not index with nil (2026-09-27: that
+				-- is exactly how the first End-void build crashed in
+				-- finish()).
+				if surface[skey] then
+					surface_name[skey] = cid_name(data[area:index(x, surface[skey], z)])
+				end
 				nat[skey] = (col.S and math.floor(col.S + 0.5)) or surface[skey]
 				if col.S and col.B and math.abs(col.B - col.S) > 0.5 then
 					moved[skey] = true

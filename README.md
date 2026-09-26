@@ -1,17 +1,16 @@
 # 2b2t Museum import kit
 
 Everything needed to import the 2b2tmuseum-WDL archive into a single packed
-Luanti / Mineclonia world on another machine.
-
-Built after a full local run reached 189/205 bases; the remaining work is
-just running this again somewhere with reliable storage.
+Luanti / Mineclonia world. Explore some of the greatest bases ever made
+without needing to buy a subscription. This is the code used on
+FriedcakeSMP to laod bases.
 
 ## What you need on the remote box
 
 1. **Luanti 5.17.x** (server build is enough — no GUI needed; the
    client must run the SAME Mineclonia as the server).
 2. **Mineclonia** in `games/mineclonia`.
-3. **The WDL archive** — rsync `~/dev/2b2tmuseum-WDL` across (~13 GB).
+3. **The WDL archive** — clone the github  (~13 GB).
 4. **This kit.**
 5. **Disk**: budget ~25 GB for the finished world. The local run reached
    8.9 GB at 189/205, and that was after two corruption/salvage cycles;

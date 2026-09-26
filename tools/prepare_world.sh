@@ -41,7 +41,7 @@ museum_target_bases = $TARGET
 CONF
 
 echo "=== first boot, to generate map_meta.txt ==="
-timeout 120 "$LUANTI/bin/luantiserver" --server --config "$KIT/tools/import.conf" \
+timeout 120 "$LUANTI/bin/luantiserver" --config "$KIT/tools/import.conf" \
   --world "$WORLD" --gameid mineclonia --logfile /tmp/firstboot.log </dev/null >/dev/null 2>&1 || true
 [ -f "$WORLD/map_meta.txt" ] || { echo "ERROR: map_meta.txt was not created"; exit 1; }
 

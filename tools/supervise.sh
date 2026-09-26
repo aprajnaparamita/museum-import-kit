@@ -23,7 +23,8 @@ LUANTI="${LUANTI_BIN:-luantiserver}"
 
 # Never sit in the world's own filesystem: if the drive drops, the shell's
 # cwd becomes invalid and every subsequent command fails with getcwd errors.
-cd /private/tmp || exit 1
+# (portable: /private/tmp is macOS; use $TMPDIR or /tmp on Linux)
+cd "${TMPDIR:-/tmp}" || exit 1
 
 placed () {
   python3 - "$WORLD/mod_storage.sqlite" <<'PY'
@@ -74,7 +75,7 @@ for attempt in $(seq 1 "$MAX"); do
     echo "[supervisor] COMPLETE: $n/$TARGET bases placed"; exit 0
   fi
   echo "[supervisor] attempt $attempt: $n/$TARGET placed, starting server $(date '+%H:%M:%S')"
-  "$LUANTI" --server --config "$CONF" --world "$WORLD" --gameid mineclonia \
+  "$LUANTI" --config "$CONF" --world "$WORLD" --gameid mineclonia \
     --logfile "$LOG" < /dev/null >> "${LOG%.log}.out" 2>&1
   rc=$?
 

@@ -10,7 +10,7 @@ FACING = {
     4: ('x', False),
     5: ('x', True),
 }
-SOURCE_PRIORITY = {'final': 0}
+SOURCE_PRIORITY = {'final': 0, 'wiki': 1, 'mapartindex': 1}
 
 by_size = defaultdict(list)
 for p in library:

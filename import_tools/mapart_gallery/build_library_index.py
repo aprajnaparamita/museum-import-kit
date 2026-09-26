@@ -159,7 +159,13 @@ def build_index(check_animated=True):
     final_manifest = load_final_manifest()
     n_rejected_animated = 0
 
-    for source in ('final',):
+    # All art pools (owner 2026-09-26: "the gallery wall only has things
+    # from final/ -- none of the art from the other sources"). The
+    # final/-only scoping had dropped wiki/ and mapartindex/; final/ is
+    # still the preferred pool (see SOURCE_WEIGHTS/SOURCE_PRIORITY in
+    # auto_gallery_fill.py / build_placement_plan.py) but the others fill
+    # the remaining frames.
+    for source in ('final', 'wiki', 'mapartindex'):
         pieces = scan_dir(source)
         for base_id, tiles in pieces.items():
             rows = max(rc[0] for rc in tiles)

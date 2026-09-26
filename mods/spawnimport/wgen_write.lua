@@ -286,10 +286,24 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 				-- raise) keep the natural island as their ground.
 				local ISLAND_SLAB = 52 -- ~= the captured island's thickness at Endhaven
 				local island_slab_lo = nil
-				if band(job) == "end" and col.S and B > col.S + 8 then
-					island_slab_lo = math.max(B - ISLAND_SLAB, col.S + 1)
-					if island_slab_lo > col.S + 1 then
-						rewrite_lo = GAP_Y_MIN + dy -- floats: clear the layer below
+				local end_void_col = false
+				if band(job) == "end" then
+					if col.S and B > col.S + 8 then
+						island_slab_lo = math.max(B - ISLAND_SLAB, col.S + 1)
+						if island_slab_lo > col.S + 1 then
+							rewrite_lo = GAP_Y_MIN + dy -- floats: clear the layer below
+						end
+					else
+						-- Natural-level column (Mineclonia's own end
+						-- islands/carpet generated FAR below the captured
+						-- island, 2026-09-26 owner: "there is still a layer
+						-- of end stone ... at -27010 ... it's all still
+						-- spawning far below"). The museum's End is the
+						-- captured islands over clean void -- generated
+						-- terrain in the merge domain that is NOT part of
+						-- the island continuation is cleared entirely.
+						end_void_col = true
+						rewrite_lo = GAP_Y_MIN + dy
 					end
 				end
 
@@ -309,7 +323,9 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 				for y = rewrite_hi, rewrite_lo + 1, -1 do
 					local idx = area:index(x, y, z)
 					local c
-					if y > B then
+					if end_void_col then
+						c = c_air
+					elseif y > B then
 						if is_water and y <= sea then
 							-- liquid column: fill to the sea/lava surface.
 							-- The sand-top rule is overworld water only --

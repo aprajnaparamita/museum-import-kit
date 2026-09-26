@@ -59,14 +59,14 @@ from tga_write import save_tga
 from PIL import Image
 
 FACING = {2: ('z', True), 3: ('z', False), 4: ('x', False), 5: ('x', True)}
-SOURCE_PRIORITY = {'final': 0}
-SOURCE_WEIGHTS = {'final': 1}
-# Single source now (~/dev/museum-maparts/output/final/) -- other source
-# dirs were removed when the gallery fill was scoped to final/ only.
-# SOURCE_WEIGHTS survives for pick_piece's weighted random (all-equal with
-# one source) -- it was left dangling by that cleanup and crashed every
-# fill with NameError (caught by smoke-testing the fill before wiring it
-# into micro_rebuild, 2026-09-26).
+SOURCE_PRIORITY = {'final': 0, 'wiki': 1, 'mapartindex': 1}
+SOURCE_WEIGHTS = {'final': 4, 'wiki': 1, 'mapartindex': 1}
+# All three art pools feed the gallery again (owner 2026-09-26: "only
+# things from final/, none of the art from the other sources") -- final/
+# (the curated 20 artworks) stays the preferred pool via these weights;
+# wiki/ and mapartindex/ fill the rest. SOURCE_WEIGHTS feeds
+# pick_piece's weighted random, SOURCE_PRIORITY the placement plan's
+# tiering.
 
 
 def log(msg):

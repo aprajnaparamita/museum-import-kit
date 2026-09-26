@@ -60,8 +60,13 @@ from PIL import Image
 
 FACING = {2: ('z', True), 3: ('z', False), 4: ('x', False), 5: ('x', True)}
 SOURCE_PRIORITY = {'final': 0}
+SOURCE_WEIGHTS = {'final': 1}
 # Single source now (~/dev/museum-maparts/output/final/) -- other source
 # dirs were removed when the gallery fill was scoped to final/ only.
+# SOURCE_WEIGHTS survives for pick_piece's weighted random (all-equal with
+# one source) -- it was left dangling by that cleanup and crashed every
+# fill with NameError (caught by smoke-testing the fill before wiring it
+# into micro_rebuild, 2026-09-26).
 
 
 def log(msg):

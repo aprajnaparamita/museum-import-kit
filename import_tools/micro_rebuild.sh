@@ -86,6 +86,22 @@ if grep -qi "ServerError" "$LOGDIR/micro_pass2.log"; then
     exit 1
 fi
 
+log "resetting mapart-gallery variety registry for this fresh run"
+echo '{}' > "$KIT/import_tools/mapart_gallery/used_pieces_registry.json"
+
+log "mapart gallery fill (Tactical Nuke's gallery + real-map cluster fixes)"
+# The gallery's own engine run must NOT see a museum_manifest_path: the
+# batch would re-run and museumloot's auto-kick can request_shutdown under
+# the gallery's worldmod work. Strip that one line from the run conf.
+sed '/^museum_manifest_path/d' "$LUANTI_CONF" > "$LOGDIR/micro_gallery.conf"
+GALLERY_LUANTI_BIN="$LUANTI_BIN" GALLERY_LUANTI_CONF="$LOGDIR/micro_gallery.conf" \
+    python3 "$KIT/import_tools/mapart_gallery/auto_gallery_fill.py" \
+        --world "$STAGING" --manifest "$STAGING/museum_manifest.json" \
+        > "$LOGDIR/micro_gallery.log" 2>&1 || {
+    echo "ERROR: mapart gallery fill failed -- see $LOGDIR/micro_gallery.log" >&2
+    exit 1
+}
+
 log "sqlite integrity check"
 for f in map.sqlite mod_storage.sqlite; do
     [ -f "$STAGING/$f" ] || continue

@@ -1158,6 +1158,172 @@ os.remove(fp_path)
 os.remove(gap_manifest_path)
 
 -- -----------------------------------------------------------------
+-- Test 6b: nether band merge -- lava sea matching + roof regen + band
+-- materials (2026-09-26, AUDIT-2026-09-26.md #1/#2/#4).
+-- -----------------------------------------------------------------
+print("")
+print("=== Test 6b: nether band merge (lava + roof + materials) ===")
+
+mock_registered_nodes["mcl_nether:netherrack"] = {}
+mock_registered_nodes["mcl_nether:soul_sand"] = {}
+mock_registered_nodes["mcl_nether:nether_lava_source"] = { groups = { liquid = 1 } }
+mock_registered_nodes["mcl_core:bedrock"] = {}
+
+local NDY = -29072            -- the real nether band offset
+local NGAP_X, NGAP_Z = GAP_X, GAP_Z + 6000
+local NTARGET = 50            -- the capture's ground level (source y)
+local NNAT = 30               -- natural generated floor (source y)
+local NSEA = 36               -- the verified nether lava sea surface (source y)
+local function ngap_dest(cx, cz)
+	return NGAP_X + (cx * 16 - ORIGIN_X), NGAP_Z + (cz * 16 - ORIGIN_Z)
+end
+local function nseed(x, z, top, surf, sub)
+	for y = top - 8, top do
+		local name
+		if y == top then name = surf
+		elseif y >= top - 2 then name = sub
+		else name = "mcl_nether:netherrack" end
+		fake_map[x .. "," .. (y + NDY) .. "," .. z] = content_id_of[name] or core.get_content_id(name)
+	end
+end
+for cz = MIN_CZ - 3, MIN_CZ + 3 do
+	for cx = MIN_CX - 3, MAX_CX + 3 do
+		local bx, bz = ngap_dest(cx, cz)
+		for lz = 0, 15 do
+			for lx = 0, 15 do
+				nseed(bx + lx, bz + lz, NNAT, "mcl_nether:soul_sand", "mcl_nether:netherrack")
+			end
+		end
+	end
+end
+-- lava pool: floor at source y 20 with lava up to the sea surface (36) --
+-- its merged column is below the lava sea and must surface-fill with lava
+do
+	local bx, bz = ngap_dest(MIN_CX, MIN_CZ + 1)
+	for lz = 0, 7 do
+		for lx = 0, 7 do
+			local x, z = bx + lx, bz + lz
+			nseed(x, z, 20, "mcl_nether:soul_sand", "mcl_nether:netherrack")
+			for y = 21, NSEA do
+				fake_map[x .. "," .. (y + NDY) .. "," .. z] =
+					core.get_content_id("mcl_nether:nether_lava_source")
+			end
+		end
+	end
+end
+
+-- synthetic footprint: flat capture ground at NTARGET (source space)
+local nfp_path = os.tmpname()
+do
+	local chunks = {}
+	for _, c in ipairs(CHUNKS) do
+		local cols = {}
+		for i = 1, 256 do cols[i] = NTARGET end
+		chunks[#chunks + 1] = {
+			cx = c.cx, cz = c.cz, height = NTARGET, is_water = false,
+			biome = "minecraft:nether_wastes",
+			cols = cols, solid_cols = cols, terrain_cols = cols,
+		}
+	end
+	local f = io.open(nfp_path, "w")
+	f:write(simple_json_encode({ chunks = chunks }))
+	f:close()
+end
+local n_manifest = {
+	{
+		display_name = "nephertest",
+		source_region_dir = REGION_DIR,
+		source_base_folder = WORLD_FOLDER,
+		dimension_type = "nether",
+		dest_anchor_x = NGAP_X,
+		dest_anchor_z = NGAP_Z,
+		dest_y_offset = NDY,
+		origin_x = ORIGIN_X,
+		origin_z = ORIGIN_Z,
+		dest_bbox = { x_min = NGAP_X, x_max = NGAP_X + EXT_W, z_min = NGAP_Z, z_max = NGAP_Z + EXT_D },
+		chunk_bounds = {
+			x_min = MIN_CX - 1, x_max = MAX_CX + 1,
+			z_min = MIN_CZ - 1, z_max = MIN_CZ + 1,
+		},
+		footprint_path = nfp_path,
+	},
+}
+local n_manifest_path = os.tmpname()
+do
+	local f = io.open(n_manifest_path, "w")
+	f:write(simple_json_encode(n_manifest))
+	f:close()
+end
+local ok_n, msg_n = run_museumimport_command("start " .. n_manifest_path .. " 5")
+check("nephertest import accepted", ok_n == true, tostring(msg_n))
+run_job_to_completion(120)
+local n_finished = false
+for _, m in ipairs(chat_messages["tester"] or {}) do
+	if m:match("^%[spawnimport%] nephertest: done%.") then n_finished = true end
+end
+check("nephertest job reported done", n_finished)
+
+-- scan the merge chunks (everything in the window that is not a captured
+-- chunk): roof plate present, lava surface at the sea, band materials
+local NW0x = NGAP_X + ((MIN_CX - 1) * 16 - ORIGIN_X)
+local NW0z = NGAP_Z + ((MIN_CZ - 1) * 16 - ORIGIN_Z)
+local NW1x = NGAP_X + ((MAX_CX + 1) * 16 + 15 - ORIGIN_X)
+local NW1z = NGAP_Z + ((MIN_CZ + 1) * 16 + 15 - ORIGIN_Z)
+local function is_merge_col(x, z)
+	local cx = math.floor((x - NGAP_X + ORIGIN_X) / 16)
+	local cz = math.floor((z - NGAP_Z + ORIGIN_Z) / 16)
+	return not CHUNK_SET[cx .. "," .. cz]
+end
+local roof_bad, roof_n = 0, 0
+local lava_hi, lava_at_sea = nil, 0
+local stone_fill, nether_fill = 0, 0
+for x = NW0x, NW1x do
+	for z = NW0z, NW1z do
+		if is_merge_col(x, z) then
+			roof_n = roof_n + 1
+			local r127 = content_name_of[fake_map[x .. "," .. (NDY + 127) .. "," .. z]]
+			local r126 = content_name_of[fake_map[x .. "," .. (NDY + 126) .. "," .. z]]
+			if r127 ~= "mcl_core:bedrock" or r126 ~= "mcl_core:bedrock" then
+				roof_bad = roof_bad + 1
+			end
+		end
+	end
+end
+for key, cid in pairs(fake_map) do
+	local x, y, z = key:match("^(%-?%d+),(%-?%d+),(%-?%d+)$")
+	x, y, z = tonumber(x), tonumber(y), tonumber(z)
+	if x and x >= NW0x and x <= NW1x and z >= NW0z and z <= NW1z and is_merge_col(x, z) then
+		local name = content_name_of[cid]
+		if name == "mcl_nether:nether_lava_source" then
+			if not lava_hi or y > lava_hi then lava_hi = y end
+			if y == NDY + NSEA then lava_at_sea = lava_at_sea + 1 end
+		end
+		if y < NDY + 30 then
+			if name == "mcl_core:stone" then stone_fill = stone_fill + 1 end
+			if name == "mcl_nether:netherrack" then nether_fill = nether_fill + 1 end
+		end
+	end
+end
+check("nether roof regenerated over fill chunks (bedrock plate at dy+126/127)",
+	roof_bad == 0 and roof_n > 0, string.format("%d/%d columns bad", roof_bad, roof_n))
+check("lava never rises above the nether lava sea (dy+36)",
+	lava_hi == nil or lava_hi <= NDY + NSEA, tostring(lava_hi and (lava_hi - NDY)))
+check("lava pool fills up to the sea surface", lava_at_sea > 0, tostring(lava_at_sea))
+check("no overworld stone in the nether raise fill", stone_fill == 0, tostring(stone_fill))
+check("nether raise fill uses netherrack", nether_fill > 0, tostring(nether_fill))
+
+local n_audit_line, n_audit_failed = nil, false
+for _, m in ipairs(log_messages) do
+	if m.msg:match("%[gap%-fill%] audit nephertest:") then n_audit_line = m.msg end
+	if m.msg:match("audit FAILED") and m.msg:match("nephertest") then n_audit_failed = true end
+end
+check("nephertest gap_fill.audit ran", n_audit_line ~= nil)
+check("nephertest gap_fill.audit did not fail", not n_audit_failed, tostring(n_audit_line))
+
+os.remove(nfp_path)
+os.remove(n_manifest_path)
+
+-- -----------------------------------------------------------------
 
 print("")
 if failures == 0 then

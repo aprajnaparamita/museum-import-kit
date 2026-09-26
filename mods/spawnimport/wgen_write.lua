@@ -167,6 +167,25 @@ local function default_filler(job, is_water)
 	return is_water and "mcl_core:sand" or "mcl_core:dirt"
 end
 
+-- underground "raise fill" material (under the soil skin, down to the old
+-- ground): stone overworld, end_stone in the End (the P5 "253-block stone
+-- column descending into the void" was this falling back to
+-- mcl_core:stone at the End band), netherrack in the Nether.
+local function default_stone(job)
+	local b = band(job)
+	if b == "nether" then return "mcl_nether:netherrack" end
+	if b == "end" then return "mcl_end:end_stone" end
+	return "mcl_core:stone"
+end
+
+-- the column liquid: water overworld, lava in the Nether (matches the
+-- mapgen's own nether lava, mcl_nether:nether_lava_source -- see
+-- AUDIT-2026-09-26 #2)
+local function default_liquid(job)
+	if band(job) == "nether" then return "mcl_nether:nether_lava_source" end
+	return "mcl_core:water_source"
+end
+
 -- ---------------------------------------------------------------------
 -- WRITE: rebuild one merge chunk
 -- ---------------------------------------------------------------------
@@ -184,9 +203,11 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 
 	local c_air = core.CONTENT_AIR
 	local c_ignore = core.CONTENT_IGNORE
-	local c_water = cid("mcl_core:water_source")
+	local c_liquid = cid(default_liquid(job))
 	local c_snow = cid("mcl_core:snow")
-	local c_stone = cid("mcl_core:stone")
+	local c_stone = cid(default_stone(job))
+	local c_bedrock = cid("mcl_core:bedrock")
+	local c_netherrack = cid("mcl_nether:netherrack")
 
 	local vm = core.get_voxel_manip()
 	local emin, emax = vm:read_from_map({ x = xmin, y = ymin, z = zmin },
@@ -252,14 +273,32 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 				-- untouched (caves/ores preserved).
 				local rewrite_lo = math.min(skin_lo, (col.S or B)) - 1
 
+				-- Nether ceiling band (2026-09-26, owner: "do the fill and
+				-- then re-generate the nether roof"): the capture's roof
+				-- profile is bedrock at dy+127/126 over netherrack (source
+				-- columns verified, AUDIT-2026-09-26 #1). The merge only
+				-- rewrites BELOW the band and then regenerates the roof
+				-- over this fill chunk, so captured and merged chunks share
+				-- one continuous ceiling at the seam.
+				local roof_lo, roof_hi = dy + 122, dy + 127
+				local do_roof = band(job) == "nether" and B < roof_lo - 2
+				local rewrite_hi = ymax
+				if do_roof then rewrite_hi = roof_lo - 1 end
+
 				-- clear/rebuild the rewritten zone
-				for y = ymax, rewrite_lo + 1, -1 do
+				for y = rewrite_hi, rewrite_lo + 1, -1 do
 					local idx = area:index(x, y, z)
 					local c
 					if y > B then
 						if is_water and y <= sea then
-							c = (y == sea and surf.node_water_top)
-								and cid(surf.node_water_top) or c_water
+							-- liquid column: fill to the sea/lava surface.
+							-- The sand-top rule is overworld water only --
+							-- nether lava beds keep the fill material (seam
+							-- copy matches real lake beds at the edges).
+							c = c_liquid
+							if y == sea and band(job) ~= "nether" and surf.node_water_top then
+								c = cid(surf.node_water_top)
+							end
 						else
 							c = c_air
 						end
@@ -273,6 +312,22 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 					end
 					data[idx] = c
 					p2data[idx] = 0
+				end
+
+				if do_roof then
+					for y = roof_lo, roof_hi do
+						local idx = area:index(x, y, z)
+						-- solid bedrock plate on top, bedrock/netherrack
+						-- mix below it (vanilla-shaped roof)
+						local c
+						if y >= roof_hi - 1 or wdl.noise2(x + y * 3, z, 7) < 0.35 then
+							c = c_bedrock
+						else
+							c = c_netherrack
+						end
+						data[idx] = c
+						p2data[idx] = 0
+					end
 				end
 
 				-- snow layer from the temperature map (land only)

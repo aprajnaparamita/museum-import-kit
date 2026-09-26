@@ -535,11 +535,23 @@ function gap_fill.build_plan(job, real, entries, opts)
 	-- the old world-level constant every End merge column read as water
 	-- and would have been flooded.
 	local SEA
-	if dy <= -20000 then
-		-- End / Nether placements (y bands near -26880 / -29072): these
-		-- dimensions have NO water (the End's and Nether's liquids are
-		-- lava, which is terrain here) -- never classify any column as
-		-- water or the merge floods it
+	local btype = job.dimension_type
+	local is_nether = btype == "nether" or (not btype and dy <= -28000)
+	local is_end = (not is_nether) and
+		(btype == "end" or (not btype and dy <= -20000))
+	if is_nether then
+		-- Nether: lava behaves like overworld water (owner ask: "match
+		-- lava lake beds and the lava surface"). The lava sea surface is
+		-- dest y -29036 = source y 36 -- verified from both the mapgen's
+		-- own nether lava and near-base columns (AUDIT-2026-09-26 #2),
+		-- NOT the vanilla 10/11 guess. Columns merged below it classify
+		-- as "aquatic" (no slope constraint into lava, liquid fills up to
+		-- the surface) exactly like overworld water columns.
+		SEA = dy + 36
+	elseif is_end then
+		-- The End has NO liquids at all -- never classify any column as
+		-- water or the merge floods it. (It also has no natural terrain
+		-- in the ring -- pure void, AUDIT-2026-09-26 #3.)
 		SEA = -31000
 	else
 		SEA = math.min(WATER_LEVEL, 62 + dy)
@@ -849,6 +861,14 @@ end
 -- floating-junk counts are informational).
 function gap_fill.audit(job, plan)
 	local t0 = core.get_us_time()
+	-- The nether ceiling band (dy+122..127) is a GENERATED ROOF, not
+	-- floating junk -- the "solid over air" heuristic misfires on it
+	-- (2026-09-26: every regenerated roof block was counted as junk in
+	-- the nether test; the 35k "floating junk" at Hausemaster in the
+	-- micro run was the same misfire over the captured/merged roofs).
+	local audit_dy = job.dest_y_offset or 0
+	local audit_nether = job.dimension_type == "nether"
+		or (not job.dimension_type and audit_dy <= -28000)
 	-- The audit is long, pure-Lua column scanning; on 2026-09-25 a run
 	-- died inside it with SIGBUS/KERN_MEMORY_ERROR (Apple Silicon JIT
 	-- page allocation under load -- crash report luanti-073449.ips).
@@ -974,7 +994,7 @@ function gap_fill.audit(job, plan)
 							local shroom = nm:find("mushroom_block") ~= nil
 							if below == core.CONTENT_AIR or below == core.CONTENT_IGNORE
 								or (is_liquid(below) and not (ice or reef)) then
-							 if not shroom then
+							 if not shroom and not (audit_nether and y >= audit_dy + 122) then
 								floating_junk = floating_junk + 1
 								if floating_junk <= 5 then
 									core.log("warning", string.format(

@@ -1,0 +1,102 @@
+[
+ {
+  "display_name": "Taylobase 4 (Nether)",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2019/Taylobase 4 (had The Archive) 2019-04-20 (Courier6 download)/DIM-1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2019/Taylobase 4 (had The Archive) 2019-04-20 (Courier6 download)",
+  "dimension_type": "nether",
+  "origin_x": 58432,
+  "origin_z": -52592,
+  "dest_anchor_x": 17000,
+  "dest_anchor_z": -7880,
+  "dest_y_offset": -29072,
+  "chunk_bounds": {
+   "x_min": 3652,
+   "x_max": 3663,
+   "z_min": -3287,
+   "z_max": -3275
+  },
+  "dest_bbox": {
+   "x_min": 17000,
+   "x_max": 17191,
+   "z_min": -7880,
+   "z_max": -7673
+  },
+  "sampled_block_count": 0,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Taylobase4_Nether.json"
+ },
+ {
+  "display_name": "Tactical Nuke 2023-09",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/l23w35 Tactical Nuke 2023-09-02_2247 remap2 (_2309 merge)/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2013/l23w35 Tactical Nuke 2023-09-02_2247 remap2 (_2309 merge)",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 15207,
+  "dest_anchor_z": -11952,
+  "dest_y_offset": -61,
+  "origin_x": 31232,
+  "origin_z": 4096,
+  "dest_bbox": {
+   "x_min": 15207,
+   "z_min": -11952,
+   "x_max": 16231,
+   "z_max": -10416
+  },
+  "chunk_bounds": {
+   "x_min": 1952,
+   "x_max": 2015,
+   "z_min": 256,
+   "z_max": 351
+  },
+  "sampled_block_count": 0,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Tactical_Nuke_2023_09.json"
+ },
+ {
+  "display_name": "Hausemaster Base 2012 (Nether)",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Base (by Hausemaster, friends, 2012) 2019-08-26 (123fly123 download)/DIM-1/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/Base (by Hausemaster, friends, 2012) 2019-08-26 (123fly123 download)",
+  "dimension_type": "nether",
+  "origin_x": -263408,
+  "origin_z": 88800,
+  "dest_anchor_x": 15207,
+  "dest_anchor_z": -7880,
+  "dest_y_offset": -29072,
+  "chunk_bounds": {
+   "x_min": -16463,
+   "x_max": -16408,
+   "z_min": 5550,
+   "z_max": 5589
+  },
+  "dest_bbox": {
+   "x_min": 15207,
+   "x_max": 16102,
+   "z_min": -7880,
+   "z_max": -7241
+  },
+  "sampled_block_count": 0,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Hausemaster_Base_2012_Nether.json"
+ },
+ {
+  "display_name": "Endhaven 2024-11-24 (est. 2022-03-13) (End trim2x2)",
+  "source_region_dir": "/Users/dara/dev/museum-microtest-src/endhaven_trim2x2/region",
+  "source_base_folder": "/Users/dara/dev/museum-microtest-src/endhaven_trim2x2",
+  "dimension_type": "end",
+  "origin_x": -4645376,
+  "origin_z": 1803776,
+  "dest_anchor_x": 4096,
+  "dest_anchor_z": 6016,
+  "dest_y_offset": -26880,
+  "chunk_bounds": {
+   "x_min": -290336,
+   "x_max": -290273,
+   "z_min": 112736,
+   "z_max": 112799
+  },
+  "dest_bbox": {
+   "x_min": 4096,
+   "x_max": 5119,
+   "z_min": 6016,
+   "z_max": 7039
+  },
+  "sampled_block_count": 0,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Endhaven_2024_11_24_End_trim2x2.json"
+ }
+]

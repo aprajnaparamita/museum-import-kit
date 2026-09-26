@@ -128,6 +128,11 @@ local TERRAIN_NAMES = {
 	["mcl_blackstone:blackstone"] = true,
 	["mcl_crimson:crimson_nylium"] = true, ["mcl_crimson:warped_nylium"] = true,
 	["mcl_end:end_stone"] = true,
+	-- bedrock IS ground (2026-09-26: without it a nether lava-sea column
+	-- -- lava over the bedrock floor -- read as NO terrain at all, whole
+	-- chunks fell to the y-range-bottom fallback height and the merge
+	-- produced 204-block cliffs into the void there)
+	["mcl_core:bedrock"] = true,
 	-- floor-with-plant variants: walkable ground wearing a plant (natural
 	-- ocean-floor decoration writes these). Ground, NOT vegetation --
 	-- classifying them as veg made the surface read 1 block low and
@@ -602,7 +607,14 @@ function gap_fill.build_plan(job, real, entries, opts)
 			local cols = cols_for(cx, cz)
 			-- a column with no terrain at all (all-air/void column) still
 			-- joins the solve at its chunk's mean surface -- skipping it
-			-- would leave the pre-generated leftovers in place
+			-- would leave the pre-generated leftovers in place.
+			-- EXCEPTION (2026-09-26, the End's island-over-void model):
+			-- at the End band a terrain-less column is VOID and must stay
+			-- void -- there is no "natural level" to ramp toward (the ring
+			-- is pure air, AUDIT-2026-09-26 #3) and filling it produced
+			-- the walls of stone descending into nothing. Pre-generated
+			-- leftovers cannot exist there (the mapgen generates nothing).
+			local end_void = job.dimension_type == "end"
 			local sum, n = 0, 0
 			for i = 1, C * C do
 				local col = cols[i]
@@ -613,8 +625,12 @@ function gap_fill.build_plan(job, real, entries, opts)
 				for lx = 0, C - 1 do
 					local sx, sz = cx * C + lx, cz * C + lz
 					local col = cols[lx * C + lz + 1]
-					if not col.S then col.S = fallback end
-					free[sx .. "," .. sz] = col.S
+					if not col.S and not (end_void and n == 0) then
+						col.S = fallback
+					end
+					if col.S then
+						free[sx .. "," .. sz] = col.S
+					end
 				end
 			end
 		end

@@ -939,6 +939,78 @@ function Job:render_map_art(stack, mc_map_id)
 	end
 end
 
+-- Mob spawner activation (2026-09-26, owner: "the spawner in Hausemaster's
+-- base does not seem to be activating"). VoxelManip placement never runs
+-- on_construct, and Mineclonia REQUIRES mcl_mobspawners.setup_spawner to
+-- be called right after a spawner is placed by LuaVoxelManip (see
+-- mods/ITEMS/mcl_mobspawners/init.lua's register_node comment). The mob
+-- comes from the captured SpawnData so a fortress spawner spawns blazes,
+-- not the default pig (mcl_mobspawners' default_mob is "mobs_mc:pig").
+--
+-- Every name below is verified against real mcl_mobs.register_mob calls
+-- in mods/ENTITIES/mobs_mc/*.lua (2026-09-26) -- mind the traps:
+-- witherskeleton (no underscore), snowman (not snow_golem),
+-- villager_zombie (not zombie_villager), and slime/magma_cube exist only
+-- as _big/_small/_tiny. Small deliberate overlap with museumloot/
+-- mobplacement.lua's own verified mob constants -- duplicated on purpose:
+-- spawnimport must not depend on museumloot (worldmods are separable).
+local SPAWNER_MOBS = {
+	axolotl = "mobs_mc:axolotl", bat = "mobs_mc:bat", blaze = "mobs_mc:blaze",
+	cat = "mobs_mc:cat", cavespider = "mobs_mc:cave_spider",
+	chicken = "mobs_mc:chicken", cod = "mobs_mc:cod", cow = "mobs_mc:cow",
+	creeper = "mobs_mc:creeper", dolphin = "mobs_mc:dolphin",
+	donkey = "mobs_mc:donkey", drowned = "mobs_mc:drowned",
+	enderdragon = "mobs_mc:enderdragon", enderman = "mobs_mc:enderman",
+	endermite = "mobs_mc:endermite", evoker = "mobs_mc:evoker",
+	ghast = "mobs_mc:ghast", glowsquid = "mobs_mc:glow_squid",
+	guardian = "mobs_mc:guardian", guardianelder = "mobs_mc:guardian_elder",
+	elderguardian = "mobs_mc:guardian_elder",
+	hoglin = "mobs_mc:hoglin", horse = "mobs_mc:horse", husk = "mobs_mc:husk",
+	illusioner = "mobs_mc:illusioner", irongolem = "mobs_mc:iron_golem",
+	llama = "mobs_mc:llama", mooshroom = "mobs_mc:mooshroom",
+	mule = "mobs_mc:mule", ocelot = "mobs_mc:ocelot", parrot = "mobs_mc:parrot",
+	pig = "mobs_mc:pig", piglin = "mobs_mc:piglin",
+	piglinbrute = "mobs_mc:piglin_brute", pillager = "mobs_mc:pillager",
+	polarbear = "mobs_mc:polar_bear", pufferfish = "mobs_mc:pufferfish",
+	rabbit = "mobs_mc:rabbit", ravager = "mobs_mc:ravager",
+	salmon = "mobs_mc:salmon", sheep = "mobs_mc:sheep",
+	shulker = "mobs_mc:shulker", silverfish = "mobs_mc:silverfish",
+	skeleton = "mobs_mc:skeleton", skeletonhorse = "mobs_mc:skeleton_horse",
+	snowman = "mobs_mc:snowman", spider = "mobs_mc:spider",
+	squid = "mobs_mc:squid", stray = "mobs_mc:stray",
+	strider = "mobs_mc:strider", traderllama = "mobs_mc:trader_llama",
+	tropicalfish = "mobs_mc:tropical_fish", vex = "mobs_mc:vex",
+	villager = "mobs_mc:villager", vindicator = "mobs_mc:vindicator",
+	wanderingtrader = "mobs_mc:wandering_trader", witch = "mobs_mc:witch",
+	wither = "mobs_mc:wither", witherskeleton = "mobs_mc:witherskeleton",
+	wolf = "mobs_mc:wolf", zoglin = "mobs_mc:zoglin", zombie = "mobs_mc:zombie",
+	zombiehorse = "mobs_mc:zombie_horse",
+	zombifiedpiglin = "mobs_mc:zombified_piglin",
+	-- vanilla slime/magma_cube carry a Size NBT the spawner part drops;
+	-- Mineclonia registers only _big/_small/_tiny (small = the vanilla
+	-- dungeon-spawner look)
+	slime = "mobs_mc:slime_small", magmacube = "mobs_mc:magma_cube_small",
+	lavaslime = "mobs_mc:magma_cube_small",   -- 1.12 entity id
+	-- 1.12 entity ids (normalized to [a-z0-9])
+	mushroomcow = "mobs_mc:mooshroom", ozelot = "mobs_mc:ocelot",
+	pigzombie = "mobs_mc:pigman", zombiepigman = "mobs_mc:pigman",
+	villagergolem = "mobs_mc:iron_golem", snowgolem = "mobs_mc:snowman",
+	witherboss = "mobs_mc:wither", entityhorse = "mobs_mc:horse",
+	zombievillager = "mobs_mc:villager_zombie",
+	villagerzombie = "mobs_mc:villager_zombie",
+}
+
+-- Normalize a captured SpawnData id ("minecraft:blaze", "Blaze", ...) to
+-- the table key above. Unknown ids return nil -- the spawner is then left
+-- INERT with a logged warning (deliberate: setup_spawner's fallback is a
+-- pig, and a pig spawner standing in for, say, a silverfish egg is worse
+-- for a museum than an honest inert cage).
+local function spawner_mob(raw)
+	if not raw or raw == "" then return nil end
+	local key = raw:lower():gsub("^minecraft:", ""):gsub("[^a-z0-9]", "")
+	return SPAWNER_MOBS[key]
+end
+
 function Job:place_one_chunk(entry)
 	local payload = anvil.read_chunk_payload(self.current_region_data, entry.offset)
 	local chunk = nbt.parse_buffer(payload)
@@ -1209,6 +1281,34 @@ function Job:place_one_chunk(entry)
 				if core.get_item_group(node.name, "sign") >= 1 then
 					core.get_meta(pos):set_string("utext", core.serialize(mcl_signs.string_to_ustring(s.text)))
 					mcl_signs.update_sign(pos)
+					self:note_interest_point(pos.x, pos.y, pos.z)
+				end
+			end
+		end
+	end
+
+	-- Mob spawners: VoxelManip placement skipped the on_construct that
+	-- would have activated them (see SPAWNER_MOBS's header) -- activate
+	-- with the CAPTURED mob from the tile entity's SpawnData.
+	if mcl_mobspawners then
+		local ok_sp, spawners = pcall(anvil.decode_chunk_spawners, chunk)
+		if ok_sp then
+			for _, s in ipairs(spawners) do
+				local pos = vector.new(
+					self.anchor_x + (s.x - self.origin_x),
+					s.y + self.dest_y_offset,
+					self.anchor_z + (s.z - self.origin_z)
+				)
+				if core.get_node(pos).name == "mcl_mobspawners:spawner" then
+					local mob = spawner_mob(s.mob)
+					if mob then
+						mcl_mobspawners.setup_spawner(pos, mob)
+						self.spawners_activated = (self.spawners_activated or 0) + 1
+					else
+						core.log("warning", string.format(
+							"[spawnimport] spawner at (%d,%d,%d): unknown mob %q -- left inert",
+							pos.x, pos.y, pos.z, tostring(s.mob)))
+					end
 					self:note_interest_point(pos.x, pos.y, pos.z)
 				end
 			end
@@ -1644,8 +1744,9 @@ function Job:finish()
 
 	self.status = "done"
 	local summary = string.format(
-		"[spawnimport] %s: done. Placed %d blocks across %d chunks (%d chunk(s) skipped) in %ds.",
-		self.name, self.placed_blocks, self.placed_chunks, self.skipped_chunks, os.time() - self.started_at)
+		"[spawnimport] %s: done. Placed %d blocks across %d chunks (%d chunk(s) skipped, %d spawner(s) activated) in %ds.",
+		self.name, self.placed_blocks, self.placed_chunks, self.skipped_chunks,
+		self.spawners_activated or 0, os.time() - self.started_at)
 	core.chat_send_player(self.player_name, summary)
 	-- Also to the log: chat_send_player to a name that isn't connected goes
 	-- nowhere at all (no log line), which makes a long unattended batch

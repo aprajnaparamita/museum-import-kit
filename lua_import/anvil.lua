@@ -499,6 +499,32 @@ function anvil.decode_chunk_signs(chunk)
 	return out
 end
 
+-- Decode mob spawners (block entities): returns a list of
+--   { x=, y=, z=, mob=<raw SpawnData id string or nil> }
+-- for every minecraft:mob_spawner / legacy MobSpawner tile entity.
+-- The SpawnData id shape varies by era: 1.12 keeps {id="Blaze"}, modern
+-- keeps {entity={id="minecraft:blaze"}} -- both are returned raw; the
+-- caller normalizes. Placement note: VoxelManip-written spawners never
+-- run on_construct, so mcl_mobspawners.setup_spawner must be called by
+-- the importer (Mineclonia's own requirement, see
+-- mods/ITEMS/mcl_mobspawners/init.lua's register_node comment).
+function anvil.decode_chunk_spawners(chunk)
+	anvil.normalize_chunk(chunk)
+	local out = {}
+	for _, be in ipairs(chunk.block_entities or {}) do
+		local id = be.id
+		if id == "minecraft:mob_spawner" or id == "MobSpawner" then
+			local mob = nil
+			local sd = be.SpawnData
+			if type(sd) == "table" then
+				mob = sd.id or (type(sd.entity) == "table" and sd.entity.id) or nil
+			end
+			out[#out + 1] = { x = be.x, y = be.y, z = be.z, mob = mob }
+		end
+	end
+	return out
+end
+
 -- Decode item frames from both block-entity form (post-1.14 captures) and
 -- entity form (older saves; also WorldTools-style captures of any era).
 -- Returns a list of:

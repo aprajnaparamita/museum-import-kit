@@ -1,20 +1,25 @@
+# Import MineCraft World Downloads into Luanti Mineclonia mod
+
+This is a system to effortlessly import World Download files into
+Mineclonia. You can save your base and import it into your Mineclonia
+world! Or you can browse world downloads of other's bases. See
+FriedcakeSMP (coming soon) to visit these bases in a fun SMP environment.
+
 # 2b2t Museum import kit
 
-Everything needed to import the 2b2tmuseum-WDL archive into a single packed
+In order to fully test the mod's effectiveness I decided to pick a large
+database of available world downloads from a real active server. Here is
+everything needed to import the 2b2tmuseum-WDL archive into a single packed
 Luanti / Mineclonia world. Explore some of the greatest bases ever made
-without needing to buy a subscription. This is the code used on
-FriedcakeSMP to laod bases.
 
-## What you need on the remote box
+## What you need
 
 1. **Luanti 5.17.x** (server build is enough — no GUI needed; the
    client must run the SAME Mineclonia as the server).
 2. **Mineclonia** in `games/mineclonia`.
 3. **The WDL archive** — clone the github  (~13 GB).
 4. **This kit.**
-5. **Disk**: budget ~25 GB for the finished world. The local run reached
-   8.9 GB at 189/205, and that was after two corruption/salvage cycles;
-   a clean run should land near 13–15 GB.
+5. **Disk**: budget ~25 GB for the finished world.
 
 ## Setup
 

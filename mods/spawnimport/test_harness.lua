@@ -1198,13 +1198,20 @@ for cz = MIN_CZ - 3, MIN_CZ + 3 do
 end
 -- lava pool: floor at source y 20 with lava up to the sea surface (36) --
 -- its merged column is below the lava sea and must surface-fill with lava
+-- lava pool: a deep basin (floor at source y -40) with lava up to the
+-- sea surface (36). Deep on purpose: the seam fade pulls free columns
+-- toward the capture level (50) across ~33 columns, so only a deeply
+-- sunken basin lands below the lava sea on free columns. A pool right
+-- at the seam is legitimately raised to the base's floor and dries out
+-- (the ring floor continues the base's floor) -- the overworld
+-- 'raised water -> air' rule, not the lava-fill rule under test.
 do
-	local bx, bz = ngap_dest(MIN_CX, MIN_CZ + 1)
-	for lz = 0, 7 do
-		for lx = 0, 7 do
+	local bx, bz = ngap_dest(MAX_CX + 1, MAX_CZ + 1)
+	for lz = 3, 12 do
+		for lx = 3, 12 do
 			local x, z = bx + lx, bz + lz
-			nseed(x, z, 20, "mcl_nether:soul_sand", "mcl_nether:netherrack")
-			for y = 21, NSEA do
+			nseed(x, z, -40, "mcl_nether:soul_sand", "mcl_nether:netherrack")
+			for y = -39, NSEA do
 				fake_map[x .. "," .. (y + NDY) .. "," .. z] =
 					core.get_content_id("mcl_nether:nether_lava_source")
 			end

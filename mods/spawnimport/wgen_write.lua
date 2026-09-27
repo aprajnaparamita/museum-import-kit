@@ -288,25 +288,21 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 				local island_slab_lo = nil
 				local end_void_col = false
 				if band(job) == "end" then
-					if col.S and B > col.S + 8 then
-						-- island continuation: slab at the merged level,
-						-- ALWAYS void below (even a mild raise must not
-						-- keep the mapgen's own island layer -- the owner's
-						-- "end stone still spawning far below")
+					-- End island model: INSIDE the capture's footprint the
+					-- island continues at one level (slab at the merged
+					-- level, void below -- never join Mineclonia's own
+					-- islands 124 blocks down, owner 2026-09-27); OUTSIDE
+					-- it the museum's End is clean void (generated islands
+					-- and their structures are cleared entirely).
+					local bx = job.chunk_bounds
+					local inside = bx and chunk.cx >= bx.x_min and chunk.cx <= bx.x_max
+						and chunk.cz >= bx.z_min and chunk.cz <= bx.z_max
+					if inside then
 						island_slab_lo = B - ISLAND_SLAB
-						rewrite_lo = GAP_Y_MIN + dy
 					else
-						-- Natural-level column (Mineclonia's own end
-						-- islands/carpet generated FAR below the captured
-						-- island, 2026-09-26 owner: "there is still a layer
-						-- of end stone ... at -27010 ... it's all still
-						-- spawning far below"). The museum's End is the
-						-- captured islands over clean void -- generated
-						-- terrain in the merge domain that is NOT part of
-						-- the island continuation is cleared entirely.
 						end_void_col = true
-						rewrite_lo = GAP_Y_MIN + dy
 					end
+					rewrite_lo = GAP_Y_MIN + dy
 				end
 
 				-- Nether ceiling band (2026-09-26, owner: "do the fill and
@@ -317,9 +313,22 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 				-- over this fill chunk, so captured and merged chunks share
 				-- one continuous ceiling at the seam.
 				local roof_lo, roof_hi = dy + 122, dy + 127
-				local do_roof = band(job) == "nether" and B < roof_lo - 2
+				-- ALWAYS seal the ceiling at the nether band, and clear the
+				-- mapgen's own ceiling remnants ABOVE it (owner 2026-09-27:
+				-- "portions of the bedrock not closing the gap" -- columns
+				-- with a high merged surface skipped the regen and left the
+				-- mapgen ceiling at a different level; "we want this to
+				-- match and be seamless"). One roof at the capture's
+				-- profile, matching the captured chunks' columns exactly.
+				local do_roof = band(job) == "nether"
+				-- the zone just above the band is cleared too (the mapgen's
+				-- own ceiling at dy+132/133), so the regen band is the ONLY
+				-- roof, at one level everywhere. Bounded at roof_hi+8: the
+				-- mapgen ceiling never sits higher than that, and scanning
+				-- the full y-range per column cost 25x (2026-09-27 harness
+				-- timeout).
 				local rewrite_hi = ymax
-				if do_roof then rewrite_hi = roof_lo - 1 end
+				if do_roof then rewrite_hi = roof_hi + 8 end
 
 				-- clear/rebuild the rewritten zone
 				for y = rewrite_hi, rewrite_lo + 1, -1 do

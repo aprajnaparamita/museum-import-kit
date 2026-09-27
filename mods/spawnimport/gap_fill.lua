@@ -254,6 +254,33 @@ local function surface_from_tops(tops)
 	return t1
 end
 
+-- Nether floor rule (owner 2026-09-27: "fill chunks below the nether
+-- roof are making odd hanging columns which cut off"): a shelf under the
+-- ceiling is NOT the floor -- the merge skinned such shelves and left
+-- floating slabs. Runs records terrain runs top-down ({top=, bottom=});
+-- a run floating over a big gap (>= FLOAT_BIG_GAP, e.g. a shelf above
+-- the cavern/lava gap) is skipped for the one below it. The OVERWORLD
+-- keeps surface_from_tops unchanged (its own floating-mass rule above).
+local FLOAT_BIG_GAP = 12
+
+local function surface_from_runs(runs)
+	for i, r in ipairs(runs) do
+		local below = runs[i + 1]
+		-- the lowest run anchors at the world bottom -- never floats
+		local gap = below and (r.bottom - below.top - 1) or 0
+		local thick = r.top - r.bottom + 1
+		if thick <= FLOAT_MAX_THICK and gap >= FLOAT_MIN_GAP then
+			-- thin floating mass: junk
+		elseif gap >= FLOAT_BIG_GAP then
+			-- shelf over a big drop: not the floor
+		else
+			return r.top
+		end
+	end
+	local last = runs[#runs]
+	return last and last.top or nil
+end
+
 -- ---------------------------------------------------------------------
 -- Footprint loading
 -- ---------------------------------------------------------------------
@@ -377,20 +404,43 @@ local function scan_chunk_columns(job, cx, cz)
 	for lz = 0, C - 1 do
 		for lx = 0, C - 1 do
 			local x, z = base_x + lx, base_z + lz
-			local tops, top = {}, nil
+			local tops, runs, top = {}, {}, nil
 			local top_count = 0
+			local cur_run = nil
+			local first_y = nil
 			for y = ymax, ymin, -1 do
+				-- bounded scan (2026-09-27): with the ceiling filtered out
+				-- the old "4 terrain values" early-out is gone and a naive
+				-- full-range scan costs 25x. Stop 120 rows below the first
+				-- terrain (the floor is never deeper below the first run)
+				-- or once three runs are collected -- plenty to decide.
+				if first_y and (y < first_y - 120 or #runs >= 3) then break end
 				local cid = data[area:index(x, y, z)]
 				if cid ~= core.CONTENT_AIR and cid ~= core.CONTENT_IGNORE then
 					if not top then top = y end
 					if is_terrain(cid) and (not ceil_y or y < ceil_y) then
+						if not first_y then first_y = y end
 						top_count = top_count + 1
 						if top_count <= 4 then tops[top_count] = y end
-						if top_count >= 4 then break end
+						if cur_run and cur_run.bottom == y + 1 then
+							cur_run.bottom = y
+						elseif #runs < 4 then
+							cur_run = { top = y, bottom = y }
+							runs[#runs + 1] = cur_run
+						end
+						-- overworld keeps the old early-out; the nether
+						-- rule needs the gap BELOW the run so it scans on
+						-- (capped at 200 terrain rows per column)
+						if not ceil_y and top_count >= 4 then break end
+						if ceil_y and top_count >= 200 then break end
+					elseif cur_run then
+						cur_run = nil
 					end
+				elseif cur_run then
+					cur_run = nil
 				end
 			end
-			local S = surface_from_tops(tops)
+			local S = ceil_y and surface_from_runs(runs) or surface_from_tops(tops)
 			local mat = S and data[area:index(x, S, z)] or nil
 			cols[lx * C + lz + 1] = { S = S, mat = mat, T = top }
 		end
@@ -674,7 +724,8 @@ function gap_fill.build_plan(job, real, entries, opts)
 				local tname = c.T and core.get_name_from_content_id(c.T) or nil
 				return wgen_inputs.surface_family(tname, gname), c.mat
 			end)
-		free = wgen_inputs.height_targets(fld, natural)
+				free = wgen_inputs.height_targets(fld, natural,
+			job.dimension_type == "end" or (not job.dimension_type and dy <= -20000))
 		last_field = fld
 		-- Domain-boundary columns bordering untouched terrain are pinned
 		-- to their own natural height (the merge must be invisible there),

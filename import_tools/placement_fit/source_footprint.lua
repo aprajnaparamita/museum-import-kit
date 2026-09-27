@@ -113,6 +113,41 @@ end
 -- smoothing absorbs anyway.
 local FLOAT_MAX_THICK = 2
 local FLOAT_MIN_GAP = 3
+local FLOAT_BIG_GAP = 12
+
+-- Nether mode: values is every terrain y in the column (any order).
+-- Group into runs top-down; a run floating over a big gap (a shelf under
+-- the ceiling) is skipped for the run below it -- same rule as
+-- gap_fill.lua's surface_from_runs (keep in sync).
+local function terrain_surface_y_nether(values)
+	if #values == 0 then return nil end
+	local sorted = {}
+	for i, y in ipairs(values) do sorted[i] = y end
+	table.sort(sorted, function(a, b) return a > b end)
+	local runs = {}
+	for _, y in ipairs(sorted) do
+		local cur = runs[#runs]
+		if cur and cur.bottom == y + 1 then
+			cur.bottom = y
+		else
+			runs[#runs + 1] = { top = y, bottom = y }
+		end
+	end
+	for i, r in ipairs(runs) do
+		local below = runs[i + 1]
+		local gap = below and (r.bottom - below.top - 1) or 0
+		local thick = r.top - r.bottom + 1
+		if thick <= FLOAT_MAX_THICK and gap >= FLOAT_MIN_GAP then
+			-- thin floating mass: junk
+		elseif gap >= FLOAT_BIG_GAP then
+			-- shelf over a big drop: not the floor
+		else
+			return r.top
+		end
+	end
+	local last = runs[#runs]
+	return last and last.top or nil
+end
 
 -- tops is a descending list of the topmost terrain-block y values seen in
 -- the column (up to 4). Returns the y that should count as the column's
@@ -235,6 +270,14 @@ for _, fpath in ipairs(files) do
 							tops = {}
 							terrain_tops[idx] = tops
 						end
+						if CEIL_Y then
+							-- nether mode: keep every terrain y so the run
+							-- rule below can tell a floor from a shelf
+							-- floating over the cavern gap (owner 2026-09-27:
+							-- floating shelves skinned into hanging slabs)
+							tops[#tops + 1] = y
+							return
+						end
 						-- keep a descending top-4 (the surface rule only
 						-- needs the top run and the next run below it)
 						if #tops < 4 or y > tops[4] then
@@ -290,7 +333,9 @@ for _, fpath in ipairs(files) do
 						for idx = 0, 255 do
 							cols[idx + 1] = top_y[idx] or height
 							solid_cols[idx + 1] = solid_y[idx] or height
-							terrain_cols[idx + 1] = terrain_surface_y(terrain_tops[idx] or {})
+							terrain_cols[idx + 1] = (CEIL_Y
+									and terrain_surface_y_nether(terrain_tops[idx] or {})
+									or terrain_surface_y(terrain_tops[idx] or {}))
 								or solid_y[idx] or top_y[idx] or height
 						end
 						chunks[cx .. "," .. cz] = {

@@ -388,8 +388,8 @@ def detect_ceiling_scrambles(world, frames):
     needs manual verification and leaves it completely untouched,
     matching the same caution already applied to wall-mounted real map
     clusters elsewhere in this file."""
-    verified = load_verified_clusters()
-    verified_by_prefix = {c['id_prefix']: c for c in verified}
+    verified_pos = {(p['x'], p['y'], p['z'])
+                    for c in resolve_verified(frames) for p in c['positions']}
     real = [f for f in frames if f['p2'] in (0, 1) and f['has_item']
             and f['mcl_maps_id'] and not f['mcl_maps_id'].startswith('gallery_')]
     if not real:
@@ -443,74 +443,82 @@ def detect_ceiling_scrambles(world, frames):
             continue
 
         id_prefix = re.sub(r'_\d+$', '', g[0]['mcl_maps_id'])
-        cur_ids = {(m['x'], m['y'], m['z']): int(re.search(r'_(\d+)$', m['mcl_maps_id']).group(1)) for m in g}
 
-        verified = verified_by_prefix.get(id_prefix)
-        if not verified:
-            log(f"ceiling cluster {id_prefix}: {len(g)} real map(s), contiguous ids "
-                f"{min(ids)}-{max(ids)} -- NOT in verified_real_map_clusters.json, "
-                f"no automatic reordering attempted (needs owner in-game verification; "
-                f"see HANDOFF.md round 30 for why numeric-order and pixel-edge-matching "
-                f"heuristics are both untrustworthy here) -- leaving as-is")
-            continue
-
-        target = {(p['x'], p['y'], p['z']): p['id'] for p in verified['positions']}
-        if set(target.keys()) != set(cur_ids.keys()):
-            log(f"ceiling cluster {id_prefix}: verified_real_map_clusters.json entry's "
-                f"positions don't match this cluster's current positions -- base may have "
-                f"moved since verification; NOT applying stale override, leaving as-is")
-            continue
-
-        if cur_ids == target:
-            log(f"ceiling cluster {id_prefix}: already matches verified mapping -- no change needed")
-            continue
-
-        log(f"ceiling cluster {id_prefix}: reasserting owner-verified mapping "
-            f"(current arrangement had drifted from it)")
-        fixes.append({'id_prefix': id_prefix, 'positions': [
-            {'x': x, 'y': y, 'z': z, 'target_id': tid}
-            for (x, y, z), tid in target.items()]})
+        if all((m['x'], m['y'], m['z']) in verified_pos for m in g):
+            continue  # an owner-verified entry covers it (apply_verified_clusters)
+        log(f"ceiling cluster {id_prefix}: {len(g)} real map(s), contiguous ids "
+            f"{min(ids)}-{max(ids)} -- NOT in verified_real_map_clusters.json, "
+            f"no automatic reordering attempted (needs owner in-game verification; "
+            f"see HANDOFF.md round 30 for why numeric-order and pixel-edge-matching "
+            f"heuristics are both untrustworthy here) -- leaving as-is")
     return fixes
 
 
-def apply_verified_wall_clusters(frames):
-    """Reasserts verified_real_map_clusters.json mappings for WALL-mounted
-    (p2 2-5) real map clusters on every rebuild -- detect_ceiling_scrambles
-    only ever looks at ceiling/floor (p2 0/1) clusters, so without this,
-    a verified wall-mounted fix (e.g. cutecurly's City's 5x5 gallery, both
-    faces) would silently vanish on the next full wipe-and-rebuild, the
-    exact class of problem round 29 already hit once for gallery-fill
-    itself. Unlike detect_ceiling_scrambles, this never tries to detect
-    OR guess a fix for an unverified cluster -- it only ever reasserts an
-    exact, already-verified mapping, matched by id_prefix and its full
-    position set (skipped if the base's frames have moved since
-    verification, never applied stale)."""
-    verified = load_verified_clusters()
-    by_pos = {}
+def _real_maps(frames):
+    """(x,y,z) -> (id_prefix, id) for every frame holding a real captured map."""
+    out = {}
     for f in frames:
-        if f['p2'] not in (0, 1) and f['has_item'] and f['mcl_maps_id'] \
-                and not f['mcl_maps_id'].startswith('gallery_'):
+        if f['has_item'] and f['mcl_maps_id'] and f['mcl_maps_id'].startswith('imported_'):
             mm = re.search(r'^(.*)_(\d+)$', f['mcl_maps_id'])
             if mm:
-                by_pos[(f['x'], f['y'], f['z'])] = (mm.group(1), int(mm.group(2)))
+                out[(f['x'], f['y'], f['z'])] = (mm.group(1), int(mm.group(2)))
+    return out
 
+
+def resolve_verified(frames):
+    """verified_real_map_clusters.json entries, moved to where their maps
+    are in THIS world.
+
+    Entries store absolute positions from the world they were solved in,
+    but a rebuild or another manifest places the base elsewhere (the
+    2026-09-28 20-base run put Fort Alcazar's ceiling at (11059,8,2902),
+    not (4847,5,-726)). Map ids are the capture's own and don't change,
+    so an entry matches wherever the same shape of frames, holding
+    exactly the entry's ids under the same prefix, sits. Returns entries
+    whose positions are translated to this world."""
+    real = _real_maps(frames)
+    # entries sharing a prefix were solved together in one world (e.g. the
+    # two faces of cutecurly's City wall, same ids on both), so they move
+    # with ONE shared translation, or a face could match the other face
+    by_prefix = {}
+    for c in load_verified_clusters():
+        by_prefix.setdefault(c['id_prefix'], []).append(c)
+    resolved = []
+    for prefix, entries in by_prefix.items():
+        pts = [(p['x'], p['y'], p['z']) for c in entries for p in c['positions']]
+        mn = min(pts)
+        for q, (qp, _) in real.items():
+            if qp != prefix:
+                continue
+            t = (q[0] - mn[0], q[1] - mn[1], q[2] - mn[2])
+
+            def mv(p):
+                return (p['x'] + t[0], p['y'] + t[1], p['z'] + t[2])
+            if all(mv(p) in real and real[mv(p)][0] == prefix
+                   and sorted(real[mv(pp)][1] for pp in c['positions']) == sorted(pp['id'] for pp in c['positions'])
+                   for c in entries for p in c['positions']):
+                for c in entries:
+                    resolved.append({'id_prefix': prefix, 'positions': [
+                        {'x': mv(p)[0], 'y': mv(p)[1], 'z': mv(p)[2], 'id': p['id']}
+                        for p in c['positions']]})
+                break
+    return resolved
+
+
+def apply_verified_clusters(frames):
+    """Reasserts the owner-verified map arrangements (walls, ceilings and
+    floors) on every rebuild, wherever the base now sits (resolve_verified).
+    Sets each position to its known id, so it is safe to re-run."""
+    real = _real_maps(frames)
     fixes = []
-    for cluster in verified:
-        id_prefix = cluster['id_prefix']
-        target = {(p['x'], p['y'], p['z']): p['id'] for p in cluster['positions']}
-        present = {pos: by_pos[pos] for pos in target if pos in by_pos}
-        if len(present) != len(target):
-            continue  # not this cluster (or wrong orientation) -- skip silently
-        if any(prefix != id_prefix for prefix, _ in present.values()):
-            continue  # positions occupied by a different cluster's ids -- skip
-        cur_ids = {pos: num for pos, (_, num) in present.items()}
-        if cur_ids == target:
+    for c in resolve_verified(frames):
+        cur = {(p['x'], p['y'], p['z']): real[(p['x'], p['y'], p['z'])][1] for p in c['positions']}
+        target = {(p['x'], p['y'], p['z']): p['id'] for p in c['positions']}
+        if cur == target:
             continue
-        log(f"wall cluster {id_prefix}: reasserting owner-verified mapping "
-            f"(current arrangement had drifted from it)")
-        fixes.append({'id_prefix': id_prefix, 'positions': [
-            {'x': x, 'y': y, 'z': z, 'target_id': tid}
-            for (x, y, z), tid in target.items()]})
+        log(f"verified cluster {c['id_prefix']} ({len(target)} maps): reasserting owner-verified mapping")
+        fixes.append({'id_prefix': c['id_prefix'], 'positions': [
+            {'x': x, 'y': y, 'z': z, 'target_id': tid} for (x, y, z), tid in target.items()]})
     return fixes
 
 
@@ -533,10 +541,10 @@ def unmirror_real_map_walls(frames):
     the mirror changes too, so they're only logged and left to a verified
     entry. Groups overlapping a verified cluster are skipped because the
     verified mapping wins. Returns fixes in the same format as
-    apply_verified_wall_clusters. NOT idempotent (a second pass would
+    apply_verified_clusters. NOT idempotent (a second pass would
     re-reverse), so main() gates it with a marker file in the world."""
     verified_pos = set()
-    for c in load_verified_clusters():
+    for c in resolve_verified(frames):
         for p in c['positions']:
             verified_pos.add((p['x'], p['y'], p['z']))
     real = {}
@@ -565,11 +573,11 @@ def unmirror_real_map_walls(frames):
                     stack.append(n)
         if len(group) < 2:
             continue
+        if any(p in verified_pos for p in group):
+            continue  # an owner-verified entry covers it
         if p2 in (0, 1):
             log(f"real-map ceiling/floor group of {len(group)} at {group[0]} -- "
                 f"not auto-unmirrored (item rotation also mirrored); needs a verified entry")
-            continue
-        if any(p in verified_pos for p in group):
             continue
         axis = 2 if p2 in (2, 3) else 0
         if len(set(p[2 if axis == 0 else 0] for p in group)) != 1:
@@ -807,9 +815,9 @@ def main():
             log(f"{b['name']}: {len(fixes)} ceiling/floor cluster(s) need real-map reordering")
         all_ceiling_fixes.extend(fixes)
 
-        wall_fixes = apply_verified_wall_clusters(frames)
+        wall_fixes = apply_verified_clusters(frames)
         if wall_fixes:
-            log(f"{b['name']}: {len(wall_fixes)} verified wall cluster(s) need reasserting")
+            log(f"{b['name']}: {len(wall_fixes)} verified cluster(s) need reasserting")
         all_ceiling_fixes.extend(wall_fixes)
 
         if not unmirror_done:

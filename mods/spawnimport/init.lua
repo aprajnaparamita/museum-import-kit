@@ -1157,6 +1157,7 @@ function Job:place_one_chunk(entry)
 	local bx, by, bz, bn, bp2 = {}, {}, {}, {}, {}
 	local n = 0
 	local banners = nil
+	local gw_idx = nil
 	anvil.decode_chunk_blocks(chunk, function(x, y, z, name, props)
 		n = n + 1
 		bx[n] = self.anchor_x + (x - self.origin_x)
@@ -1166,14 +1167,31 @@ function Job:place_one_chunk(entry)
 		bn[n] = resolution.node
 		bp2[n] = resolution.param2
 		if resolution.node == "mcl_portals:portal_gateway" then
-			self.gateways = self.gateways or {}
-			self.gateways[#self.gateways + 1] = vector.new(bx[n], by[n], bz[n])
+			gw_idx = gw_idx or {}
+			gw_idx[#gw_idx + 1] = n
 		end
 		if resolution.node == "mcl_banners:hanging_banner" then
 			banners = banners or {}
 			banners[#banners + 1] = { i = n, color = name:match("^minecraft:(.-)_wall_banner$") }
 		end
 	end)
+
+	-- A real end gateway (vanilla, and Mineclonia's schematic) is one
+	-- gateway block with bedrock directly above and below. Anything else
+	-- is decoration: Space Valkyria III builds starfield walls out of
+	-- 11,000+ gateway blocks (2026-09-28). Only real ones are linked to
+	-- the main island (gateway_link.lua).
+	if gw_idx then
+		local at = {}
+		for i = 1, n do at[bx[i] .. "," .. by[i] .. "," .. bz[i]] = bn[i] end
+		for _, i in ipairs(gw_idx) do
+			if at[bx[i] .. "," .. (by[i] + 1) .. "," .. bz[i]] == "mcl_core:bedrock"
+				and at[bx[i] .. "," .. (by[i] - 1) .. "," .. bz[i]] == "mcl_core:bedrock" then
+				self.gateways = self.gateways or {}
+				self.gateways[#self.gateways + 1] = vector.new(bx[i], by[i], bz[i])
+			end
+		end
+	end
 
 	local vm = core.get_voxel_manip()
 	local emin, emax = vm:read_from_map({ x = xmin, y = ymin, z = zmin }, { x = xmax, y = ymax, z = zmax })

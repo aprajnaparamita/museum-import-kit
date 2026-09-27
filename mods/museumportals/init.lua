@@ -205,6 +205,14 @@ if core.registered_nodes["mcl_portals:portal_gateway"] and mcl_vars and mcl_vars
 			if pos.y < END_BAND_BOTTOM or pos.y > END_BAND_TOP then return end
 			local link = partner[core.pos_to_string(pos)]
 			local mcl = not link and mcl_owns(pos)
+			-- a real gateway has bedrock directly above and below; bare
+			-- gateway blocks are decoration (Space Valkyria III's starfield
+			-- walls) and must not teleport anyone
+			if not link and not mcl
+				and not (core.get_node(vector.offset(pos, 0, 1, 0)).name == "mcl_core:bedrock"
+					and core.get_node(vector.offset(pos, 0, -1, 0)).name == "mcl_core:bedrock") then
+				return
+			end
 			-- 2 blocks: the gateway is a solid node and Mineclonia's own ABM
 			-- only catches objects within 1 of its centre, which a player
 			-- beside or under it never is (owner 2026-09-28: the return

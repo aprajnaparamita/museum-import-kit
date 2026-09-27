@@ -1,23 +1,31 @@
-# Import a World Downloader (WDL) Anvil files into Luanti Mineclonia mod
+# Import World Downloader (WDL) Anvil saves into Luanti / Mineclonia
 
-This is a system to effortlessly import World Download files into
-Luanti. You can save your base and import it into your Mineclonia
-world! Or you can browse world downloads of other's bases. See
+This is a system to import world downloads (Minecraft Java Edition saves in
+the Anvil `.mca` format, as captured by World Downloader or WorldTools) into
+Luanti running the Mineclonia game. You can save your base and import it into
+your Mineclonia world, or browse world downloads of other people's bases. See
 FriedcakeSMP (coming soon) to visit these bases in a fun SMP environment.
+
+Free and open-source software under the GNU GPL v3 or later; see
+[License](#license). This project is not affiliated with Minecraft, Mojang,
+Microsoft, 2b2t or any of the tools named here; see
+[Disclaimer](#disclaimer).
 
 # 2b2t Museum import kit
 
 In order to fully test the mod's effectiveness I decided to pick a large
-database of available world downloads from a real active server. Here is
+database of available world downloads from a real, active server. Here is
 everything needed to import the 2b2tmuseum-WDL archive into a single packed
-Luanti / Mineclonia world. Explore some of the greatest bases ever made
+Luanti / Mineclonia world. Explore some of the greatest bases ever made.
 
 ## What you need
 
 1. **Luanti 5.17.x** (server build is enough — no GUI needed; the
    client must run the SAME Mineclonia as the server).
 2. **Mineclonia** in `games/mineclonia`.
-3. **The WDL archive** — clone the github  (~13 GB).
+3. **The WDL archive**: clone
+   [TwinkNet/2b2tmuseum-WDL](https://github.com/TwinkNet/2b2tmuseum-WDL)
+   (~13 GB). It is not part of this kit.
 4. **This kit.**
 5. **Disk**: budget ~25 GB for the finished world.
 
@@ -140,3 +148,60 @@ destination. The local run scored **99.982%** across 633,597 blocks
 
 Also worth checking per base: containers > 0, signs carry `utext`, no
 orphaned door bottoms, and no Mineclonia terrain in the column beneath.
+
+## License
+
+Copyright (C) 2026 Janet Jeffus
+
+This program is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+more details. The full text is in [`LICENSE`](LICENSE).
+
+### Third-party code in this repository
+
+A few parts are derived from other free-software projects and keep their
+original licenses and credits:
+
+- **Mineclonia** (GPL-3.0, <https://codeberg.org/mineclonia/mineclonia>):
+  - `mods/museumloot/structures.lua` reproduces Mineclonia's vanilla
+    structure loot tables, citing each source file and line;
+  - `mods/museumloot/mobplacement.lua` reproduces Mineclonia's villager
+    profession table (`mobs_mc/villager.lua`) and follows its mob
+    despawn-prevention mechanism;
+  - `mods/spawnimport/gateway_link.lua` reuses Mineclonia's End gateway
+    position table;
+  - `import_tools/game_patches/mcl_maps-load_map-headless.patch` is a patch
+    to Mineclonia's `mcl_maps`.
+- **Luanti** (LGPL-2.1-or-later, <https://github.com/luanti-org/luanti>):
+  `import_tools/game_patches/luanti-5.17.0-museum-import.patch` is a patch to
+  the engine and remains under the engine's license.
+
+Nothing else in this repository is copied from Minecraft, Mojang, Mineclonia
+or Luanti. It ships no Minecraft code, assets, textures, sounds or game
+data. Block and item identifiers such as `minecraft:stone` appear only as
+names, so saves can be read and translated to Mineclonia's own nodes.
+
+### World downloads are not included
+
+The kit ships **no world downloads and no players' builds**. It reads saves
+that you supply, for example a clone of the 2b2tmuseum-WDL archive. Those
+builds, and any map art or text in them, belong to their creators and to
+the archive that distributes them; importing them is subject to their
+terms. The mapart gallery images are likewise not part of this repository.
+
+## Disclaimer
+
+NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH
+MOJANG OR MICROSOFT. "Minecraft" is a trademark of Mojang Synergies AB /
+Microsoft, used here only to describe the file format this software reads.
+
+This project is independent and is not affiliated with, endorsed by or
+sponsored by 2b2t, the Luanti or Mineclonia projects, World Downloader,
+WorldTools, or the maintainers of the 2b2tmuseum-WDL archive. All names are
+used only to identify the software and data formats this kit works with.

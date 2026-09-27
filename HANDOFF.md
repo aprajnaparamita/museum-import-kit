@@ -1,10 +1,14 @@
 # HANDOFF — single entry point for a fresh agent, 2026-09-17
 
-> **LATEST (2026-09-27): read `SESSION_2026-09-27_SUMMARY.md` first.** The
-> nether/End merge was rewritten as a 3-D blend (`wgen_blend3d.lua`), the
-> nether/End band offsets were corrected to v7 (-29067 / -27073), and the
-> mapart east-west mirror was removed. That work is UNCOMMITTED and deployed
-> to "2b2t Museum TEST", awaiting the owner's walk-through.
+> **LATEST (2026-09-28): read `SESSION_2026-09-27_SUMMARY.md` first.** The
+> nether/End merge is a 3-D blend (`wgen_blend3d.lua`) on the v7 bands
+> (-29067 / -27073, End placed +14). Also: the mapart unmirror in the
+> gallery pass, OP loot everywhere in bases, End gateways linked to the main
+> island, and download void kept void. All of it is committed and walked by
+> the owner. **To build the full museum on a server, follow `GUIDE-vps.md`**
+> ("Read this before a full run" + "Agent prompt"). A 20-base diagnostic
+> set is `manifest/museum_manifest_sample20.json`
+> (`MICRO_MANIFEST=... import_tools/micro_rebuild.sh`).
 
 Read this file top to bottom before touching anything. It is meant to be
 fully self-sufficient — everything you need to pick up exactly where the

@@ -1,7 +1,7 @@
-# Import MineCraft World Downloads into Luanti Mineclonia mod
+# Import a World Downloader (WDL) Anvil files into Luanti Mineclonia mod
 
 This is a system to effortlessly import World Download files into
-Mineclonia. You can save your base and import it into your Mineclonia
+Luanti. You can save your base and import it into your Mineclonia
 world! Or you can browse world downloads of other's bases. See
 FriedcakeSMP (coming soon) to visit these bases in a fun SMP environment.
 
@@ -22,6 +22,14 @@ Luanti / Mineclonia world. Explore some of the greatest bases ever made
 5. **Disk**: budget ~25 GB for the finished world.
 
 ## Setup
+
+> **Before a full run, read `GUIDE-vps.md` → "Read this before a full run".**
+> The steps below are older than the nether/End merge, the End gateways and
+> the mapart unmirror. As written they build a terrain-less singlenode world,
+> copy every mod (including a second batch driver), skip the merge wherever
+> footprints are missing, and leave multi-map art reversed. The guide lists
+> the fixes, and ends with a ready-made agent prompt for the whole run.
+> The verified reference is `import_tools/micro_rebuild.sh`.
 
 ```bash
 # 1. mods

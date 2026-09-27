@@ -18,7 +18,7 @@
 #   - worlddata is wiped every run (loop = full deterministic rebuild).
 # The full 205-base import runs on the destination server, not here.
 #
-# Usage: ./micro_rebuild.sh [--no-deploy] [--continue]
+# Usage: [MICRO_MANIFEST=<manifest.json>] ./micro_rebuild.sh [--no-deploy] [--continue]
 #   default: rebuild, then deploy -> "2b2t Museum TEST" (museumloot
 #   stripped so the owner can walk around without the batch restarting).
 #   --continue: do NOT wipe; keep whatever bases are already placed and
@@ -58,7 +58,15 @@ for mod in spawnimport museumloot museumwarp museumportals; do
     rm -rf "$STAGING/worldmods/$mod"
     cp -R "$KIT/mods/$mod" "$STAGING/worldmods/"
 done
-cp "$KIT/manifest/museum_manifest_micro.json" "$STAGING/museum_manifest.json"
+# MICRO_MANIFEST picks another set (e.g. manifest/museum_manifest_sample20.json);
+# the run conf's museum_target_bases follows the manifest's length so the
+# loot pass waits for every base.
+MANIFEST_SRC="${MICRO_MANIFEST:-$KIT/manifest/museum_manifest_micro.json}"
+cp "$MANIFEST_SRC" "$STAGING/museum_manifest.json"
+N_BASES=$(python3 -c 'import json,sys; print(len(json.load(open(sys.argv[1]))))' "$MANIFEST_SRC")
+sed "s/^museum_target_bases *=.*/museum_target_bases = $N_BASES/" "$LUANTI_CONF" > "$LOGDIR/micro_run.conf"
+LUANTI_CONF="$LOGDIR/micro_run.conf"
+log "manifest: $MANIFEST_SRC ($N_BASES bases)"
 cp "$KIT/manifest/base_patches.json" "$STAGING/base_patches.json"
 
 if [ "$CONTINUE" = "1" ]; then

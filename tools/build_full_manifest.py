@@ -13,6 +13,7 @@ Usage:
     build_full_manifest.py <out_manifest.json>
 """
 import json
+import math
 import os
 import re
 import sys
@@ -35,6 +36,59 @@ PLACED_NAMES = {
 
 def norm(s):
     return re.sub(r"[^a-z0-9]", "", s.lower())
+
+
+# Mineclonia's gateway ring (portal_gateway.lua gateway_positions)
+GATEWAY_SLOTS = [
+    (96, 0), (91, 29), (77, 56), (56, 77), (29, 91),
+    (0, 96), (-29, 91), (-56, 77), (-77, 56), (-91, 29),
+    (-96, 0), (-91, -29), (-77, -56), (-56, -77), (-29, -91),
+    (0, -96), (29, -91), (56, -77), (77, -56), (91, -29),
+]
+
+
+def _angle_gap(a, b):
+    return abs(math.atan2(math.sin(a - b), math.cos(a - b)))
+
+
+def assign_end_gateway_slots(man):
+    ends = [e for e in man if e.get("dimension_type") == "end"]
+    slot_ang = [math.atan2(z, x) for x, z in GATEWAY_SLOTS]
+    half = math.pi / len(GATEWAY_SLOTS)  # half the slot spacing
+    used = set()
+    for e in ends:
+        b = e["dest_bbox"]
+        cx, cz = (b["x_min"] + b["x_max"]) / 2, (b["z_min"] + b["z_max"]) / 2
+        ang = math.atan2(cz, cx)
+        free = [i for i in range(len(GATEWAY_SLOTS)) if i not in used]
+        if not free:
+            print(f"  End {e['display_name']}: no gateway slot left -- gateway returns to the main island")
+            continue
+        i = min(free, key=lambda k: _angle_gap(ang, slot_ang[k]))
+        used.add(i)
+        if _angle_gap(ang, slot_ang[i]) <= half:
+            print(f"  End {e['display_name']}: gateway slot {i + 1}")
+            continue
+        # turn the base to the slot's direction, same distance, chunk-aligned
+        r = math.hypot(cx, cz)
+        dx = int(round((r * math.cos(slot_ang[i]) - cx) / 16)) * 16
+        dz = int(round((r * math.sin(slot_ang[i]) - cz) / 16)) * 16
+        e["dest_anchor_x"] = int(e["dest_anchor_x"]) + dx
+        e["dest_anchor_z"] = int(e["dest_anchor_z"]) + dz
+        for k in ("x_min", "x_max"):
+            b[k] += dx
+        for k in ("z_min", "z_max"):
+            b[k] += dz
+        print(f"  End {e['display_name']}: moved ({dx},{dz}) to gateway slot {i + 1}")
+    for i, a in enumerate(ends):
+        ab = a["dest_bbox"]
+        for c in ends[i + 1:]:
+            cb = c["dest_bbox"]
+            if (ab["x_min"] <= cb["x_max"] and ab["x_max"] >= cb["x_min"]
+                    and ab["z_min"] <= cb["z_max"] and ab["z_max"] >= cb["z_min"]):
+                print(f"ERROR: End bases overlap after gateway placement: "
+                      f"{a['display_name']} / {c['display_name']}")
+                sys.exit(1)
 
 
 def main():
@@ -126,6 +180,29 @@ def main():
                     print(f"ERROR: overlap {a['display_name']} / {b['display_name']}")
                     sys.exit(1)
         print("  overlap check: all placements disjoint")
+
+    # End bases: one main-island gateway slot each (owner 2026-09-28).
+    # spawnimport's gateway_link.lua pairs a base's captured gateway with
+    # the free slot nearest the base's direction (Mineclonia's 20-slot
+    # ring, mcl_portals/portal_gateway.lua). End bases float in void, so
+    # they can go anywhere: a base whose direction lands on a slot another
+    # base already has is turned around the origin, at the same distance,
+    # to the nearest free slot. Past 20 bases the gateway falls back to
+    # "return to the main island" (museumportals).
+    assign_end_gateway_slots(man)
+
+    # Band offsets must be Mineclonia's v7 bands (mcl_init/init.lua with
+    # enable_mcl_levelgen = false -- the museum worlds run mg_name = v7).
+    # The levelgen pair (-29072 / -26880) put the nether 5 blocks low and
+    # the End 193 blocks high (2026-09-27: split roofs, broken floors,
+    # two island layers).
+    band_dy = {"nether": -29067, "end": -27073}
+    for e in man:
+        want = band_dy.get(e.get("dimension_type"))
+        if want is not None and e.get("dest_y_offset") != want:
+            print(f"ERROR: {e['display_name']}: {e['dimension_type']} dest_y_offset "
+                  f"{e.get('dest_y_offset')} != v7 band {want}")
+            sys.exit(1)
 
     with open(out_path, "w") as f:
         json.dump(man, f, indent=1)

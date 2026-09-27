@@ -1158,347 +1158,269 @@ os.remove(fp_path)
 os.remove(gap_manifest_path)
 
 -- -----------------------------------------------------------------
--- Test 6b: nether band merge -- lava sea matching + roof regen + band
--- materials (2026-09-26, AUDIT-2026-09-26.md #1/#2/#4).
+-- Tests 6b/6c: the NETHER and END merges (wgen_blend3d.lua, 2026-09-27).
+-- Not a height field: a 3-D blend between the capture (mirrored across
+-- the seam) and the generated terrain, weight 1 at the seam -> 0 at the
+-- ring's outer edge. Asserted by name:
+--   * the seam is exact (blend3d.audit: 0 seam voxel mismatches);
+--   * columns at the ring's outer edge (weight 0) are byte-for-byte the
+--     generated terrain -- invisible against untouched chunks;
+--   * the bedrock floor/roof rows are never written (nether);
+--   * lava never rises above the lava sea (nether);
+--   * generated decoration survives where the geometry is unchanged;
+--   * the End keeps Mineclonia's own islands at the outer edge (no more
+--     "clear everything to void") and writes no liquid.
+-- Wrapped in functions: the harness main chunk is at LuaJIT's
+-- 200-locals limit.
 -- -----------------------------------------------------------------
+
+-- Euclidean column distance from (x, z) to the nearest captured chunk of
+-- a test placed at (gx, gz) -- the same measure wgen_blend3d uses.
+local function capture_dist(x, z, gx, gz)
+	local best = math.huge
+	for _, c in ipairs(CHUNKS) do
+		local x0 = gx + (c.cx * 16 - ORIGIN_X)
+		local z0 = gz + (c.cz * 16 - ORIGIN_Z)
+		local dx = (x < x0 and x0 - x) or (x > x0 + 15 and x - x0 - 15) or 0
+		local dz = (z < z0 and z0 - z) or (z > z0 + 15 and z - z0 - 15) or 0
+		local d = math.sqrt(dx * dx + dz * dz)
+		if d < best then best = d end
+	end
+	return best
+end
+
+local function run_band_job(name, dim, gx, gz, dy, fp_path)
+	local manifest = {
+		{
+			display_name = name,
+			source_region_dir = REGION_DIR,
+			source_base_folder = WORLD_FOLDER,
+			dimension_type = dim,
+			dest_anchor_x = gx,
+			dest_anchor_z = gz,
+			dest_y_offset = dy,
+			origin_x = ORIGIN_X,
+			origin_z = ORIGIN_Z,
+			dest_bbox = { x_min = gx, x_max = gx + EXT_W, z_min = gz, z_max = gz + EXT_D },
+			chunk_bounds = {
+				x_min = MIN_CX - 1, x_max = MAX_CX + 1,
+				z_min = MIN_CZ - 1, z_max = MIN_CZ + 1,
+			},
+			footprint_path = fp_path,
+		},
+	}
+	local mpath = os.tmpname()
+	local f = io.open(mpath, "w")
+	f:write(simple_json_encode(manifest))
+	f:close()
+	local ok, msg = run_museumimport_command("start " .. mpath .. " 5")
+	check(name .. " import accepted", ok == true, tostring(msg))
+	run_job_to_completion(400)
+	local finished = false
+	for _, m in ipairs(chat_messages["tester"] or {}) do
+		if m:match("^%[spawnimport%] " .. name .. ": done%.") then finished = true end
+	end
+	check(name .. " job reported done", finished)
+	local band_seen = false
+	for _, m in ipairs(log_messages) do
+		if m.msg:find(name .. ": " .. dim .. " band", 1, true) then band_seen = true end
+	end
+	-- the job itself must know its band (2026-09-27: dimension_type never
+	-- reached the job and the nether roof seal silently never ran)
+	check(name .. " job carries dimension_type '" .. dim .. "'", band_seen)
+	local audit_line, failed = nil, false
+	for _, m in ipairs(log_messages) do
+		if m.msg:match("%[gap%-fill%] audit " .. name .. ":") then audit_line = m.msg end
+		if m.msg:match("audit FAILED") and m.msg:match(name) then failed = true end
+	end
+	check(name .. " 3-D blend audit ran", audit_line ~= nil and audit_line:match("3%-D blend") ~= nil,
+		tostring(audit_line))
+	check(name .. " seam exact (0 seam voxel mismatches)", not failed, tostring(audit_line))
+	os.remove(mpath)
+end
+
+local function write_footprint(level, biome)
+	local path = os.tmpname()
+	local chunks = {}
+	for _, c in ipairs(CHUNKS) do
+		local cols = {}
+		for i = 1, 256 do cols[i] = level end
+		chunks[#chunks + 1] = {
+			cx = c.cx, cz = c.cz, height = level, is_water = false, biome = biome,
+			cols = cols, solid_cols = cols, terrain_cols = cols,
+		}
+	end
+	local f = io.open(path, "w")
+	f:write(simple_json_encode({ chunks = chunks }))
+	f:close()
+	return path
+end
+
+local function test_6b()
 print("")
-print("=== Test 6b: nether band merge (lava + roof + materials) ===")
+print("=== Test 6b: nether 3-D blend (bedrock rows, lava sea, outer edge) ===")
 
 mock_registered_nodes["mcl_nether:netherrack"] = {}
 mock_registered_nodes["mcl_nether:soul_sand"] = {}
-mock_registered_nodes["mcl_nether:nether_lava_source"] = { groups = { liquid = 1 } }
+mock_registered_nodes["mcl_nether:nether_lava_source"] = { liquidtype = "source", groups = { liquid = 1 } }
 mock_registered_nodes["mcl_core:bedrock"] = {}
+mock_registered_nodes["mcl_crimson:crimson_roots"] = { walkable = false }
 
-local NDY = -29072            -- the real nether band offset
-local NGAP_X, NGAP_Z = GAP_X, GAP_Z + 6000
-local NTARGET = 50            -- the capture's ground level (source y)
-local NNAT = 30               -- natural generated floor (source y)
-local NSEA = 36               -- the verified nether lava sea surface (source y)
-local function ngap_dest(cx, cz)
-	return NGAP_X + (cx * 16 - ORIGIN_X), NGAP_Z + (cz * 16 - ORIGIN_Z)
+local NDY = -29067            -- Mineclonia's v7 nether band (mg_nether_min)
+local NGX, NGZ = GAP_X, GAP_Z + 6000
+-- generated nether: bedrock 0..4, netherrack to a soul-sand floor at 20,
+-- lava sea 21..31, open cavern, netherrack ceiling 100..123, bedrock
+-- roof 124..128; crimson roots on the floor of every 7th column
+local function nat(x, y, z)
+	if y <= 4 or y >= 124 then return "mcl_core:bedrock" end
+	if y < 20 or y >= 100 then return "mcl_nether:netherrack" end
+	if y == 20 then return "mcl_nether:soul_sand" end
+	if y <= 31 then return "mcl_nether:nether_lava_source" end
+	return nil
 end
-local function nseed(x, z, top, surf, sub)
-	for y = top - 8, top do
-		local name
-		if y == top then name = surf
-		elseif y >= top - 2 then name = sub
-		else name = "mcl_nether:netherrack" end
-		fake_map[x .. "," .. (y + NDY) .. "," .. z] = content_id_of[name] or core.get_content_id(name)
+local cid = function(n) return content_id_of[n] or core.get_content_id(n) end
+local x0 = NGX + ((MIN_CX - 3) * 16 - ORIGIN_X)
+local z0 = NGZ + ((MIN_CZ - 3) * 16 - ORIGIN_Z)
+local x1 = NGX + ((MAX_CX + 3) * 16 + 15 - ORIGIN_X)
+local z1 = NGZ + ((MAX_CZ + 3) * 16 + 15 - ORIGIN_Z)
+local roots = {}
+for x = x0, x1 do
+	for z = z0, z1 do
+		for y = 0, 128 do
+			local n = nat(x, y, z)
+			if n then fake_map[x .. "," .. (y + NDY) .. "," .. z] = cid(n) end
+		end
+		-- decoration ABOVE the lava sea: a roots patch on a netherrack
+		-- ledge at 40 (every 7th column), so a far-from-seam roots node
+		-- sits where the geometry is unchanged
+		if (x + z) % 7 == 0 then
+			fake_map[x .. "," .. (40 + NDY) .. "," .. z] = cid("mcl_nether:netherrack")
+			fake_map[x .. "," .. (41 + NDY) .. "," .. z] = cid("mcl_crimson:crimson_roots")
+			roots[#roots + 1] = { x, z }
+		end
 	end
 end
-for cz = MIN_CZ - 3, MIN_CZ + 3 do
-	for cx = MIN_CX - 3, MAX_CX + 3 do
-		local bx, bz = ngap_dest(cx, cz)
-		for lz = 0, 15 do
-			for lx = 0, 15 do
-				nseed(bx + lx, bz + lz, NNAT, "mcl_nether:soul_sand", "mcl_nether:netherrack")
+
+local fp = write_footprint(60, "minecraft:nether_wastes")
+run_band_job("nephertest", "nether", NGX, NGZ, NDY, fp)
+os.remove(fp)
+
+local merge_cols, bedrock_bad, lava_hi, outer_cols, outer_bad = 0, 0, nil, 0, 0
+local changed_cols = 0
+for x = x0, x1 do
+	for z = z0, z1 do
+		local cx = math.floor((x - NGX + ORIGIN_X) / 16)
+		local cz = math.floor((z - NGZ + ORIGIN_Z) / 16)
+		if not CHUNK_SET[cx .. "," .. cz] then
+			merge_cols = merge_cols + 1
+			local d = capture_dist(x, z, NGX, NGZ)
+			local col_changed = false
+			for y = 0, 128 do
+				local got = content_name_of[fake_map[x .. "," .. (y + NDY) .. "," .. z]]
+				local want = nat(x, y, z)
+				if y == 40 and (x + z) % 7 == 0 then want = "mcl_nether:netherrack" end
+				if y == 41 and (x + z) % 7 == 0 then want = "mcl_crimson:crimson_roots" end
+				if (y <= 4 or y >= 124) and got ~= "mcl_core:bedrock" then bedrock_bad = bedrock_bad + 1 end
+				if got == "mcl_nether:nether_lava_source" and (not lava_hi or y > lava_hi) then lava_hi = y end
+				if got ~= want then col_changed = true end
+				if d >= 33 and got ~= want then outer_bad = outer_bad + 1 end
 			end
+			if d >= 33 then outer_cols = outer_cols + 1 end
+			if col_changed then changed_cols = changed_cols + 1 end
 		end
 	end
 end
--- lava pool: floor at source y 20 with lava up to the sea surface (36) --
--- its merged column is below the lava sea and must surface-fill with lava
--- lava pool: a deep basin (floor at source y -40) with lava up to the
--- sea surface (36). Deep on purpose: the seam fade pulls free columns
--- toward the capture level (50) across ~33 columns, so only a deeply
--- sunken basin lands below the lava sea on free columns. A pool right
--- at the seam is legitimately raised to the base's floor and dries out
--- (the ring floor continues the base's floor) -- the overworld
--- 'raised water -> air' rule, not the lava-fill rule under test.
-do
-	local bx, bz = ngap_dest(MAX_CX + 1, MAX_CZ + 1)
-	for lz = 3, 12 do
-		for lx = 3, 12 do
-			local x, z = bx + lx, bz + lz
-			nseed(x, z, -40, "mcl_nether:soul_sand", "mcl_nether:netherrack")
-			for y = -39, NSEA do
-				fake_map[x .. "," .. (y + NDY) .. "," .. z] =
-					core.get_content_id("mcl_nether:nether_lava_source")
-			end
-		end
+check("nether merge rewrote columns near the seam", changed_cols > 0,
+	string.format("%d/%d merge columns changed", changed_cols, merge_cols))
+check("bedrock floor (0..4) and roof (124..128) rows untouched", bedrock_bad == 0, tostring(bedrock_bad))
+check("lava never above the lava sea (source 31)", lava_hi == nil or lava_hi <= 31, tostring(lava_hi))
+check("ring outer edge (weight 0) is exactly the generated terrain",
+	outer_cols > 0 and outer_bad == 0, string.format("%d bad voxels over %d columns", outer_bad, outer_cols))
+-- decoration rule: where the ledge under a roots node is still there
+-- and the space above it still open (geometry unchanged), and the
+-- generated side dominates (weight < 0.5 -- d >= 24 even with jitter),
+-- the roots must survive. (Nearer the seam the capture's higher ground
+-- legitimately rises over the ledge and buries it.)
+local roots_far, roots_far_kept = 0, 0
+local open_ = function(n) return n == nil or n == "mcl_crimson:crimson_roots" end
+for _, r in ipairs(roots) do
+	local cx = math.floor((r[1] - NGX + ORIGIN_X) / 16)
+	local cz = math.floor((r[2] - NGZ + ORIGIN_Z) / 16)
+	local at = function(y) return content_name_of[fake_map[r[1] .. "," .. (y + NDY) .. "," .. r[2]]] end
+	if not CHUNK_SET[cx .. "," .. cz] and capture_dist(r[1], r[2], NGX, NGZ) >= 24
+		and at(40) == "mcl_nether:netherrack" and open_(at(41)) and at(42) == nil then
+		roots_far = roots_far + 1
+		if at(41) == "mcl_crimson:crimson_roots" then roots_far_kept = roots_far_kept + 1 end
 	end
 end
--- synthetic CEILING: a nether roof band over the whole area (netherrack
--- at source y 122..127). The surface scan must treat it as CEILING, not
--- ground -- if the height model ever reads the roof as the surface again,
--- the merged surfaces jump to ~source 125 and the floor check below
--- fails (the owner-visible symptoms were skinned roofs + netherrack
--- pillars at ceiling height, 2026-09-26).
-for cz = MIN_CZ - 3, MIN_CZ + 3 do
-	for cx = MIN_CX - 3, MAX_CX + 3 do
-		local bx, bz = ngap_dest(cx, cz)
-		for lz = 0, 15 do
-			for lx = 0, 15 do
-				local x, z = bx + lx, bz + lz
-				for y = 122, 127 do
-					fake_map[x .. "," .. (y + NDY) .. "," .. z] =
-						core.get_content_id("mcl_nether:netherrack")
-				end
-			end
-		end
-	end
+check("generated decoration survives where the geometry is unchanged",
+	roots_far > 0 and roots_far_kept == roots_far, string.format("%d/%d", roots_far_kept, roots_far))
 end
+test_6b()
 
--- synthetic footprint: flat capture ground at NTARGET (source space)
-local nfp_path = os.tmpname()
-do
-	local chunks = {}
-	for _, c in ipairs(CHUNKS) do
-		local cols = {}
-		for i = 1, 256 do cols[i] = NTARGET end
-		chunks[#chunks + 1] = {
-			cx = c.cx, cz = c.cz, height = NTARGET, is_water = false,
-			biome = "minecraft:nether_wastes",
-			cols = cols, solid_cols = cols, terrain_cols = cols,
-		}
-	end
-	local f = io.open(nfp_path, "w")
-	f:write(simple_json_encode({ chunks = chunks }))
-	f:close()
-end
-local n_manifest = {
-	{
-		display_name = "nephertest",
-		source_region_dir = REGION_DIR,
-		source_base_folder = WORLD_FOLDER,
-		dimension_type = "nether",
-		dest_anchor_x = NGAP_X,
-		dest_anchor_z = NGAP_Z,
-		dest_y_offset = NDY,
-		origin_x = ORIGIN_X,
-		origin_z = ORIGIN_Z,
-		dest_bbox = { x_min = NGAP_X, x_max = NGAP_X + EXT_W, z_min = NGAP_Z, z_max = NGAP_Z + EXT_D },
-		chunk_bounds = {
-			x_min = MIN_CX - 1, x_max = MAX_CX + 1,
-			z_min = MIN_CZ - 1, z_max = MIN_CZ + 1,
-		},
-		footprint_path = nfp_path,
-	},
-}
-local n_manifest_path = os.tmpname()
-do
-	local f = io.open(n_manifest_path, "w")
-	f:write(simple_json_encode(n_manifest))
-	f:close()
-end
-local ok_n, msg_n = run_museumimport_command("start " .. n_manifest_path .. " 5")
-check("nephertest import accepted", ok_n == true, tostring(msg_n))
-run_job_to_completion(120)
-local n_finished = false
-for _, m in ipairs(chat_messages["tester"] or {}) do
-	if m:match("^%[spawnimport%] nephertest: done%.") then n_finished = true end
-end
-check("nephertest job reported done", n_finished)
-
--- scan the merge chunks (everything in the window that is not a captured
--- chunk): roof plate present, lava surface at the sea, band materials
-local NW0x = NGAP_X + ((MIN_CX - 1) * 16 - ORIGIN_X)
-local NW0z = NGAP_Z + ((MIN_CZ - 1) * 16 - ORIGIN_Z)
-local NW1x = NGAP_X + ((MAX_CX + 1) * 16 + 15 - ORIGIN_X)
-local NW1z = NGAP_Z + ((MIN_CZ + 1) * 16 + 15 - ORIGIN_Z)
-local function is_merge_col(x, z)
-	local cx = math.floor((x - NGAP_X + ORIGIN_X) / 16)
-	local cz = math.floor((z - NGAP_Z + ORIGIN_Z) / 16)
-	return not CHUNK_SET[cx .. "," .. cz]
-end
-local roof_bad, roof_n = 0, 0
-local lava_hi, lava_at_sea = nil, 0
-local stone_fill, nether_fill = 0, 0
-local floor_max = {}
-for x = NW0x, NW1x do
-	for z = NW0z, NW1z do
-		if is_merge_col(x, z) then
-			roof_n = roof_n + 1
-			local r127 = content_name_of[fake_map[x .. "," .. (NDY + 127) .. "," .. z]]
-			local r126 = content_name_of[fake_map[x .. "," .. (NDY + 126) .. "," .. z]]
-			if r127 ~= "mcl_core:bedrock" or r126 ~= "mcl_core:bedrock" then
-				roof_bad = roof_bad + 1
-			end
-		end
-	end
-end
-for key, cid in pairs(fake_map) do
-	local x, y, z = key:match("^(%-?%d+),(%-?%d+),(%-?%d+)$")
-	x, y, z = tonumber(x), tonumber(y), tonumber(z)
-	if x and x >= NW0x and x <= NW1x and z >= NW0z and z <= NW1z and is_merge_col(x, z) then
-		local name = content_name_of[cid]
-		if name == "mcl_nether:nether_lava_source" then
-			if not lava_hi or y > lava_hi then lava_hi = y end
-			if y == NDY + NSEA then lava_at_sea = lava_at_sea + 1 end
-		end
-		if y < NDY + 30 then
-			if name == "mcl_core:stone" then stone_fill = stone_fill + 1 end
-			if name == "mcl_nether:netherrack" then nether_fill = nether_fill + 1 end
-		end
-		-- merged surface = topmost solid below the ceiling band (the
-		-- floor-vs-roof model check)
-		if y < NDY + 122 and name ~= "mcl_nether:nether_lava_source"
-			and name ~= "air" and name ~= "mcl_core:bedrock" then
-			local skey = x .. "," .. z
-			if not floor_max[skey] or y > floor_max[skey] then floor_max[skey] = y end
-		end
-	end
-end
-check("nether roof regenerated over fill chunks (bedrock plate at dy+126/127)",
-	roof_bad == 0 and roof_n > 0, string.format("%d/%d columns bad", roof_bad, roof_n))
-check("lava never rises above the nether lava sea (dy+36)",
-	lava_hi == nil or lava_hi <= NDY + NSEA, tostring(lava_hi and (lava_hi - NDY)))
-check("lava pool fills up to the sea surface", lava_at_sea > 0, tostring(lava_at_sea))
-check("no overworld stone in the nether raise fill", stone_fill == 0, tostring(stone_fill))
-check("nether raise fill uses netherrack", nether_fill > 0, tostring(nether_fill))
-local floor_worst = nil
-for _, y in pairs(floor_max) do
-	if not floor_worst or y > floor_worst then floor_worst = y end
-end
-check("merged surfaces track the FLOOR, not the ceiling (floor-vs-roof model)",
-	floor_worst ~= nil and floor_worst <= NDY + 60,
-	string.format("worst merged surface at source y %s (ceiling is 122+)",
-		floor_worst and tostring(floor_worst - NDY) or "nil"))
-
-local n_audit_line, n_audit_failed = nil, false
-for _, m in ipairs(log_messages) do
-	if m.msg:match("%[gap%-fill%] audit nephertest:") then n_audit_line = m.msg end
-	if m.msg:match("audit FAILED") and m.msg:match("nephertest") then n_audit_failed = true end
-end
-check("nephertest gap_fill.audit ran", n_audit_line ~= nil)
-check("nephertest gap_fill.audit did not fail", not n_audit_failed, tostring(n_audit_line))
-
-os.remove(nfp_path)
-os.remove(n_manifest_path)
-
--- -----------------------------------------------------------------
--- Test 6c: End band merge -- island slabs over void, void stays void
--- (2026-09-27: the first End-void build CRASHED the audit with
--- area:index(x, nil, z) on fully-cleared columns -- green harness let
--- it through because no test produced a written void column. This runs
--- a real End job that does.) Wrapped in its own function scope: the
--- harness main chunk hit LuaJIT's 200-locals limit otherwise.
--- -----------------------------------------------------------------
 local function test_6c()
 print("")
-print("=== Test 6c: End island slabs + void columns ===")
+print("=== Test 6c: End 3-D blend (islands meet, outer edge natural) ===")
 
 mock_registered_nodes["mcl_end:end_stone"] = {}
 
-local EDY = -26880               -- the real End band offset
-local EGAP_X, EGAP_Z = GAP_X, GAP_Z + 12000
-local ETARGET = 60               -- the captured island's surface (source y)
-local function egap_dest(cx, cz)
-	return EGAP_X + (cx * 16 - ORIGIN_X), EGAP_Z + (cz * 16 - ORIGIN_Z)
+local EDY = -27073               -- Mineclonia's v7 End band (mg_end_min)
+local EGX, EGZ = GAP_X, GAP_Z + 12000
+-- generated End: Mineclonia's thin island sheets at source 64..67 on a
+-- checkerboard of chunks, void elsewhere
+local x0 = EGX + ((MIN_CX - 3) * 16 - ORIGIN_X)
+local z0 = EGZ + ((MIN_CZ - 3) * 16 - ORIGIN_Z)
+local x1 = EGX + ((MAX_CX + 3) * 16 + 15 - ORIGIN_X)
+local z1 = EGZ + ((MAX_CZ + 3) * 16 + 15 - ORIGIN_Z)
+local function sheet(x, z)
+	local cx = math.floor((x - EGX + ORIGIN_X) / 16)
+	local cz = math.floor((z - EGZ + ORIGIN_Z) / 16)
+	return (cx + cz) % 2 == 0
 end
--- natural terrain = Mineclonia's own end islands FAR below (source y
--- ~-120), on half the columns; the rest is pure void. Both must end as
--- clean void below the merged island (the owner's "end stone ... still
--- spawning far below" / "it's all still spawning far below").
-for cz = MIN_CZ - 3, MIN_CZ + 3 do
-	for cx = MIN_CX - 3, MAX_CX + 3 do
-		local bx, bz = egap_dest(cx, cz)
-		for lz = 0, 15 do
-			for lx = 0, 15 do
-				local x, z = bx + lx, bz + lz
-				if (cx + cz) % 2 == 0 then
-					for y = -124, -120 do
-						-- seeded as a MARKER material (stone): the End fill
-						-- writes end_stone only, so any surviving stone in a
-						-- merge column is un-cleared generated layer
-						fake_map[x .. "," .. (y + EDY) .. "," .. z] =
-							core.get_content_id("mcl_core:stone")
-					end
-				end
-			end
+local c_es = content_id_of["mcl_end:end_stone"] or core.get_content_id("mcl_end:end_stone")
+for x = x0, x1 do
+	for z = z0, z1 do
+		if sheet(x, z) then
+			for y = 64, 67 do fake_map[x .. "," .. (y + EDY) .. "," .. z] = c_es end
 		end
 	end
 end
 
-local efp_path = os.tmpname()
-do
-	local chunks = {}
-	for _, c in ipairs(CHUNKS) do
-		local cols = {}
-		for i = 1, 256 do cols[i] = ETARGET end
-		chunks[#chunks + 1] = {
-			cx = c.cx, cz = c.cz, height = ETARGET, is_water = false,
-			biome = "minecraft:the_end",
-			cols = cols, solid_cols = cols, terrain_cols = cols,
-		}
-	end
-	local f = io.open(efp_path, "w")
-	f:write(simple_json_encode({ chunks = chunks }))
-	f:close()
-end
-local e_manifest = {
-	{
-		display_name = "endtest",
-		source_region_dir = REGION_DIR,
-		source_base_folder = WORLD_FOLDER,
-		dimension_type = "end",
-		dest_anchor_x = EGAP_X,
-		dest_anchor_z = EGAP_Z,
-		dest_y_offset = EDY,
-		origin_x = ORIGIN_X,
-		origin_z = ORIGIN_Z,
-		dest_bbox = { x_min = EGAP_X, x_max = EGAP_X + EXT_W, z_min = EGAP_Z, z_max = EGAP_Z + EXT_D },
-		chunk_bounds = {
-			x_min = MIN_CX - 1, x_max = MAX_CX + 1,
-			z_min = MIN_CZ - 1, z_max = MIN_CZ + 1,
-		},
-		footprint_path = efp_path,
-	},
-}
-local e_manifest_path = os.tmpname()
-do
-	local f = io.open(e_manifest_path, "w")
-	f:write(simple_json_encode(e_manifest))
-	f:close()
-end
-local ok_e, msg_e = run_museumimport_command("start " .. e_manifest_path .. " 5")
-check("endtest import accepted", ok_e == true, tostring(msg_e))
-run_job_to_completion(400)
-local e_finished = false
-for _, m in ipairs(chat_messages["tester"] or {}) do
-	if m:match("^%[spawnimport%] endtest: done%.") then e_finished = true end
-end
--- job reported done == finish() ran the AUDIT over written void columns
--- without crashing (the exact 2026-09-27 crash)
-check("endtest job reported done (audit survives void columns)", e_finished)
-
-local EW0x = EGAP_X + ((MIN_CX - 1) * 16 - ORIGIN_X)
-local EW0z = EGAP_Z + ((MIN_CZ - 1) * 16 - ORIGIN_Z)
-local EW1x = EGAP_X + ((MAX_CX + 1) * 16 + 15 - ORIGIN_X)
-local EW1z = EGAP_Z + ((MIN_CZ + 1) * 16 + 15 - ORIGIN_Z)
-local deep_endstone, slab_endstone = 0, 0
-for key, cid in pairs(fake_map) do
-	local x, y, z = key:match("^(%-?%d+),(%-?%d+),(%-?%d+)$")
-	x, y, z = tonumber(x), tonumber(y), tonumber(z)
-	if x and x >= EW0x and x <= EW1x and z >= EW0z and z <= EW1z then
-		local cx = math.floor((x - EGAP_X + ORIGIN_X) / 16)
-		local cz = math.floor((z - EGAP_Z + ORIGIN_Z) / 16)
-		if not CHUNK_SET[cx .. "," .. cz] then
-			-- deep-only: the real capture's own stone legitimately seam-copies
-			-- into surface/fill positions, but nothing writes stone DEEP
-			if content_name_of[cid] == "mcl_core:stone" and y < EDY - 30 then
-				deep_endstone = deep_endstone + 1
-				if deep_endstone <= 3 then
-					print(string.format("  [uncleared layer sample] (%d,%d,%d)", x, y, z))
-				end
-			end
-			if content_name_of[cid] == "mcl_end:end_stone"
-				and y > EDY and y <= EDY + ETARGET then slab_endstone = slab_endstone + 1 end
-		end
-	end
-end
-check("no generated end stone far below the island (deep layer cleared)",
-	deep_endstone == 0, tostring(deep_endstone))
-check("island slab written at the merged level", slab_endstone > 0, tostring(slab_endstone))
-
-local e_audit_failed = false
+local fp = write_footprint(60, "minecraft:the_end")
+run_band_job("endtest", "end", EGX, EGZ, EDY, fp)
+os.remove(fp)
+-- End captures sit END_ISLAND_LIFT (14) above the band key so vanilla
+-- island tops (~58) meet Mineclonia's (~72) -- see new_job
+local lifted = false
 for _, m in ipairs(log_messages) do
-	if m.msg:match("audit FAILED") and m.msg:match("endtest") then e_audit_failed = true end
+	if m.msg:find("endtest: end band, dest_y_offset " .. (EDY + 14), 1, true) then lifted = true end
 end
-check("endtest gap_fill.audit did not fail", not e_audit_failed)
+check("End job places at band + 14 (island-top lift)", lifted)
 
-os.remove(efp_path)
-os.remove(e_manifest_path)
+local outer_cols, outer_bad, liquid, below_band = 0, 0, 0, 0
+for x = x0, x1 do
+	for z = z0, z1 do
+		local cx = math.floor((x - EGX + ORIGIN_X) / 16)
+		local cz = math.floor((z - EGZ + ORIGIN_Z) / 16)
+		if not CHUNK_SET[cx .. "," .. cz] then
+			local d = capture_dist(x, z, EGX, EGZ)
+			for y = -8, 255 do
+				local got = content_name_of[fake_map[x .. "," .. (y + EDY) .. "," .. z]]
+				if got and (got:find("water") or got:find("lava")) then liquid = liquid + 1 end
+				if y < 0 and got then below_band = below_band + 1 end
+				if d >= 33 then
+					local want = (sheet(x, z) and y >= 64 and y <= 67) and "mcl_end:end_stone" or nil
+					if got ~= want then outer_bad = outer_bad + 1 end
+				end
+			end
+			if d >= 33 then outer_cols = outer_cols + 1 end
+		end
+	end
+end
+check("End ring outer edge keeps Mineclonia's own islands exactly",
+	outer_cols > 0 and outer_bad == 0, string.format("%d bad voxels over %d columns", outer_bad, outer_cols))
+check("End merge writes no liquid", liquid == 0, tostring(liquid))
+check("End merge never writes below the band", below_band == 0, tostring(below_band))
 end
 test_6c()
 

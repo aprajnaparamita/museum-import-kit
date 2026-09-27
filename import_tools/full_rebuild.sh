@@ -39,8 +39,8 @@ if pgrep -f "$LUANTI_BIN" > /dev/null; then
     exit 1
 fi
 
-log "syncing kit worldmods -> staging (spawnimport, museumloot, museumwarp)"
-for mod in spawnimport museumloot museumwarp; do
+log "syncing kit worldmods -> staging (spawnimport, museumloot, museumwarp, museumportals)"
+for mod in spawnimport museumloot museumwarp museumportals; do
     if [ -d "$KIT/mods/$mod" ]; then
         rm -rf "$STAGING/worldmods/$mod"
         cp -R "$KIT/mods/$mod" "$STAGING/worldmods/"
@@ -50,7 +50,7 @@ done
 log "wiping staging world data"
 rm -f "$STAGING/map.sqlite" "$STAGING/mod_storage.sqlite" "$STAGING/map_meta.txt" \
       "$STAGING/env_meta.txt" "$STAGING/force_loaded.txt"
-rm -rf "$STAGING/mod_storage" "$STAGING/mcl_maps"
+rm -rf "$STAGING/mod_storage" "$STAGING/mcl_maps" "$STAGING/mapart_unmirrored.txt" "$STAGING/museum_gateways.json"
 
 log "resetting mapart-gallery variety registry for this fresh run"
 echo '{}' > "$KIT/import_tools/mapart_gallery/used_pieces_registry.json"

@@ -8,7 +8,7 @@
   "origin_z": -52592,
   "dest_anchor_x": 17000,
   "dest_anchor_z": -7880,
-  "dest_y_offset": -29072,
+  "dest_y_offset": -29067,
   "chunk_bounds": {
    "x_min": 3652,
    "x_max": 3663,
@@ -58,7 +58,7 @@
   "origin_z": 88800,
   "dest_anchor_x": 15207,
   "dest_anchor_z": -7880,
-  "dest_y_offset": -29072,
+  "dest_y_offset": -29067,
   "chunk_bounds": {
    "x_min": -16463,
    "x_max": -16408,
@@ -83,7 +83,7 @@
   "origin_z": 1803776,
   "dest_anchor_x": 4096,
   "dest_anchor_z": 6016,
-  "dest_y_offset": -26880,
+  "dest_y_offset": -27073,
   "chunk_bounds": {
    "x_min": -290336,
    "x_max": -290273,

@@ -149,6 +149,7 @@ local function is_terrain_name(name)
 	if name:match("^mcl_deepslate:deepslate_with_") then return true end
 	return false
 end
+gap_fill.is_terrain_name = is_terrain_name
 
 -- Vegetation: the only thing allowed to ride along above the shifted
 -- surface (trees, plants, vines, snow layers...). Liquids and floating
@@ -671,13 +672,6 @@ function gap_fill.build_plan(job, real, entries, opts)
 			-- a column with no terrain at all (all-air/void column) still
 			-- joins the solve at its chunk's mean surface -- skipping it
 			-- would leave the pre-generated leftovers in place.
-			-- EXCEPTION (2026-09-26, the End's island-over-void model):
-			-- at the End band a terrain-less column is VOID and must stay
-			-- void -- there is no "natural level" to ramp toward (the ring
-			-- is pure air, AUDIT-2026-09-26 #3) and filling it produced
-			-- the walls of stone descending into nothing. Pre-generated
-			-- leftovers cannot exist there (the mapgen generates nothing).
-			local end_void = job.dimension_type == "end"
 			local sum, n = 0, 0
 			for i = 1, C * C do
 				local col = cols[i]
@@ -688,7 +682,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 				for lx = 0, C - 1 do
 					local sx, sz = cx * C + lx, cz * C + lz
 					local col = cols[lx * C + lz + 1]
-					if not col.S and not (end_void and n == 0) then
+					if not col.S then
 						col.S = fallback
 					end
 					if col.S then
@@ -724,8 +718,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 				local tname = c.T and core.get_name_from_content_id(c.T) or nil
 				return wgen_inputs.surface_family(tname, gname), c.mat
 			end)
-				free = wgen_inputs.height_targets(fld, natural,
-			job.dimension_type == "end" or (not job.dimension_type and dy <= -20000))
+		free = wgen_inputs.height_targets(fld, natural)
 		last_field = fld
 		-- Domain-boundary columns bordering untouched terrain are pinned
 		-- to their own natural height (the merge must be invisible there),

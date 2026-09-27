@@ -1,5 +1,11 @@
 # HANDOFF — single entry point for a fresh agent, 2026-09-17
 
+> **LATEST (2026-09-27): read `SESSION_2026-09-27_SUMMARY.md` first.** The
+> nether/End merge was rewritten as a 3-D blend (`wgen_blend3d.lua`), the
+> nether/End band offsets were corrected to v7 (-29067 / -27073), and the
+> mapart east-west mirror was removed. That work is UNCOMMITTED and deployed
+> to "2b2t Museum TEST", awaiting the owner's walk-through.
+
 Read this file top to bottom before touching anything. It is meant to be
 fully self-sufficient — everything you need to pick up exactly where the
 previous session left off is either inline here or pointed to precisely.

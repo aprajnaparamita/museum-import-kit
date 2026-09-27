@@ -1277,14 +1277,25 @@ local function discover_containers_for_base(base, done_cb)
 			-- and use that structure's own loot table -- see
 			-- structures.lua for the detection heuristics and the
 			-- hand-copied tables themselves.
+			--
+			-- Owner explicit 2026-09-27: every container inside a world
+			-- download gets the base-stash (OP) loot, including ones that
+			-- look like they're in a vanilla structure. The detector can't
+			-- tell a real structure from a player's stash next to a spawner
+			-- farm (Tactical Nuke: 785 of 1104 containers matched
+			-- "dungeon"), and end-city chests in a base read as ordinary
+			-- loot. structure_match is still recorded because mobplacement
+			-- uses it (end-city shulkers, villagers). Mineclonia's own
+			-- structures outside the captured area are never scanned, so
+			-- they keep vanilla loot. museumloot_vanilla_structures = true
+			-- restores the old vanilla-table behaviour.
 			local match = structures.detect(c.pos, x_min, x_max, y_min, y_max, z_min, z_max, c.node)
-			if match then
+			c.structure_match = match and match.structure or nil
+			if match and core.settings:get_bool("museumloot_vanilla_structures", false) then
 				c.theme_key = nil
-				c.structure_match = match.structure
 				c.structure_loot = match.loot_table
 				c.structure_loot_use = match.use
 			else
-				c.structure_match = nil
 				c.structure_loot = nil
 				c.structure_loot_use = nil
 				c.theme_key = classify(c.nearby_signs_blob, c.pos)
@@ -2031,7 +2042,8 @@ local function run_loot_for_base(base, done_cb)
 		for _, c in ipairs(containers) do
 			if c.structure_match then
 				by_structure[c.structure_match] = (by_structure[c.structure_match] or 0) + 1
-			else
+			end
+			if c.theme_key then
 				by_theme[c.theme_key] = (by_theme[c.theme_key] or 0) + 1
 			end
 		end

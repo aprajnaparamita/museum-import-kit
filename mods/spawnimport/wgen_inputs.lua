@@ -168,7 +168,7 @@ inputs.surface_family = wdl.surface_family
 -- w = 1 at the seam (match the touching block), 0 from FADE columns out
 -- (match the natural Mineclonia terrain). The solver's slope cap and
 -- pins remain the hard constraints -- this only shapes the ramp.
-function inputs.height_targets(field, natural, hold_seam)
+function inputs.height_targets(field, natural)
 	local t = {}
 	for skey, s in pairs(natural) do
 		local d = field.dist[skey]
@@ -182,17 +182,7 @@ function inputs.height_targets(field, natural, hold_seam)
 			local x, z = skey:match("^(%-?%d+),(%-?%d+)$")
 			local jit = wdl.jitter(tonumber(x), tonumber(z)) * 0.6
 			local w = weights(d, jit)
-			if hold_seam then
-				-- End island model (owner 2026-09-27: "very strange
-				-- formations as the algorithm tries to join the islands
-				-- which are 124 blocks higher"): never fade toward the
-				-- deep natural level -- the island's surface is ONE level
-				-- (the capture's), no ramps toward Mineclonia's own
-				-- islands far below.
-				t[skey] = field.level[skey] or s
-			else
-				t[skey] = w * field.level[skey] + (1 - w) * s
-			end
+			t[skey] = w * field.level[skey] + (1 - w) * s
 		else
 			t[skey] = s
 		end

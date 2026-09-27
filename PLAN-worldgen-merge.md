@@ -1,5 +1,29 @@
 # PLAN — worldgen merge: patch gap chunks *before* trees, plants and structures
 
+> **Nether and End (2026-09-27): not this method.** Everything below is
+> the OVERWORLD merge (a height field: one surface per column). The
+> nether (floor + shelves + roof) and the End (floating island blobs)
+> are 3-D, and forcing them into one surface per column produced split
+> roofs, holed floors, floating slabs and islands joined by pillars.
+> They now use `mods/spawnimport/wgen_blend3d.lua`: per merge column,
+> the capture (mirrored across the seam, terrain blocks only) and the
+> generated terrain are each turned into a 1-D signed distance along y
+> and mixed with a weight that is 1 at the seam and 0 at the ring's
+> outer edge. The seam is the capture exactly, the outer edge is the
+> generated terrain exactly, and in between surfaces move smoothly,
+> shelves pinch off, caverns continue and islands fuse. See that file's
+> header for details.
+>
+> Precondition, and the root cause of most earlier nether/End bugs: the
+> capture must sit in Mineclonia's own band. This world runs v7, so
+> `dest_y_offset` = nether −29067 / End −27073 (`mcl_vars.mg_nether_min`
+> / `mg_end_min`), NOT the levelgen pair −29072 / −26880 that the
+> 2026-09-26 manifests used (nether 5 blocks low, End 193 blocks high).
+> With the right offset, the capture's bedrock floor, lava sea (y 31)
+> and roof line up with the generated nether row for row, and End
+> islands sit at Mineclonia's island height. `build_full_manifest.py`
+> refuses any other value, and spawnimport logs an error at job start.
+
 Status: **SHIPPED and live-validated** (2026-09-25). Shipped: engine shim
 `core.generate_decorations_with_inputs` (l_mapgen.cpp, rebuilt Luanti 5.17);
 `wdl_climate.lua` (MC→Mineclonia biome/climate map); `wgen_inputs.lua`

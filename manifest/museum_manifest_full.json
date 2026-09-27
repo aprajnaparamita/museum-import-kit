@@ -8,7 +8,7 @@
   "origin_z": 88800,
   "dest_anchor_x": 15207,
   "dest_anchor_z": -7880,
-  "dest_y_offset": -29072,
+  "dest_y_offset": -29067,
   "chunk_bounds": {
    "x_min": -16463,
    "x_max": -16408,
@@ -31,7 +31,7 @@
   "dimension_type": "end",
   "dest_anchor_x": 4096,
   "dest_anchor_z": 6016,
-  "dest_y_offset": -26880,
+  "dest_y_offset": -27073,
   "origin_x": -4647024,
   "origin_z": 1802624,
   "dest_bbox": {
@@ -56,7 +56,7 @@
   "dimension_type": "end",
   "dest_anchor_x": 4096,
   "dest_anchor_z": 0,
-  "dest_y_offset": -26880,
+  "dest_y_offset": -27073,
   "origin_x": 65680,
   "origin_z": -114208,
   "dest_bbox": {

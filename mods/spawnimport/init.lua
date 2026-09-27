@@ -286,6 +286,9 @@ local wdl_climate = dofile(modpath .. "/wdl_climate.lua") -- WDL biome/temperatu
 local wgen_inputs = dofile(modpath .. "/wgen_inputs.lua")(wdl_climate) -- per-column merge targets (biome/material/tint/snow)
 local wgen_write = dofile(modpath .. "/wgen_write.lua")(wdl_climate) -- column rebuild + natural vegetation regrow
 local gap_fill = dofile(modpath .. "/gap_fill.lua")(gap_field, wgen_inputs) -- merge plan + audit, see that file's own header
+-- nether/End: 3-D blend instead of the overworld height-field merge
+local blend3d = dofile(modpath .. "/wgen_blend3d.lua")(wdl_climate, gap_fill.is_terrain_name)
+local gateway_link = dofile(modpath .. "/gateway_link.lua")
 
 -- core.get_mod_storage() is scoped per-calling-modname, so a different mod
 -- (museumwarp) can't read this one's storage directly -- publish the
@@ -576,6 +579,11 @@ end
 local Job = {}
 Job.__index = Job
 
+-- Minecraft banner colour -> mcl_dyes colour key (mcl_banners item
+-- names are mcl_banners:banner_item_<key>; checked in mcl_dyes/init.lua).
+-- Every other Minecraft colour name is already the key.
+local BANNER_COLOR_KEY = { light_gray = "silver", gray = "grey" }
+
 local function new_job(p)
 	local self = setmetatable({}, Job)
 	self.player_name = p.player_name
@@ -596,6 +604,36 @@ local function new_job(p)
 	-- "overworld"/"nether"/"end" -- the merge writer picks fallback
 	-- materials per band from this (see wgen_write.band)
 	self.dimension_type = p.dimension_type
+	-- The manifest's dest_y_offset is the BAND KEY (the band's min y);
+	-- museumwarp's tables and the registry key off it. End captures are
+	-- placed END_ISLAND_LIFT above it. Measured 2026-09-27 on Endhaven:
+	-- vanilla outer-island tops sit at src ~58 (10-90%: 48-64), while
+	-- Mineclonia's v7 End (the end_stone "stratum" ore in mcl_biomes,
+	-- centred at band min + 70) puts its island tops at ~72. The owner
+	-- saw the step at -27018 vs -27003 and chose to lift the captures so
+	-- the tops meet.
+	self.band_y_offset = self.dest_y_offset
+	if self.dimension_type == "end" then
+		self.dest_y_offset = self.dest_y_offset
+			+ (tonumber(core.settings:get("spawnimport_end_island_lift")) or 14)
+	end
+	-- A nether/End capture must sit in Mineclonia's own band, or its
+	-- floor/roof/lava sea (nether) and islands (End) miss the generated
+	-- terrain's and no merge can hide it (2026-09-27: the levelgen pair
+	-- -29072 / -26880 on a v7 world put the nether 5 blocks low, the End
+	-- 193 blocks high).
+	local band_min = mcl_vars and ((self.dimension_type == "nether" and mcl_vars.mg_nether_min)
+		or (self.dimension_type == "end" and mcl_vars.mg_end_min)) or nil
+	if self.dimension_type == "nether" or self.dimension_type == "end" then
+		core.log("action", string.format("[spawnimport] %s: %s band, dest_y_offset %d",
+			tostring(p.name), self.dimension_type, self.dest_y_offset))
+	end
+	if band_min and self.band_y_offset ~= band_min then
+		core.log("error", string.format(
+			"[spawnimport] %s: %s dest_y_offset %d is not this world's band (mcl_vars %d) -- "
+			.. "the capture will not line up with the generated %s",
+			tostring(p.name), self.dimension_type, self.band_y_offset, band_min, self.dimension_type))
+	end
 	self.status = "running"
 	self.started_at = os.time()
 
@@ -1084,20 +1122,23 @@ function Job:place_one_chunk(entry)
 		end
 	end
 	local clear_y_max = sec_y_max * 16 + 15
-	if self.dest_y_offset ~= OVERWORLD_Y_CORRECTION then
-		-- Nether/End bands: clear the FULL pregen y range too, not just
-		-- the capture's own section span (2026-09-26, the End double-island
-		-- bug the owner found: Endhaven's capture spans source y 0..255,
-		-- but Mineclonia's end mapgen puts its islands at source y ~ -120
-		-- -- BELOW the capture's span -- so every captured chunk kept a
-		-- foreign island layer under it, with a generated end CITY on it
-		-- and a 130-block air gap between the layers). Same class as the
-		-- overworld's clear_y_min extension above. The pregen y range is
-		-- band-relative (PREGEN_Y_MIN/MAX + dest_y_offset) and the bands
-		-- sit thousands of blocks apart, so this cannot spill into a
-		-- neighbouring dimension band (the old objection here).
-		if PREGEN_Y_MIN < clear_y_min then clear_y_min = PREGEN_Y_MIN end
-		if PREGEN_Y_MAX > clear_y_max then clear_y_max = PREGEN_Y_MAX end
+	-- Nether/End bands (2026-09-27): clear the vanilla dimension's own
+	-- height -- nether source y 0..128 (vanilla 0..127 + the one extra
+	-- row Mineclonia's 129-tall nether has, sealed below), End 0..255 --
+	-- and never beyond it. With the capture in Mineclonia's own band
+	-- (dest_y_offset = mg_nether_min / mg_end_min) that is exactly the
+	-- generated dimension's span: the capture replaces the generated
+	-- terrain row for row, the bedrock floor/roof and the lava sea line
+	-- up with the neighbouring generated chunks. (The 2026-09-26 "clear
+	-- the full pregen range" extension was compensating for the End
+	-- sitting 193 blocks too high; below the nether it deleted the
+	-- generated floor.)
+	local band_top = nil
+	if self.dimension_type == "nether" then band_top = 128
+	elseif self.dimension_type == "end" then band_top = 255 end
+	if band_top then
+		if clear_y_min > 0 then clear_y_min = 0 end
+		if clear_y_max < band_top then clear_y_max = band_top end
 	end
 	if self.dest_y_offset == OVERWORLD_Y_CORRECTION and PREGEN_Y_MAX then
 		-- 2026-09-23 (owner-directed): clear all the way to SKY LIMIT
@@ -1115,6 +1156,7 @@ function Job:place_one_chunk(entry)
 
 	local bx, by, bz, bn, bp2 = {}, {}, {}, {}, {}
 	local n = 0
+	local banners = nil
 	anvil.decode_chunk_blocks(chunk, function(x, y, z, name, props)
 		n = n + 1
 		bx[n] = self.anchor_x + (x - self.origin_x)
@@ -1123,6 +1165,14 @@ function Job:place_one_chunk(entry)
 		local resolution = palette.resolve_detailed(name, props)
 		bn[n] = resolution.node
 		bp2[n] = resolution.param2
+		if resolution.node == "mcl_portals:portal_gateway" then
+			self.gateways = self.gateways or {}
+			self.gateways[#self.gateways + 1] = vector.new(bx[n], by[n], bz[n])
+		end
+		if resolution.node == "mcl_banners:hanging_banner" then
+			banners = banners or {}
+			banners[#banners + 1] = { i = n, color = name:match("^minecraft:(.-)_wall_banner$") }
+		end
 	end)
 
 	local vm = core.get_voxel_manip()
@@ -1191,6 +1241,25 @@ function Job:place_one_chunk(entry)
 		end
 	end
 
+	-- Nether roof seal: Mineclonia's nether is one row taller than
+	-- vanilla's (bedrock up to mg_nether_min + 128). Over the capture's
+	-- own roof (bedrock at source 127) that row gets bedrock too, so the
+	-- ceiling top is one flat plate across captured and generated chunks.
+	-- Never over builds on the roof (row 127 not bedrock -> left alone).
+	if band_top == 128 then
+		local c_bedrock = content_id_for("mcl_core:bedrock")
+		local y_seal = 128 + self.dest_y_offset
+		for z = zmin, zmax do
+			for x = xmin, xmax do
+				local top = area:index(x, y_seal, z)
+				if data[top] == core.CONTENT_AIR and data[top - area.ystride] == c_bedrock then
+					data[top] = c_bedrock
+					p2data[top] = 0
+				end
+			end
+		end
+	end
+
 	-- Repair door bottoms whose upper half the capture lost.
 	--
 	-- A Minecraft door is always two blocks, but these captures do not
@@ -1220,6 +1289,32 @@ function Job:place_one_chunk(entry)
 	vm:write_to_map(true) -- recalculate lighting; see README.md if imports need to go faster
 	if has_liquid then vm:update_liquids() end
 	vm:close()
+
+	-- Wall banners: Mineclonia draws a banner as an entity whose facing
+	-- and colour come from node meta (rotation_level, a banner item in
+	-- the "banner" list). Only a player placement sets them, so every
+	-- imported banner faced one fixed way (owner 2026-09-28: "some of
+	-- the banners correct and some seem rotated") and was white. Set
+	-- both the way mcl_banners' on_place does; its load LBM then spawns
+	-- the entity. Patterns are block-entity data and still aren't read.
+	if banners then
+		for _, b in ipairs(banners) do
+			local pos = vector.new(bx[b.i], by[b.i], bz[b.i])
+			if core.get_node(pos).name == "mcl_banners:hanging_banner" then
+				local pdir = vector.multiply(core.wallmounted_to_dir(bp2[b.i] or 0), -1)
+				local rot = 0
+				if pdir.x > 0 then rot = 4 elseif pdir.z > 0 then rot = 8 elseif pdir.x < 0 then rot = 12 end
+				local meta = core.get_meta(pos)
+				meta:set_int("rotation_level", rot)
+				local key = BANNER_COLOR_KEY[b.color] or b.color
+				local item = key and ("mcl_banners:banner_item_" .. key)
+				if not (item and core.registered_items[item]) then item = "mcl_banners:banner_item_white" end
+				local inv = meta:get_inventory()
+				inv:set_size("banner", 1)
+				inv:set_stack("banner", 1, ItemStack(item))
+			end
+		end
+	end
 
 	-- Must run after vm:close() -- on_construct may itself call
 	-- core.set_node/get_meta, which need the VoxelManip's own write to have
@@ -1787,7 +1882,11 @@ function Job:finish()
 	-- /worldplace gapaudit can re-run it on demand.
 	if self.gap_plan then
 		last_gap = { job = self, plan = self.gap_plan }
-		gap_fill.audit(self, self.gap_plan)
+		if self.gap_plan.blend3d then
+			blend3d.audit(self, self.gap_plan)
+		else
+			gap_fill.audit(self, self.gap_plan)
+		end
 	end
 
 	if self.frames_placed and self.frames_placed > 0 then
@@ -1824,13 +1923,21 @@ function Job:finish()
 			"[spawnimport] warning: no non-air blocks were placed anywhere (every captured chunk was empty or " ..
 			"failed) -- still registering the cleared footprint below so a later import won't overlap it.")
 	end
+	-- End base with a captured gateway: pair it with a main-island
+	-- gateway (gateway_link.lua)
+	local ok_gw, err_gw = pcall(gateway_link.link, self)
+	if not ok_gw then
+		core.log("warning", "[spawnimport] gateway link failed for " .. tostring(self.name) .. ": " .. tostring(err_gw))
+	end
 	registry.add({
 		name = self.name,
 		source_folder = self.world_folder,
 		dimension_path = self.dimension_path,
 		anchor_x = self.anchor_x,
 		anchor_z = self.anchor_z,
-		dest_y_offset = self.dest_y_offset,
+		-- the band key, not the lifted placement offset (museumwarp's
+		-- per-band tables are keyed on it); bbox has the real y range
+		dest_y_offset = self.band_y_offset or self.dest_y_offset,
 		bbox = self.result_bbox,
 		block_count = self.placed_blocks,
 		placed_at = os.time(),
@@ -1890,36 +1997,45 @@ function Job:step()
 				-- against the real generated map. Widened chunks (when a
 				-- ramp needs more room than the ring has) join the cursor
 				-- here -- nothing else writes them.
-				self.gap_plan = gap_fill.build_plan(self, self.gap_real, self.gap_fill_chunks,
-					{ avoid = self.gap_avoid })
-				-- worldgen-merge: per-column targets (WDL biome/temperature
-				-- map -> Mineclonia biome, surface material, tint, snow)
-				wgen_inputs.attach_targets(self, self.gap_real, self.gap_plan)
-				local queued = {}
-				for _, e in ipairs(self.gap_fill_chunks) do queued[e.cx .. "_" .. e.cz] = true end
-				for _, key in ipairs(self.gap_plan.chunk_order) do
-					if not queued[key] then
+				if blend3d.band(self) then
+					-- nether/End: 3-D blend over the ring, no widening, no
+					-- height targets and no vegetation regrow (see
+					-- wgen_blend3d.lua)
+					self.gap_plan = blend3d.build_plan(self, self.gap_real, self.gap_fill_chunks)
+				else
+					self.gap_plan = gap_fill.build_plan(self, self.gap_real, self.gap_fill_chunks,
+						{ avoid = self.gap_avoid })
+					-- worldgen-merge: per-column targets (WDL biome/temperature
+					-- map -> Mineclonia biome, surface material, tint, snow)
+					wgen_inputs.attach_targets(self, self.gap_real, self.gap_plan)
+					local queued = {}
+					for _, e in ipairs(self.gap_fill_chunks) do queued[e.cx .. "_" .. e.cz] = true end
+					for _, key in ipairs(self.gap_plan.chunk_order) do
+						if not queued[key] then
+							local cx, cz = key:match("^(.-)_(.-)$")
+							self.cursor_list[#self.cursor_list + 1] = {
+								is_gap = true, cx = tonumber(cx), cz = tonumber(cz),
+							}
+							self.cursor_total = self.cursor_total + 1
+						end
+					end
+					-- GROW phase: engine-native vegetation on the finished
+					-- surface, queued AFTER every write entry so the terrain is
+					-- final before any tree is planted (PLAN-worldgen-merge.md
+					-- §3.4 -- this ordering is the whole point).
+					for _, key in ipairs(self.gap_plan.chunk_order) do
 						local cx, cz = key:match("^(.-)_(.-)$")
 						self.cursor_list[#self.cursor_list + 1] = {
-							is_gap = true, cx = tonumber(cx), cz = tonumber(cz),
+							is_gap = true, is_grow = true, cx = tonumber(cx), cz = tonumber(cz),
 						}
 						self.cursor_total = self.cursor_total + 1
 					end
 				end
-				-- GROW phase: engine-native vegetation on the finished
-				-- surface, queued AFTER every write entry so the terrain is
-				-- final before any tree is planted (PLAN-worldgen-merge.md
-				-- §3.4 -- this ordering is the whole point).
-				for _, key in ipairs(self.gap_plan.chunk_order) do
-					local cx, cz = key:match("^(.-)_(.-)$")
-					self.cursor_list[#self.cursor_list + 1] = {
-						is_gap = true, is_grow = true, cx = tonumber(cx), cz = tonumber(cz),
-					}
-					self.cursor_total = self.cursor_total + 1
-				end
 			end
 			local ok, err
-			if entry.is_grow then
+			if self.gap_plan.blend3d then
+				ok, err = pcall(blend3d.place_chunk, self, self.gap_plan, entry)
+			elseif entry.is_grow then
 				ok, err = pcall(wgen_write.grow_chunk, self, self.gap_plan, entry)
 			else
 				ok, err = pcall(wgen_write.place_chunk, self, self.gap_plan, entry, content_id_for)
@@ -2025,7 +2141,12 @@ local function handle_gapaudit()
 	if not last_gap or not last_gap.plan then
 		return true, "[spawnimport] nothing to audit yet -- run an import with a footprint first"
 	end
-	local ok = gap_fill.audit(last_gap.job, last_gap.plan)
+	local ok
+	if last_gap.plan.blend3d then
+		ok = blend3d.audit(last_gap.job, last_gap.plan)
+	else
+		ok = gap_fill.audit(last_gap.job, last_gap.plan)
+	end
 	return true, "[spawnimport] gap-fill audit for '" .. tostring(last_gap.job.name) .. "': "
 		.. (ok and "PASS" or "FAIL") .. " (per-check numbers in the server log)"
 end
@@ -2125,6 +2246,10 @@ local function start_job(player_name, world_folder, x, z, name, dimension_path_o
 		dimension_path = dimension_path,
 		region_dir = region_dir,
 		dest_y_offset = opts.dest_y_offset,
+		-- "overworld"/"nether"/"end" (2026-09-27: never reached the job
+		-- before -- every band check silently fell back to guessing from
+		-- dest_y_offset, and the nether roof seal never ran at all)
+		dimension_type = opts.dimension_type,
 		chunk_bounds = opts.chunk_bounds,
 		name = name or (world_folder:match("([^/\\]+)[/\\]?$") or "base"),
 		anchor_x = x,
@@ -2225,6 +2350,7 @@ local function advance_batch()
 				{
 					region_dir = entry.source_region_dir,
 					dest_y_offset = entry.dest_y_offset or 0,
+					dimension_type = entry.dimension_type,
 					skip_collision = true,
 					origin_x = entry.origin_x,
 					origin_z = entry.origin_z,

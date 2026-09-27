@@ -67,7 +67,7 @@ else
     log "wiping world data"
     rm -f "$STAGING/map.sqlite" "$STAGING/mod_storage.sqlite" "$STAGING/map_meta.txt" \
           "$STAGING/env_meta.txt" "$STAGING/force_loaded.txt"
-    rm -rf "$STAGING/mod_storage" "$STAGING/mcl_maps"
+    rm -rf "$STAGING/mod_storage" "$STAGING/mcl_maps" "$STAGING/mapart_unmirrored.txt" "$STAGING/museum_gateways.json"
 fi
 
 log "pass 1: import + gap-fill + loot"

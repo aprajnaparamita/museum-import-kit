@@ -514,6 +514,90 @@ def apply_verified_wall_clusters(frames):
     return fixes
 
 
+def unmirror_real_map_walls(frames):
+    """Reflects every wall-mounted group of REAL captured maps along the
+    picture's horizontal axis, so multi-map art reads in its original order.
+
+    Why (2026-09-27, proven by stitching Tactical Nuke's 3x3 portrait and
+    2x3 poster from their tiles): spawnimport places blocks and frames at
+    anchor + (source - origin) WITHOUT negating z, but Minecraft's +z is
+    south and Luanti's is north, so every imported base is a north-south
+    mirror image of the original. Each map texture still renders
+    unmirrored, so a single map reads correctly, but a picture made of
+    several maps shows its tiles in reversed left-right order. This is the
+    "outer positions swapped, center fixed" pattern in the owner-solved
+    Fort/City entries in verified_real_map_clusters.json.
+
+    Walls only: p2 2/3 (facing +-x) reverse along z, p2 4/5 (facing +-z)
+    reverse along x. Ceiling/floor groups also carry item rotation, which
+    the mirror changes too, so they're only logged and left to a verified
+    entry. Groups overlapping a verified cluster are skipped because the
+    verified mapping wins. Returns fixes in the same format as
+    apply_verified_wall_clusters. NOT idempotent (a second pass would
+    re-reverse), so main() gates it with a marker file in the world."""
+    verified_pos = set()
+    for c in load_verified_clusters():
+        for p in c['positions']:
+            verified_pos.add((p['x'], p['y'], p['z']))
+    real = {}
+    for f in frames:
+        if f['has_item'] and f['mcl_maps_id'] and f['mcl_maps_id'].startswith('imported_'):
+            mm = re.search(r'^(.*)_(\d+)$', f['mcl_maps_id'])
+            if mm:
+                real[(f['x'], f['y'], f['z'])] = (f['p2'], mm.group(1), int(mm.group(2)))
+
+    fixes = []
+    seen = set()
+    for start in real:
+        if start in seen:
+            continue
+        p2 = real[start][0]
+        group = []
+        stack = [start]
+        seen.add(start)
+        while stack:
+            cur = stack.pop()
+            group.append(cur)
+            x, y, z = cur
+            for n in ((x+1, y, z), (x-1, y, z), (x, y+1, z), (x, y-1, z), (x, y, z+1), (x, y, z-1)):
+                if n in real and n not in seen and real[n][0] == p2:
+                    seen.add(n)
+                    stack.append(n)
+        if len(group) < 2:
+            continue
+        if p2 in (0, 1):
+            log(f"real-map ceiling/floor group of {len(group)} at {group[0]} -- "
+                f"not auto-unmirrored (item rotation also mirrored); needs a verified entry")
+            continue
+        if any(p in verified_pos for p in group):
+            continue
+        axis = 2 if p2 in (2, 3) else 0
+        if len(set(p[2 if axis == 0 else 0] for p in group)) != 1:
+            log(f"real-map wall group at {group[0]} isn't planar -- skipped")
+            continue
+        lo = min(p[axis] for p in group)
+        hi = max(p[axis] for p in group)
+        gset = set(group)
+
+        def refl(p):
+            q = list(p)
+            q[axis] = lo + hi - p[axis]
+            return tuple(q)
+        if any(refl(p) not in gset for p in group):
+            log(f"real-map wall group at {group[0]} isn't symmetric along its "
+                f"horizontal axis -- skipped")
+            continue
+        prefixes = set(real[p][1] for p in group)
+        if len(prefixes) != 1 or lo == hi:
+            continue  # mixed sources, or a single column (nothing to reverse)
+        log(f"real-map wall group {prefixes.pop()} ({len(group)} maps, p2={p2}): "
+            f"reversing along {'z' if axis == 2 else 'x'} {lo}..{hi}")
+        fixes.append({'id_prefix': real[group[0]][1], 'positions': [
+            {'x': p[0], 'y': p[1], 'z': p[2], 'target_id': real[refl(p)][2]}
+            for p in group]})
+    return fixes
+
+
 # ---------------------------------------------------------------------
 # Phase 3: render textures into the target world's mcl_maps/
 # ---------------------------------------------------------------------
@@ -706,6 +790,10 @@ def main():
 
     all_placements = []
     all_ceiling_fixes = []
+    unmirror_marker = os.path.join(args.world, "mapart_unmirrored.txt")
+    unmirror_done = os.path.exists(unmirror_marker)
+    if unmirror_done:
+        log(f"{unmirror_marker} exists -- real-map walls already unmirrored, not reversing again")
     for b in bases:
         frames = survey.get(b['name'], [])
         log(f"{b['name']}: {len(frames)} item frame(s) surveyed")
@@ -724,11 +812,17 @@ def main():
             log(f"{b['name']}: {len(wall_fixes)} verified wall cluster(s) need reasserting")
         all_ceiling_fixes.extend(wall_fixes)
 
+        if not unmirror_done:
+            all_ceiling_fixes.extend(unmirror_real_map_walls(frames))
+
     save_registry(registry)
     log(f"registry now has {len(registry.get('used_base_ids', []))} used piece(s)")
 
     frame_manifest = render(args.world, all_placements)
     do_place(args.world, frame_manifest, all_ceiling_fixes, bases)
+    if not unmirror_done:
+        with open(unmirror_marker, "w") as f:
+            f.write("real-map walls reversed by auto_gallery_fill.py unmirror_real_map_walls\n")
     log("done")
 
 

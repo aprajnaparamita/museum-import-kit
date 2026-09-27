@@ -187,17 +187,22 @@ function mapdata.decode_file(path)
 	-- first (renders at the bottom) and the northernmost row last
 	-- (renders at the top) -- real north-up map orientation.
 	--
-	-- 2026-09-23: the EAST-WEST axis is flipped too. Mineclonia renders
-	-- maps in item frames as an upright_sprite whose texture left edge
-	-- lands on the wall's +x/-z convention per facing -- combined with
-	-- the item-frame entity's dir_to_rotation, the map's west ended up on
-	-- the RIGHT for wall-mounted frames. Reversed the x here
-	-- (`row[128-x]`) so x=0 (Minecraft's WEST) renders on the left again.
+	-- East-west is NOT reversed (2026-09-27, owner: "All maparts from the
+	-- world download are flipped backwards" -- mirrored text on every
+	-- captured map). A 2026-09-23 change reversed x here on the theory
+	-- that item frames mirror maps; they don't. Mineclonia's own map
+	-- writer (mcl_maps/init.lua create_map) builds pixels[z][x] with x=1
+	-- = west on the left and its maps read correctly in frames, and the
+	-- gallery art path (auto_gallery_fill.py -> tga_write.py) never
+	-- flipped x either -- only captured maps were mirrored. Multi-map
+	-- pictures still need their TILE ORDER reversed, because the import
+	-- doesn't negate z and so mirrors whole bases north-south; that's done
+	-- per wall in auto_gallery_fill.py (unmirror_real_map_walls), not here.
 	local pixels = {}
 	for z = 0, 127 do
 		local row = {}
 		for x = 0, 127 do
-			row[128 - x] = rgb_for_index(d.colors[z * 128 + x + 1])
+			row[x + 1] = rgb_for_index(d.colors[z * 128 + x + 1])
 		end
 		pixels[128 - z] = row
 	end

@@ -1,5 +1,5 @@
 {
-  "_comment": "Permanent, hand-verified frame-to-map-id mappings for real captured map-art clusters where the automated pipeline (position/rotation-based solving, and the source WDL entity NBT itself) could NOT be trusted to reconstruct the correct arrangement. Each entry was solved by the owner in-game, by trial and error (removing/re-adding frames and testing which map belongs where), then captured here directly from the corrected live world. detect_ceiling_scrambles and any other automatic real-map reordering logic MUST check this file first and skip any cluster listed here entirely -- never overwrite a verified mapping with a computed guess. See HANDOFF.md's round 30 write-up for the full investigation: the raw World Downloader capture's entity NBT for at least one of these clusters (Fort Alcazar's ceiling grid) does NOT match the true correct arrangement (it's mirrored on one axis relative to reality) -- meaning even direct source-file verification isn't reliable for this class of bug, and these mappings are the only trustworthy record.\n\nRoot cause (2026-09-23, owner report across cutecurly/Fort/Tactical): the raw World Downloader capture's entity NBT for multi-map walls is MIRRORED ON ONE AXIS relative to reality -- vertically (Y) correct but HORIZONTALLY (X or Z, the wall's left-right) flipped. It is NOT an import bug: the importer places each map at its real decoded position with its real decoded id; the SOURCE positions themselves are mirrored. Therefore this cannot be fixed in the import -- only post-hoc, by swapping the mirrored columns back (the mappings below) or by edge-coherence solving (solve_grid_jigsaw.py).",
+  "_comment": "CORRECTION 2 (2026-09-27, later): the real cause of the 'outer positions swapped along one axis, center fixed' pattern is that spawnimport places everything at anchor + (source - origin) WITHOUT negating z (Minecraft +z = south, Luanti +z = north), so every imported base is a north-south mirror image. Map textures render unmirrored, so single maps read correctly but multi-map pictures show their tiles in reversed left-right order. Proven by stitching Tactical Nuke's 3x3 portrait and 2x3 poster. auto_gallery_fill.py's unmirror_real_map_walls() now reverses every real-map WALL group automatically. The entries in 'clusters' below were solved by the owner on 2026-09-22 against UN-mirrored tiles (mapdata.lua's per-tile east-west mirror existed only 2026-09-23..27), so they are correct again and ACTIVE; they take precedence over the automatic reversal (which skips any group they cover), and Fort's ceiling grid needs its entry because ceilings aren't auto-reversed. The Tactical column_swaps were never consumed by any code and are superseded by the automatic reversal; kept under 'retired' for reference only.\n\nPermanent, hand-verified frame-to-map-id mappings for real captured map-art clusters where the automated pipeline (position/rotation-based solving, and the source WDL entity NBT itself) could NOT be trusted to reconstruct the correct arrangement. Each entry was solved by the owner in-game, by trial and error (removing/re-adding frames and testing which map belongs where), then captured here directly from the corrected live world. detect_ceiling_scrambles and any other automatic real-map reordering logic MUST check this file first and skip any cluster listed here entirely -- never overwrite a verified mapping with a computed guess. See HANDOFF.md's round 30 write-up for the full investigation: the raw World Downloader capture's entity NBT for at least one of these clusters (Fort Alcazar's ceiling grid) does NOT match the true correct arrangement (it's mirrored on one axis relative to reality) -- meaning even direct source-file verification isn't reliable for this class of bug, and these mappings are the only trustworthy record.\n\nRoot cause (2026-09-23, owner report across cutecurly/Fort/Tactical): the raw World Downloader capture's entity NBT for multi-map walls is MIRRORED ON ONE AXIS relative to reality -- vertically (Y) correct but HORIZONTALLY (X or Z, the wall's left-right) flipped. It is NOT an import bug: the importer places each map at its real decoded position with its real decoded id; the SOURCE positions themselves are mirrored. Therefore this cannot be fixed in the import -- only post-hoc, by swapping the mirrored columns back (the mappings below) or by edge-coherence solving (solve_grid_jigsaw.py).",
   "clusters": [
     {
       "base": "Fort Alcazar 2024-04-22 (Th3_L1nk download)",
@@ -382,70 +382,73 @@
       ]
     }
   ],
-  "column_swaps": [
-    {
-      "base": "Tactical Nuke 2023-09",
-      "location": "2x3 wall mapart (x=7762, y=2..4, z=-778 vs z=-777)",
-      "note": "swap the two columns: maps at z=-778 move to z=-777 and vice versa, preserving Y order. ids to be resolved via edge-coherence or in-game.",
-      "axis": "z",
-      "pairs": [
-        {
-          "a": {
-            "x": 7762,
-            "y": 2,
-            "z": -778
+  "column_swaps": [],
+  "retired": {
+    "column_swaps": [
+      {
+        "base": "Tactical Nuke 2023-09",
+        "location": "2x3 wall mapart (x=7762, y=2..4, z=-778 vs z=-777)",
+        "note": "swap the two columns: maps at z=-778 move to z=-777 and vice versa, preserving Y order. ids to be resolved via edge-coherence or in-game.",
+        "axis": "z",
+        "pairs": [
+          {
+            "a": {
+              "x": 7762,
+              "y": 2,
+              "z": -778
+            },
+            "b": {
+              "x": 7762,
+              "y": 2,
+              "z": -777
+            }
           },
-          "b": {
-            "x": 7762,
-            "y": 2,
-            "z": -777
-          }
-        },
-        {
-          "a": {
-            "x": 7762,
-            "y": 3,
-            "z": -778
+          {
+            "a": {
+              "x": 7762,
+              "y": 3,
+              "z": -778
+            },
+            "b": {
+              "x": 7762,
+              "y": 3,
+              "z": -777
+            }
           },
-          "b": {
-            "x": 7762,
-            "y": 3,
-            "z": -777
+          {
+            "a": {
+              "x": 7762,
+              "y": 4,
+              "z": -778
+            },
+            "b": {
+              "x": 7762,
+              "y": 4,
+              "z": -777
+            }
           }
-        },
-        {
-          "a": {
-            "x": 7762,
-            "y": 4,
-            "z": -778
-          },
-          "b": {
-            "x": 7762,
-            "y": 4,
-            "z": -777
+        ]
+      },
+      {
+        "base": "Tactical Nuke 2023-09",
+        "location": "3-wide mapart centered x=7762 (left/right columns x=7760 <-> x=7763)",
+        "note": "center column correct; outer left/right columns are swapped (7760 <-> 7763), Y order preserved. Report truncated -- confirm the exact width/columns and ids before applying.",
+        "axis": "x",
+        "pairs": [
+          {
+            "a": {
+              "x": 7760,
+              "y": 3,
+              "z": 773
+            },
+            "b": {
+              "x": 7763,
+              "y": 3,
+              "z": 773
+            }
           }
-        }
-      ]
-    },
-    {
-      "base": "Tactical Nuke 2023-09",
-      "location": "3-wide mapart centered x=7762 (left/right columns x=7760 <-> x=7763)",
-      "note": "center column correct; outer left/right columns are swapped (7760 <-> 7763), Y order preserved. Report truncated -- confirm the exact width/columns and ids before applying.",
-      "axis": "x",
-      "pairs": [
-        {
-          "a": {
-            "x": 7760,
-            "y": 3,
-            "z": 773
-          },
-          "b": {
-            "x": 7763,
-            "y": 3,
-            "z": 773
-          }
-        }
-      ]
-    }
-  ]
+        ]
+      }
+    ]
+  }
 }

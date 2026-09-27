@@ -206,8 +206,6 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 	local c_liquid = cid(default_liquid(job))
 	local c_snow = cid("mcl_core:snow")
 	local c_stone = cid(default_stone(job))
-	local c_bedrock = cid("mcl_core:bedrock")
-	local c_netherrack = cid("mcl_nether:netherrack")
 
 	local vm = core.get_voxel_manip()
 	local emin, emax = vm:read_from_map({ x = xmin, y = ymin, z = zmin },
@@ -273,70 +271,15 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 				-- untouched (caves/ores preserved).
 				local rewrite_lo = math.min(skin_lo, (col.S or B)) - 1
 
-				-- End island model (2026-09-26 owner findings): a raised
-				-- merge column continues the ISLAND -- a slab at the
-				-- merged level, at most ISLAND_SLAB deep -- instead of
-				-- pouring a pillar down to Mineclonia's own island layer
-				-- ~175 blocks below (the capture sits at y -26825, the
-				-- mapgen's islands at -27000; the pillars + the air gap
-				-- between layers were the "large gap"). When the slab
-				-- floats clear of the natural island, everything below it
-				-- is cleared to void too -- no second island layer under
-				-- the base. Columns merged at their natural level (no
-				-- raise) keep the natural island as their ground.
-				local ISLAND_SLAB = 52 -- ~= the captured island's thickness at Endhaven
-				local island_slab_lo = nil
-				local end_void_col = false
-				if band(job) == "end" then
-					-- End island model: INSIDE the capture's footprint the
-					-- island continues at one level (slab at the merged
-					-- level, void below -- never join Mineclonia's own
-					-- islands 124 blocks down, owner 2026-09-27); OUTSIDE
-					-- it the museum's End is clean void (generated islands
-					-- and their structures are cleared entirely).
-					local bx = job.chunk_bounds
-					local inside = bx and chunk.cx >= bx.x_min and chunk.cx <= bx.x_max
-						and chunk.cz >= bx.z_min and chunk.cz <= bx.z_max
-					if inside then
-						island_slab_lo = B - ISLAND_SLAB
-					else
-						end_void_col = true
-					end
-					rewrite_lo = GAP_Y_MIN + dy
-				end
-
-				-- Nether ceiling band (2026-09-26, owner: "do the fill and
-				-- then re-generate the nether roof"): the capture's roof
-				-- profile is bedrock at dy+127/126 over netherrack (source
-				-- columns verified, AUDIT-2026-09-26 #1). The merge only
-				-- rewrites BELOW the band and then regenerates the roof
-				-- over this fill chunk, so captured and merged chunks share
-				-- one continuous ceiling at the seam.
-				local roof_lo, roof_hi = dy + 122, dy + 127
-				-- ALWAYS seal the ceiling at the nether band, and clear the
-				-- mapgen's own ceiling remnants ABOVE it (owner 2026-09-27:
-				-- "portions of the bedrock not closing the gap" -- columns
-				-- with a high merged surface skipped the regen and left the
-				-- mapgen ceiling at a different level; "we want this to
-				-- match and be seamless"). One roof at the capture's
-				-- profile, matching the captured chunks' columns exactly.
-				local do_roof = band(job) == "nether"
-				-- the zone just above the band is cleared too (the mapgen's
-				-- own ceiling at dy+132/133), so the regen band is the ONLY
-				-- roof, at one level everywhere. Bounded at roof_hi+8: the
-				-- mapgen ceiling never sits higher than that, and scanning
-				-- the full y-range per column cost 25x (2026-09-27 harness
-				-- timeout).
+				-- (nether/End merges are wgen_blend3d.lua's -- this writer
+				-- only ever sees overworld columns)
 				local rewrite_hi = ymax
-				if do_roof then rewrite_hi = roof_hi + 8 end
 
 				-- clear/rebuild the rewritten zone
 				for y = rewrite_hi, rewrite_lo + 1, -1 do
 					local idx = area:index(x, y, z)
 					local c
-					if end_void_col then
-						c = c_air
-					elseif y > B then
+					if y > B then
 						if is_water and y <= sea then
 							-- liquid column: fill to the sea/lava surface.
 							-- The sand-top rule is overworld water only --
@@ -354,34 +297,11 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 					elseif y > B - depth_top - depth_filler then
 						c = filler
 					else
-						-- raise-fill gap: stone under the soil skin (End
-						-- island model caps it at island_slab_lo -- air
-						-- below, so the island floats over void instead of
-						-- pouring down to the mapgen's island layer)
-						if island_slab_lo and y <= island_slab_lo then
-							c = c_air
-						else
-							c = c_stone
-						end
+						-- raise-fill gap: stone under the soil skin
+						c = c_stone
 					end
 					data[idx] = c
 					p2data[idx] = 0
-				end
-
-				if do_roof then
-					for y = roof_lo, roof_hi do
-						local idx = area:index(x, y, z)
-						-- solid bedrock plate on top, bedrock/netherrack
-						-- mix below it (vanilla-shaped roof)
-						local c
-						if y >= roof_hi - 1 or wdl.noise2(x + y * 3, z, 7) < 0.35 then
-							c = c_bedrock
-						else
-							c = c_netherrack
-						end
-						data[idx] = c
-						p2data[idx] = 0
-					end
 				end
 
 				-- snow layer from the temperature map (land only)

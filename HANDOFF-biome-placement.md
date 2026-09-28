@@ -61,8 +61,10 @@ match the capture's biomes as closely as possible, with no overlaps.
   level needs real terrain height, which `get_biome_data` doesn't give.
   The Phase 2 idea in `import_tools/placement_fit/README.md` (count water
   or land in the generated destination) is the right check. v7 height can
-  be sampled cheaply with `core.get_spawn_level(x, z)` (returns nil over
-  water) or by emerging a sparse grid.
+  be sampled roughly with `core.get_spawn_level(x, z)`, but it returns nil
+  for anything outside `water_level`..`water_level + 16` and near rivers,
+  so nil does not mean water. For a real land/water answer, emerge a
+  sparse grid and read the surface.
 
 ## What to build
 

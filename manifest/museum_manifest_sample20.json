@@ -47,7 +47,12 @@
    "z_max": -391
   },
   "sampled_block_count": 121313,
-  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Ravenholm_2018_1774216918143.json"
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/Ravenholm_2018_1774216918143.json",
+  "warp_source": {
+   "x": 36633,
+   "y": 63,
+   "z": -6667
+  }
  },
  {
   "display_name": "upside down pyramid 2013-01-25",

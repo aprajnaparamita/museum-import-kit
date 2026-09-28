@@ -208,6 +208,7 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 	local c_ignore = core.CONTENT_IGNORE
 	local c_liquid = cid(default_liquid(job))
 	local c_snow = cid("mcl_core:snow")
+	local c_ice = cid("mcl_core:ice")
 	local c_stone = cid(default_stone(job))
 
 	local vm = core.get_voxel_manip()
@@ -272,6 +273,24 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 						filler = col.smat
 					end
 				end
+				-- toward the merge area's outer edge the untouched terrain's
+				-- own surface block takes over (noise-jittered), or the
+				-- merge's biome skin (grass) meets natural ground (a stony
+				-- biome's stone) along a straight chunk line (owner
+				-- 2026-09-28, The Citadel's ring at (-2776, 7055))
+				if not top and col.mat and col.sdist and not is_water then
+					local nat = cname(col.mat)
+					if is_natural_ground(nat) and not nat:find("water") then
+						local frac = (col.sdist - 1) / TINT_FADE
+						if frac > 1 then frac = 1 end
+						if wdl.noise2(x + 17, z - 31, 7) < frac then
+							top = col.mat
+							-- grass keeps the biome's dirt under it; bare
+							-- ground (stone, sand...) continues downward
+							if not nat:find("grass") then filler = col.mat end
+						end
+					end
+				end
 				top = top or cid(surf.node_top or default_top(job, is_water))
 				filler = filler or cid(surf.node_filler or default_filler(job, is_water))
 				depth_top = surf.depth_top or 1
@@ -301,6 +320,14 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 							if y == sea and band(job) ~= "nether" and surf.node_water_top then
 								c = cid(surf.node_water_top)
 							end
+							-- a frozen seam's ice continues onto the merged
+							-- water and thins out (noise-jittered), instead
+							-- of water turning to ice along the seam line
+							-- (owner 2026-09-28, upside down pyramid)
+							if y == sea and band(job) ~= "nether" and col.sfam == "snow" and col.sdist
+								and wdl.noise2(x - 7, z + 3, 6) < 1 - (col.sdist - 1) / TINT_FADE then
+								c = c_ice
+							end
 						else
 							c = c_air
 						end
@@ -317,7 +344,15 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 				end
 
 				-- snow layer from the temperature map (land only)
-				if col.tsnow and not is_water and B + 1 <= ymax then
+				-- snow cover also fades out from a snowy seam (not only
+				-- where the merged biome is snowy), or the capture's snow
+				-- stops in a straight line at the chunk edge
+				local snow = col.tsnow
+				if not snow and col.sfam == "snow" and col.sdist
+					and wdl.noise2(x + 5, z - 9, 6) < 1 - (col.sdist - 1) / TINT_FADE then
+					snow = true
+				end
+				if snow and not is_water and B + 1 <= ymax then
 					local idx = area:index(x, B + 1, z)
 					data[idx] = c_snow
 					p2data[idx] = 0

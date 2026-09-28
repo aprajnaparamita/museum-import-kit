@@ -230,23 +230,34 @@ do
 	check("sanity: same edges counted without the classification", nf2 >= 1, tostring(nf2))
 end
 
-print("=== sea floor relief between two water columns stays exempt ===")
+print("=== sea floor: steep allowed, cliffs not (2026-09-28) ===")
 do
-	-- Both-underwater edges are still unconstrained: the sea floor may
-	-- drop off a ledge and nobody walks there. The -8 free column must
-	-- keep its level (not dragged to the -30 pin) and the 22-block
-	-- seabed step must classify as structural relief, not a violation
-	-- the widening loop chases.
+	-- Underwater edges used to be exempt, which left a captured sea floor
+	-- meeting the natural one in a wall on the merge's chunk line (owner,
+	-- The Fort). They are now capped at AQ_FACTOR (3) x the land slope.
+	-- A 22-block ledge between two pins 2 apart can't fit: the free column
+	-- compromises and the step is counted FIXABLE (widen for room).
 	local free = { [field.key(1, 0)] = -8 }
 	local fixed = { [field.key(0, 0)] = -8, [field.key(2, 0)] = -30 }
 	local aquatic = { [field.key(0, 0)] = true, [field.key(1, 0)] = true,
 		[field.key(2, 0)] = true }
 	local h = field.solve(free, fixed, { aquatic = aquatic })
-	check("sea floor column keeps its level", math.abs(h[field.key(1, 0)] + 8) < 2,
-		string.format("%.1f", h[field.key(1, 0)]))
-	local nf, ns = field.violations(free, fixed, h, nil, { aquatic = aquatic })
-	check("seabed ledge: structural relief, zero fixable", nf == 0 and ns >= 1,
-		nf .. "/" .. ns)
+	local v = h[field.key(1, 0)]
+	check("sea floor column compromises between the pins", v < -12 and v > -26,
+		string.format("%.1f", v))
+	local nf = field.violations(free, fixed, h, nil, { aquatic = aquatic })
+	check("seabed cliff between pins is fixable", nf >= 1, tostring(nf))
+	-- the natural sea bed's own ledge (same step in the untouched
+	-- terrain) is still natural relief, not a merge fault
+	local nf2, ns2 = field.violations(free, fixed, h, nil,
+		{ aquatic = aquatic, natural = { [field.key(0, 0)] = -8, [field.key(1, 0)] = -8, [field.key(2, 0)] = -30 } })
+	check("natural sea-bed ledge still counts as relief", ns2 >= 1, nf2 .. "/" .. ns2)
+	-- a 3-per-column sea bed is fine underwater
+	local free3 = { [field.key(1, 0)] = -11 }
+	local fixed3 = { [field.key(0, 0)] = -8, [field.key(2, 0)] = -14 }
+	local h3 = field.solve(free3, fixed3, { aquatic = aquatic })
+	local nf3 = field.violations(free3, fixed3, h3, nil, { aquatic = aquatic })
+	check("3-per-column sea floor is within the underwater cap", nf3 == 0, tostring(nf3))
 end
 
 print("=== deflate_steps collapses 2-block zigzags, keeps real cliffs ===")

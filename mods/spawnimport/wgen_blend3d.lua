@@ -220,21 +220,60 @@ function blend3d.build_plan(job, real, ring)
 			end
 			return cols
 		end
-		for key in pairs(job.end_empty) do
-			local cx, cz = key:match("^(.-)_(.-)$")
-			cx, cz = tonumber(cx), tonumber(cz)
-			local sides = 0
-			for _, f in ipairs({ { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } }) do
-				local nkey = (cx + f[1]) .. "_" .. (cz + f[2])
-				if captured[nkey] and not job.end_empty[nkey]
-					and face_terrain(cx + f[1], cz + f[2], -f[1], -f[2]) >= 4 then
-					sides = sides + 1
+		-- Holes are judged per connected REGION of empty chunks, not per
+		-- chunk (owner 2026-09-28, Krobar's bridge: a multi-chunk void
+		-- inside an island stayed square -- its inner chunks never had 3
+		-- terrain sides of their own). A region is a hole when it is small
+		-- (<= HOLE_MAX_CHUNKS) and at least HOLE_ENCLOSED of its boundary
+		-- faces carry island terrain. Large empty regions (a player-cleared
+		-- area like Endhaven's) and regions open to the void stay void.
+		local HOLE_MAX_CHUNKS, HOLE_ENCLOSED = 24, 0.6
+		local DIRS4 = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } }
+		local seen = {}
+		for start in pairs(job.end_empty) do
+			if not seen[start] then
+				local region, stack = {}, { start }
+				seen[start] = true
+				while #stack > 0 do
+					local key = table.remove(stack)
+					region[#region + 1] = key
+					local cx, cz = key:match("^(.-)_(.-)$")
+					cx, cz = tonumber(cx), tonumber(cz)
+					for _, f in ipairs(DIRS4) do
+						local nkey = (cx + f[1]) .. "_" .. (cz + f[2])
+						if job.end_empty[nkey] and not seen[nkey] then
+							seen[nkey] = true
+							stack[#stack + 1] = nkey
+						end
+					end
 				end
-			end
-			if sides >= 3 then
-				hole[key] = true
-				plan.holes[#plan.holes + 1] = key
-				work[#work + 1] = { cx = cx, cz = cz }
+				if #region <= HOLE_MAX_CHUNKS then
+					local faces, walled = 0, 0
+					local in_region = {}
+					for _, key in ipairs(region) do in_region[key] = true end
+					for _, key in ipairs(region) do
+						local cx, cz = key:match("^(.-)_(.-)$")
+						cx, cz = tonumber(cx), tonumber(cz)
+						for _, f in ipairs(DIRS4) do
+							local nkey = (cx + f[1]) .. "_" .. (cz + f[2])
+							if not in_region[nkey] then
+								faces = faces + 1
+								if captured[nkey] and not job.end_empty[nkey]
+									and face_terrain(cx + f[1], cz + f[2], -f[1], -f[2]) >= 4 then
+									walled = walled + 1
+								end
+							end
+						end
+					end
+					if faces > 0 and walled / faces >= HOLE_ENCLOSED then
+						for _, key in ipairs(region) do
+							local cx, cz = key:match("^(.-)_(.-)$")
+							hole[key] = true
+							plan.holes[#plan.holes + 1] = key
+							work[#work + 1] = { cx = tonumber(cx), cz = tonumber(cz) }
+						end
+					end
+				end
 			end
 		end
 		for key in pairs(hole) do captured[key] = nil end
@@ -296,7 +335,9 @@ function blend3d.build_plan(job, real, ring)
 					local Dc = D
 					if is_hole then
 						local v = (0.6 * wdl.noise2(x, z, 11) + 0.4 * wdl.noise2(x, z, 5) - 0.5) * 2 + 0.5
-						Dc = 10 + 20 * math.max(0, math.min(1, v))
+						-- (raised 2026-09-28 for multi-chunk holes: an
+						-- inner chunk can be ~40 columns from terrain)
+						Dc = 44 + 20 * math.max(0, math.min(1, v))
 					end
 					if mx and d < Dc then
 						local t = (Dc - d) / (Dc - 1)

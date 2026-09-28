@@ -296,6 +296,16 @@ blk(104, { default={name="minecraft:pumpkin_stem"}, [7]={name="minecraft:attache
 blk(105, { default={name="minecraft:melon_stem"},   [7]={name="minecraft:attached_melon_stem"} })
 -- 106 vines: bit per face (0x1 south ... 0x8 west); palette keeps one face
 blk(106, { default={name="minecraft:vine"} })
+-- 1.12 vine metadata is a side bitmask (1 south, 2 west, 4 north, 8
+-- east; 0 = only under a block). Without it every vine read as "up" only
+-- and was placed lying flat (owner 2026-09-28, Krobar's bridge).
+for m = 1, 15 do
+	P[106][m] = {name="minecraft:vine", props={
+		south = (m % 2 >= 1) and "true" or "false",
+		west = (m % 4 >= 2) and "true" or "false",
+		north = (m % 8 >= 4) and "true" or "false",
+		east = (m >= 8) and "true" or "false"}}
+end
 -- 107 oak fence gate: facing metas
 blk(107, { default={name="minecraft:oak_fence_gate"} })
 for m, f in pairs(H_BED) do P[107][m] = {name="minecraft:oak_fence_gate", props={facing=f}} end
@@ -339,8 +349,11 @@ stairs(128, "minecraft:sandstone_stairs")
 blk(129, { default={name="minecraft:emerald_ore"} })
 blk(130, { default={name="minecraft:ender_chest"} }) -- metas 2,4 seen (TE minecraft:ender_chest)
 for m, f in pairs(H_CHEST) do P[130][m] = {name="minecraft:ender_chest", props={facing=f}} end
--- 131 tripwire hook / 132 tripwire: NO Mineclonia node exists (documented
--- known gap, same as the modern capture path) -- left unmapped on purpose.
+-- 131 tripwire hook / 132 tripwire: Mineclonia has no tripwire (checked:
+-- no register_node for it). They were unmapped and became stone blocks
+-- stuck in doorways/walls; the string is invisible anyway, so place air.
+blk(131, { default={name="minecraft:air"} })
+blk(132, { default={name="minecraft:air"} })
 blk(133, { default={name="minecraft:emerald_block"} })
 stairs(134, "minecraft:spruce_stairs")
 stairs(135, "minecraft:birch_stairs")
@@ -427,7 +440,10 @@ blk(172, { default={name="minecraft:terracotta"} })
 blk(173, { default={name="minecraft:coal_block"} })
 blk(174, { default={name="minecraft:packed_ice"} })
 blk(175, { default={name="minecraft:sunflower"} }) -- double plants 0-5
-for m, d in ipairs(DOUBLE_PLANT) do P[175][m - 1] = {name="minecraft:" .. d} end
+for m, d in ipairs(DOUBLE_PLANT) do P[175][m - 1] = {name="minecraft:" .. d, props={half="lower"}} end
+-- metas 8+ are the upper half; 1.12 does not store the plant type there
+-- (it's the block below's), so spawnimport copies it from below
+for m = 8, 15 do P[175][m] = {name="minecraft:sunflower", props={half="upper"}} end
 -- 176/177 banners: colour 0-15 (patterns live in the TE and are lost --
 -- the palette maps all banners to Mineclonia's banner node anyway)
 blk(176, { default={name="minecraft:white_banner"} })

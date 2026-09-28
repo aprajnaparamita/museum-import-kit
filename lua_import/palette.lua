@@ -357,10 +357,19 @@ local function tier1(base, props)
 	if trapdoor_base then
 		local node = trapdoor_base
 		if props.open == "true" then node = node .. "_open" end
+		-- Minecraft's trapdoor facing is the OPPOSITE of the placer's
+		-- look (an open facing=north trapdoor stands on the block's south
+		-- edge); Mineclonia's param2 is the placer's look (api_trapdoors
+		-- on_place) with the open panel on the far side. Using facing
+		-- directly put every open trapdoor on the wrong edge of its block
+		-- (owner 2026-09-28, The Citadel: a door framed by open trapdoors
+		-- looked set in the wrong place).
+		local OPPOSITE = { north = "south", south = "north", east = "west", west = "east" }
+		local tprops = { facing = OPPOSITE[props.facing] or props.facing, half = props.half }
 		return Resolution(node, "exact",
 			"trapdoor facing=" .. tostring(props.facing) .. " half=" .. tostring(props.half)
 			.. " open=" .. tostring(props.open),
-			stair_param2(props))
+			stair_param2(tprops))
 	end
 
 	if ends_with(base, "_fence_gate") then
@@ -455,6 +464,36 @@ local function tier1(base, props)
 		local target = SPECIAL.furnace_lit[lit] or "mcl_furnaces:furnace"
 		local param2 = FACING_TO_FACEDIR[props.facing] or 0
 		return Resolution(target, "exact", "furnace lit=" .. lit .. " facing=" .. tostring(props.facing), param2)
+	end
+
+	-- Lanterns: Mineclonia has separate floor and ceiling nodes
+	-- (mcl_lanterns register_lantern: <name>_floor / <name>_ceiling).
+	-- hanging=true was placed as a floor lantern, so it stood upside
+	-- down under its ceiling (owner 2026-09-28, Fort Alcazar); soul
+	-- lanterns had no mapping at all (stone).
+	-- Tripwire: Mineclonia has no tripwire or hook (data.lua notes). They
+	-- fell through to stone and left stone blocks in doorways; the string
+	-- is near-invisible anyway, so leave the space open.
+	if base == "tripwire" or base == "tripwire_hook" then
+		return Resolution("air", "exact", base .. " (no Mineclonia equivalent) -> air", 0)
+	end
+
+	if base == "lantern" or base == "soul_lantern" then
+		local part = (props.hanging == "true") and "_ceiling" or "_floor"
+		return Resolution("mcl_lanterns:" .. base .. part, "exact",
+			base .. " hanging=" .. tostring(props.hanging), 0)
+	end
+
+	-- Ground cover (1.20/1.21): Mineclonia's mcl_flowers ground flowers
+	-- are <name>_1.._4 with paramtype2 color4dir (low 2 bits = facing).
+	-- leaf_litter had no mapping and became stone blocks (owner
+	-- 2026-09-28, Fort Alcazar).
+	if base == "leaf_litter" or base == "pink_petals" or base == "wildflowers" then
+		local amount = tonumber(props.segment_amount or props.flower_amount) or 1
+		if amount < 1 then amount = 1 elseif amount > 4 then amount = 4 end
+		return Resolution("mcl_flowers:" .. base .. "_" .. amount, "exact",
+			base .. " amount=" .. amount .. " facing=" .. tostring(props.facing),
+			(FACING_TO_FACEDIR[props.facing] or 0) % 4)
 	end
 
 	if base == "water" or base == "lava" then
@@ -757,19 +796,24 @@ local function tier1(base, props)
 		if base == wood .. "_sign" then
 			local rotation = math.floor(tonumber(props.rotation) or 0) % 16
 			-- paramtype2 = degrotate: 16 Minecraft rotations over 240 steps.
-			return Resolution("mcl_signs:standing_sign_" .. wood, "exact",
-				"standing sign rotation=" .. rotation, rotation * 15)
+			-- Minecraft's rotation is the way the TEXT faces (0 = south);
+			-- Mineclonia's param2 is the placer's yaw (mcl_signs on_place),
+			-- and the text faces back toward the placer -- the opposite
+			-- way. rotation*15 put every standing sign 180 degrees off
+			-- (owner 2026-09-28, The Citadel: rotation 0 and 8 both flipped).
+			return Resolution("mcl_signs:standing_sign_" .. mcl_species_key(wood), "exact",
+				"standing sign rotation=" .. rotation, (rotation * 15 + 120) % 240)
 		end
 		if base == wood .. "_wall_sign" then
 			local param2 = SIGN_FACING_TO_WALLMOUNTED[props.facing] or 4
-			return Resolution("mcl_signs:wall_sign_" .. wood, "exact",
+			return Resolution("mcl_signs:wall_sign_" .. mcl_species_key(wood), "exact",
 				"wall sign facing=" .. tostring(props.facing), param2)
 		end
 		-- Hanging signs are a 1.20 block Mineclonia has no equivalent for.
 		-- The nearest honest stand-in is the same wood's standing sign --
 		-- it at least renders as a readable sign rather than a stone cube.
 		if base == wood .. "_hanging_sign" or base == wood .. "_wall_hanging_sign" then
-			return Resolution("mcl_signs:standing_sign_" .. wood, "family",
+			return Resolution("mcl_signs:standing_sign_" .. mcl_species_key(wood), "family",
 				"hanging sign -> standing sign (no hanging sign in Mineclonia)", 0)
 		end
 	end

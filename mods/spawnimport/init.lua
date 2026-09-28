@@ -584,6 +584,13 @@ Job.__index = Job
 -- Every other Minecraft colour name is already the key.
 local BANNER_COLOR_KEY = { light_gray = "silver", gray = "grey" }
 
+-- Mineclonia two-block plants (mcl_flowers/register.lua add_large_plant)
+local LARGE_PLANT = {
+	["mcl_flowers:peony"] = true, ["mcl_flowers:rose_bush"] = true,
+	["mcl_flowers:lilac"] = true, ["mcl_flowers:sunflower"] = true,
+	["mcl_flowers:double_grass"] = true, ["mcl_flowers:double_fern"] = true,
+}
+
 -- sea-bed node -> Mineclonia seagrass surface (mcl_ocean/seagrass.lua)
 local SEAGRASS_SURFACE = {
 	["mcl_core:dirt"] = "dirt", ["mcl_core:sand"] = "sand", ["mcl_core:redsand"] = "redsand",
@@ -619,6 +626,7 @@ local function new_job(p)
 	-- no separate dimensions -- Nether/End are just other Y ranges in the
 	-- same coordinate space (mods/CORE/mcl_init/init.lua).
 	self.dest_y_offset = p.dest_y_offset or 0
+	self.warp_source = p.warp_source
 	-- "overworld"/"nether"/"end" -- the merge writer picks fallback
 	-- materials per band from this (see wgen_write.band)
 	self.dimension_type = p.dimension_type
@@ -1123,7 +1131,24 @@ function Job:place_one_chunk(entry)
 	end
 	self.placed_chunks = self.placed_chunks + 1
 	if not sec_y_min then
-		return -- chunk has a sections list but no Y-tagged entries at all; nothing to clear or place
+		-- A chunk saved with no sections at all is an EMPTY chunk, the same
+		-- as one saved with all-air sections, and must be handled the same
+		-- way. Returning here left whatever Mineclonia generated: in the
+		-- End that made a chunk-shaped patchwork of generated islands and
+		-- cleared void (owner 2026-09-28, Krobar's bridge: "loads of end
+		-- chunks here didn't merge" -- 3950 of its 4096 chunks are empty);
+		-- in the overworld it skipped the empty-chunk merge.
+		if blend3d.band(self) == "end" then
+			self.end_empty = self.end_empty or {}
+			self.end_empty[chunk.xPos .. "_" .. chunk.zPos] = true
+			sec_y_min, sec_y_max = 0, 0 -- clear the band below (download void)
+		elseif blend3d.band(self) == "nether" then
+			sec_y_min, sec_y_max = 0, 0 -- the nether band clear still applies
+		else
+			self.empty_captured = self.empty_captured or {}
+			self.empty_captured[#self.empty_captured + 1] = { cx = chunk.xPos, cz = chunk.zPos }
+			return
+		end
 	end
 
 	local xmin, xmax = base_x, base_x + 15
@@ -1156,13 +1181,15 @@ function Job:place_one_chunk(entry)
 	-- OVERWORLD_Y_CORRECTION` (not `== 0`) is what used to just mean
 	-- "this is an overworld import, not a Nether/End band" back when 0 was
 	-- overworld's own offset.
+	-- 2026-09-28: no longer extended down to OVERWORLD_MIN_Y. That
+	-- deleted Mineclonia's own bottom bedrock rows (-128..-126) under a
+	-- 1.18+ capture whose floor is at source -64 (dest -125), leaving an
+	-- air layer over nothing -- a way into the void (owner, cutecurly's
+	-- City at (-10746, -129, 8467)); under an older capture it removed the
+	-- whole deep terrain. Clear only the capture's own sections; whatever
+	-- Mineclonia generated below stays (see the pre-1.18 depth handling
+	-- after the decode).
 	local clear_y_min = sec_y_min * 16
-	if self.dest_y_offset == OVERWORLD_Y_CORRECTION and OVERWORLD_MIN_Y then
-		local floor_in_source_space = OVERWORLD_MIN_Y - self.dest_y_offset
-		if floor_in_source_space < clear_y_min then
-			clear_y_min = floor_in_source_space
-		end
-	end
 	local clear_y_max = sec_y_max * 16 + 15
 	-- Nether/End bands (2026-09-27): clear the vanilla dimension's own
 	-- height -- nether source y 0..128 (vanilla 0..127 + the one extra
@@ -1199,7 +1226,10 @@ function Job:place_one_chunk(entry)
 	local bx, by, bz, bn, bp2 = {}, {}, {}, {}, {}
 	local n = 0
 	local banners = nil
+	local jukeboxes = nil
 	local gw_idx = nil
+	local src_lowest, src_bedrock0 = math.huge, false
+	local upper_plants = nil
 	anvil.decode_chunk_blocks(chunk, function(x, y, z, name, props)
 		n = n + 1
 		bx[n] = self.anchor_x + (x - self.origin_x)
@@ -1212,11 +1242,59 @@ function Job:place_one_chunk(entry)
 			gw_idx = gw_idx or {}
 			gw_idx[#gw_idx + 1] = n
 		end
+		if resolution.node == "mcl_jukebox:jukebox" then
+			jukeboxes = jukeboxes or {}
+			jukeboxes[#jukeboxes + 1] = n
+		end
 		if resolution.node == "mcl_banners:hanging_banner" then
 			banners = banners or {}
 			banners[#banners + 1] = { i = n, color = name:match("^minecraft:(.-)_wall_banner$") }
 		end
+		if props and props.half == "upper" and LARGE_PLANT[resolution.node] then
+			upper_plants = upper_plants or {}
+			upper_plants[#upper_plants + 1] = n
+		end
+		if y < src_lowest then src_lowest = y end
+		if y == 0 and name == "minecraft:bedrock" then src_bedrock0 = true end
 	end)
+
+	-- Pre-1.18 depth (owner 2026-09-28, upside down pyramid: "a huge
+	-- section of void under it"): an overworld capture whose blocks start
+	-- at source y 0 on the old bedrock band sits 64+ blocks above
+	-- Mineclonia's floor (mg_overworld_min), and the clear below reaches
+	-- that floor, so the column under it was left empty. Drop the
+	-- capture's bedrock band (source y 0..4) and clear only from source y 5
+	-- up: Mineclonia's own deep terrain (deepslate, caves, ores, bedrock)
+	-- continues underneath. 1.18+ captures reaching y -64 are unaffected.
+	if not blend3d.band(self) and src_bedrock0 and src_lowest >= 0 and n > 0 then
+		local keep = 5 + self.dest_y_offset
+		local map = {}
+		local m = 0
+		for i = 1, n do
+			if by[i] >= keep then
+				m = m + 1
+				bx[m], by[m], bz[m], bn[m], bp2[m] = bx[i], by[i], bz[i], bn[i], bp2[i]
+				map[i] = m
+			end
+		end
+		for i = m + 1, n do bx[i], by[i], bz[i], bn[i], bp2[i] = nil, nil, nil, nil, nil end
+		n = m
+		local function remap(list, field)
+			if not list then return nil end
+			local out = {}
+			for _, v in ipairs(list) do
+				local old = field and v[field] or v
+				if map[old] then
+					if field then v[field] = map[old]; out[#out + 1] = v else out[#out + 1] = map[old] end
+				end
+			end
+			return out
+		end
+		gw_idx = remap(gw_idx)
+		jukeboxes = remap(jukeboxes)
+		banners = remap(banners, "i")
+		if keep > ymin then ymin = keep end
+	end
 
 	-- Overworld: a chunk the download saved with ZERO blocks (not even
 	-- bedrock) is missing data, not terrain -- the downloader writes every
@@ -1271,6 +1349,25 @@ function Job:place_one_chunk(entry)
 					tint_of[name] = t
 				end
 				if t then bp2[i] = t end
+			end
+		end
+	end
+
+	-- Tall plants (sunflower, lilac, rose bush, peony, tall grass, large
+	-- fern): Mineclonia uses a separate "<name>_top" node for the upper
+	-- half. Both halves mapped to the bottom node, so the plant broke
+	-- (owner 2026-09-28, Krobar's bridge sunflowers). The upper half takes
+	-- the type of the plant below it (1.12 doesn't store it on the top).
+	if upper_plants then
+		local at = {}
+		for i = 1, n do at[bx[i] .. "," .. by[i] .. "," .. bz[i]] = i end
+		for _, i in ipairs(upper_plants) do
+			local below = at[bx[i] .. "," .. (by[i] - 1) .. "," .. bz[i]]
+			if below and LARGE_PLANT[bn[below]] then
+				bn[i] = bn[below] .. "_top"
+				bp2[i] = bp2[below]
+			else
+				bn[i] = "air" -- a top with no plant under it
 			end
 		end
 	end
@@ -1497,6 +1594,30 @@ function Job:place_one_chunk(entry)
 				local inv = meta:get_inventory()
 				inv:set_size("banner", 1)
 				inv:set_stack("banner", 1, ItemStack(item))
+			end
+		end
+	end
+
+	-- Jukeboxes: every one in a base holds a random music disc (owner
+	-- 2026-09-28). mcl_jukebox keeps the disc in a 1-slot "main" list;
+	-- the pick is seeded by position so rebuilds are deterministic.
+	if jukeboxes and mcl_jukebox and mcl_jukebox.registered_records then
+		local records = {}
+		for name in pairs(mcl_jukebox.registered_records) do
+			if core.registered_items[name] then records[#records + 1] = name end
+		end
+		table.sort(records)
+		if #records > 0 then
+			for _, i in ipairs(jukeboxes) do
+				local pos = vector.new(bx[i], by[i], bz[i])
+				if core.get_node(pos).name == "mcl_jukebox:jukebox" then
+					local inv = core.get_meta(pos):get_inventory()
+					inv:set_size("main", 1)
+					if inv:is_empty("main") then
+						local pr = PcgRandom(math.abs(bx[i] * 73856093 + by[i] * 19349663 + bz[i] * 83492791) % 2 ^ 31)
+						inv:set_stack("main", 1, ItemStack(records[pr:next(1, #records)]))
+					end
+				end
 			end
 		end
 	end
@@ -2129,7 +2250,14 @@ function Job:finish()
 		-- Where /warp should actually put a player: the densest cluster of
 		-- containers/signs, not the bbox centre. nil for a capture with
 		-- neither (museumwarp falls back to its own search).
-		warp_target = self:best_interest_point(),
+		-- a manifest warp_source (the download's own coordinates, chosen
+		-- by hand, e.g. Ravenholm's founding sign) beats the automatic
+		-- densest-container pick, which can land in a mine shaft
+		warp_target = self.warp_source and {
+			x = self.anchor_x + (self.warp_source.x - self.origin_x),
+			y = self.warp_source.y + self.dest_y_offset,
+			z = self.anchor_z + (self.warp_source.z - self.origin_z),
+		} or self:best_interest_point(),
 	})
 end
 
@@ -2455,6 +2583,7 @@ local function start_job(player_name, world_folder, x, z, name, dimension_path_o
 		dimension_path = dimension_path,
 		region_dir = region_dir,
 		dest_y_offset = opts.dest_y_offset,
+		warp_source = opts.warp_source,
 		-- "overworld"/"nether"/"end" (2026-09-27: never reached the job
 		-- before -- every band check silently fell back to guessing from
 		-- dest_y_offset, and the nether roof seal never ran at all)
@@ -2559,6 +2688,7 @@ local function advance_batch()
 				{
 					region_dir = entry.source_region_dir,
 					dest_y_offset = entry.dest_y_offset or 0,
+					warp_source = entry.warp_source,
 					dimension_type = entry.dimension_type,
 					skip_collision = true,
 					origin_x = entry.origin_x,

@@ -54,6 +54,18 @@ local function edge_ok(a, b, aquatic)
 	return not (aquatic[a] and aquatic[b])
 end
 
+-- 2026-09-28: sea-floor edges are no longer exempt, only looser. With no
+-- constraint a captured sea floor met the natural one in a sandstone wall
+-- on the domain's chunk line (owner, The Fort: "the ocean floor does not
+-- merge at all"). Underwater the cap is AQ_FACTOR x the land slope -- a
+-- steep but continuous sea bed, not a cliff -- which still leaves the
+-- solver room so whole coastlines aren't dragged down.
+field.AQ_FACTOR = 3
+local function edge_cap(a, b, aquatic, step)
+	if aquatic and aquatic[a] and aquatic[b] then return step * field.AQ_FACTOR end
+	return step
+end
+
 local function parse_key(k)
 	local x, z = k:match("^(-?%d+),(-?%d+)$")
 	return tonumber(x), tonumber(z)
@@ -178,11 +190,11 @@ function field.bounds(free, fixed, opts)
 		local x, z = parse_key(key)
 		for _, d in ipairs(DIRS) do
 			local nkey = field.key(x + d[1], z + d[2])
-			if L[nkey] and edge_ok(key, nkey, aquatic) then
+			if L[nkey] then
 				local changed = false
-				local st = step
+				local st = edge_cap(key, nkey, aquatic, step)
 				if jitter > 0 then
-					st = step * (1 - jitter * (0.65 * noise2(x + d[1], z + d[2], 11)
+					st = st * (1 - jitter * (0.65 * noise2(x + d[1], z + d[2], 11)
 						+ 0.35 * noise2(x + d[1], z + d[2], 4)))
 				end
 				if L[key] - st > L[nkey] then
@@ -251,18 +263,19 @@ function field.solve(free, fixed, opts)
 			for key, s in pairs(free) do
 				local x, z = parse_key(key)
 				local v = h[key] + beta * (s - h[key])
-				local n, lo, hi = 0, math.huge, -math.huge
+				local n, n_lower, n_upper = 0, -math.huge, math.huge
 				for _, d in ipairs(DIRS) do
 					local nkey = field.key(x + d[1], z + d[2])
 					local hv = h[nkey]
-					if hv and edge_ok(key, nkey, aquatic) then
+					if hv then
+						local cap = edge_cap(key, nkey, aquatic, step)
 						n = n + 1
-						if hv < lo then lo = hv end
-						if hv > hi then hi = hv end
+						if hv - cap > n_lower then n_lower = hv - cap end
+						if hv + cap < n_upper then n_upper = hv + cap end
 					end
 				end
 				if n > 0 then
-					local n_lower, n_upper = hi - step, lo + step -- neighbour band
+					-- neighbour band: within each neighbour's own edge cap
 					local lower, upper = n_lower, n_upper
 					if L[key] > lower then lower = L[key] end
 					if U[key] < upper then upper = U[key] end
@@ -305,8 +318,8 @@ function field.solve(free, fixed, opts)
 			local x, z = parse_key(key)
 			for _, d in ipairs(DIRS) do
 				local nkey = field.key(x + d[1], z + d[2])
-				if free[nkey] and h[nkey] and key < nkey and edge_ok(key, nkey, aquatic) then
-					local diff = math.abs(h[key] - h[nkey])
+				if free[nkey] and h[nkey] and key < nkey then
+					local diff = math.abs(h[key] - h[nkey]) - (edge_cap(key, nkey, aquatic, step) - step)
 					if diff > worst then worst = diff end
 				end
 			end
@@ -360,7 +373,9 @@ function field.violations(free, fixed, h, step, kinds)
 		-- both-underwater edges are sea floor relief: real coastlines do
 		-- that and nobody walks there. Water-to-LAND edges are fixable
 		-- (and now constrained) -- the seam must stay walkable.
-		if a == "W" and b == "W" then return false end
+		-- sea-floor edges past the underwater cap: a submerged cliff,
+		-- widen like any other
+		if a == "W" and b == "W" then return true end
 		-- free vs any pin: the merge ramp, widen for room
 		if (a == "F" and b ~= "F") or (b == "F" and a ~= "F") then return true end
 		-- a seam pin against untouched terrain: grow the ramp outward
@@ -381,7 +396,8 @@ function field.violations(free, fixed, h, step, kinds)
 				if hv and not seen[key .. "|" .. nkey] and not seen[nkey .. "|" .. key] then
 					seen[key .. "|" .. nkey] = true
 					local diff = math.abs(h[key] - hv)
-					if diff > step + eps then
+					local cap = (aquatic[key] and aquatic[nkey]) and step * field.AQ_FACTOR or step
+					if diff > cap + eps then
 						if diff > worst then worst = diff end
 						local nk = natural[key]
 						local nnv = natural[nkey]

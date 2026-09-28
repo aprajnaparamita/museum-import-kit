@@ -168,10 +168,22 @@ inputs.surface_family = wdl.surface_family
 -- w = 1 at the seam (match the touching block), 0 from FADE columns out
 -- (match the natural Mineclonia terrain). The solver's slope cap and
 -- pins remain the hard constraints -- this only shapes the ramp.
-function inputs.height_targets(field, natural)
+-- slow_chunk (optional): "cx_cz" set of chunks whose columns fade 3x
+-- slower -- captured chunks the download saved empty. Their terrain is
+-- missing capture data, so the capture's surroundings (the seam level)
+-- are the better guess; at full natural weight a v7 mountain rose inside
+-- a base's frozen sea (owner 2026-09-28, upside down pyramid: "merges do
+-- not fully extend to the water level ... huge square shaped cliffs").
+function inputs.height_targets(field, natural, slow_chunk)
 	local t = {}
 	for skey, s in pairs(natural) do
 		local d = field.dist[skey]
+		if d and slow_chunk then
+			local x, z = skey:match("^(%-?%d+),(%-?%d+)$")
+			if slow_chunk[math.floor(tonumber(x) / C) .. "_" .. math.floor(tonumber(z) / C)] then
+				d = 1 + (d - 1) / 3
+			end
+		end
 		if d then
 			-- jittered like the biome fade (2026-09-25 owner report:
 			-- "right angles, like a pyramid", square coastline steps) --
@@ -326,6 +338,7 @@ function inputs.attach_targets(job, real, plan)
 				-- snow via the "snow" surface family above (the resolved
 				-- biome goes cold at w~1) and the seam-material copy keeps
 				-- the touching blocks' look.
+				col.sfam = fam -- seam surface family, for the write's snow/ice fade
 				col.tsnow = (def and def._mcl_biome_type == "snowy") or false
 				if col.tsnow and (fam == "grass" or fam == "sand") and w > 0.35 then
 					col.tsnow = false

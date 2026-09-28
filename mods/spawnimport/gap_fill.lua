@@ -365,7 +365,12 @@ end
 -- Widening margin: how many extra rings of natural chunks may join the
 -- merge domain when a ramp doesn't fit. Also the pregen margin init.lua
 -- must reserve around the base for gap-fill to be able to widen at all.
-gap_fill.MAX_EXTRA_RINGS = 3
+-- 6 (was 3, 2026-09-28): an ocean seam next to high natural land (a
+-- badlands mesa ~80 above the sea at cutecurly's City, a v7 range at
+-- upside down pyramid) needs ~80+ columns of 1-block ramp; with 3 extra
+-- rings the leftover step stayed as a wall on the domain's outer chunk
+-- line (owner: "square edges the whole way").
+gap_fill.MAX_EXTRA_RINGS = 6
 
 -- ---------------------------------------------------------------------
 -- Plan: natural column scan + merged height field
@@ -718,7 +723,12 @@ function gap_fill.build_plan(job, real, entries, opts)
 				local tname = c.T and core.get_name_from_content_id(c.T) or nil
 				return wgen_inputs.surface_family(tname, gname), c.mat
 			end)
-		free = wgen_inputs.height_targets(fld, natural)
+		local slow = nil
+		if job.empty_captured then
+			slow = {}
+			for _, e in ipairs(job.empty_captured) do slow[e.cx .. "_" .. e.cz] = true end
+		end
+		free = wgen_inputs.height_targets(fld, natural, slow)
 		last_field = fld
 		-- Domain-boundary columns bordering untouched terrain are pinned
 		-- to their own natural height (the merge must be invisible there),

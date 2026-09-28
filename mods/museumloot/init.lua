@@ -279,7 +279,7 @@ local GEAR_GOLD_RARE_CHANCE = 3
 -- iron-gear chest deliberately instead of by an unintended nonzero
 -- weight.
 local GEAR_THEME_MATERIAL = {
-	gear_diamond = "diamond",
+	gear_diamond = "netherite", -- 2026-09-28 owner: netherite over diamond
 	gear_netherite = "netherite",
 	gear_iron = "iron",
 	gear_gold = "gold",
@@ -433,14 +433,15 @@ end
 THEMES = {
 	default_stash = {
 		description = "mixed PvP kit -- the catch-all when sign text says nothing useful",
+		-- 2026-09-28 owner: "bump the odds of the Netherite armor and
+		-- weapons and remove or greatly reduce the diamond stuff" -- the
+		-- gear here is enchanted netherite (was diamond); raw diamonds cut.
 		{ stacks_min = 6, stacks_max = 10, items = {
-			item("mcl_core:diamond", 4, 12, 3),
-			item("mcl_core:diamond", 12, 24, 2),
-			item("mcl_core:diamondblock", 1, 2, 2),
-			item("mcl_tools:pick_diamond", 1, 1, 1),
-			item("mcl_tools:pick_diamond_enchanted", 1, 1, 4, enchanted),
-			item("mcl_tools:sword_diamond", 1, 1, 1),
-			item("mcl_tools:sword_diamond_enchanted", 1, 1, 4, enchanted),
+			item("mcl_core:diamond", 4, 12, 1),
+			item("mcl_core:diamond", 12, 24, 1),
+			item("mcl_core:diamondblock", 1, 2, 1),
+			item("mcl_tools:pick_netherite_enchanted", 1, 1, 6, enchanted),
+			item("mcl_tools:sword_netherite_enchanted", 1, 1, 6, enchanted),
 			-- 2026-09-19 owner correction (round 13): "unenchanted diamond
 			-- is very very rare and usually thrown away or enchanted" --
 			-- these weights were STILL the pre-round-5 ratio (plain 4x
@@ -448,14 +449,10 @@ THEMES = {
 			-- below, which was already flipped 2026-09-18 for the exact
 			-- same owner feedback ("loot... is also not enchanted often,
 			-- it mostly should be enchanted"). Flipped to match.
-			item("mcl_armor:helmet_diamond", 1, 1, 1),
-			item("mcl_armor:helmet_diamond_enchanted", 1, 1, 4, enchanted),
-			item("mcl_armor:chestplate_diamond", 1, 1, 1),
-			item("mcl_armor:chestplate_diamond_enchanted", 1, 1, 4, enchanted),
-			item("mcl_armor:leggings_diamond", 1, 1, 1),
-			item("mcl_armor:leggings_diamond_enchanted", 1, 1, 4, enchanted),
-			item("mcl_armor:boots_diamond", 1, 1, 1),
-			item("mcl_armor:boots_diamond_enchanted", 1, 1, 4, enchanted),
+			item("mcl_armor:helmet_netherite_enchanted", 1, 1, 6, enchanted),
+			item("mcl_armor:chestplate_netherite_enchanted", 1, 1, 6, enchanted),
+			item("mcl_armor:leggings_netherite_enchanted", 1, 1, 6, enchanted),
+			item("mcl_armor:boots_netherite_enchanted", 1, 1, 6, enchanted),
 			item("mcl_core:gold_ingot", 6, 16, 2),
 			-- 2026-09-19 owner explicit (round 19): "ALL apples in chests
 			-- should be enchanted golden apples NOT golden apples and ALL
@@ -962,12 +959,12 @@ local FALLBACK_POOL = {
 	-- comment for the rest of the elimination (the THEME_RULES sign-match
 	-- above no longer routes here either).
 	{ key = "gear_gold", weight = 2 },
-	{ key = "gear_netherite", weight = 14 },
+	{ key = "gear_netherite", weight = 28 }, -- doubled 2026-09-28 (owner: more netherite)
 	-- Kit shulkers are "pretty common" per the project owner, but this is
 	-- the UNLABELED-container roll -- most kits should come from actual
 	-- "kit"/"loadout" signs (see THEME_RULES above); this just means an
 	-- unlabeled chest occasionally turns out to hold one anyway.
-	{ key = "pvp_kit", weight = 14 },
+	{ key = "pvp_kit", weight = 20 }, -- raised 2026-09-28
 	-- Genuinely empty -- still real (per the project owner: "some should
 	-- be empty, some should be totally full"), but cut down -- most
 	-- chests in a real top-tier stash should read as stocked.
@@ -1716,6 +1713,10 @@ local OP_JACKPOT = {
 	"mcl_totems:totem",
 	"mcl_tools:sword_netherite",
 	"mcl_tools:pick_netherite",
+	"mcl_armor:helmet_netherite",
+	"mcl_armor:chestplate_netherite",
+	"mcl_armor:leggings_netherite",
+	"mcl_armor:boots_netherite",
 	"mcl_tools:axe_netherite",
 	"mcl_tridents:trident",
 	"mcl_tools:mace",

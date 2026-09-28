@@ -1292,6 +1292,7 @@ function Job:place_one_chunk(entry)
 		end
 		gw_idx = remap(gw_idx)
 		jukeboxes = remap(jukeboxes)
+		upper_plants = remap(upper_plants) -- (missed at first: 133 chunks failed)
 		banners = remap(banners, "i")
 		if keep > ymin then ymin = keep end
 	end

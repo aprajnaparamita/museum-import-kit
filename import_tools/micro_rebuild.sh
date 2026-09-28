@@ -28,9 +28,12 @@
 
 set -euo pipefail
 
-STAGING="/Users/dara/dev/museum-microtest"
+# STAGING / LUANTI_BIN can be overridden: the external drive has dropped
+# out mid-build and taken the running binary with it (SIGBUS paging in
+# code, 2026-09-28). Put both on the internal disk when that happens.
+STAGING="${STAGING:-/Users/dara/dev/museum-microtest}"
 DEPLOYED="/Users/dara/Library/Application Support/minetest/worlds/2b2t Museum TEST"
-LUANTI_BIN="$HOME/dev/luanti/bin/luanti"          # 5.17.0 -- NOT museum-testrig's 5.16.1
+LUANTI_BIN="${LUANTI_BIN:-$HOME/dev/luanti/bin/luanti}"          # 5.17.0 -- NOT museum-testrig's 5.16.1
 LUANTI_CONF="$HOME/dev/museum-testrig/conf/microtest.conf"
 KIT="/Volumes/Dara/dev/museum-import-kit"
 LOGDIR="/tmp"
@@ -64,7 +67,9 @@ done
 MANIFEST_SRC="${MICRO_MANIFEST:-$KIT/manifest/museum_manifest_micro.json}"
 cp "$MANIFEST_SRC" "$STAGING/museum_manifest.json"
 N_BASES=$(python3 -c 'import json,sys; print(len(json.load(open(sys.argv[1]))))' "$MANIFEST_SRC")
-sed "s/^museum_target_bases *=.*/museum_target_bases = $N_BASES/" "$LUANTI_CONF" > "$LOGDIR/micro_run.conf"
+sed -e "s/^museum_target_bases *=.*/museum_target_bases = $N_BASES/" \
+    -e "s|^museum_manifest_path *=.*|museum_manifest_path = $STAGING/museum_manifest.json|" \
+    "$LUANTI_CONF" > "$LOGDIR/micro_run.conf"
 LUANTI_CONF="$LOGDIR/micro_run.conf"
 log "manifest: $MANIFEST_SRC ($N_BASES bases)"
 cp "$KIT/manifest/base_patches.json" "$STAGING/base_patches.json"

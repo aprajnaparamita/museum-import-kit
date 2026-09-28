@@ -281,7 +281,16 @@ local function decode_section_biomes(section, callback)
 	if not biomes then return end
 	local palette = biomes.palette
 	local data = biomes.data
-	if not palette or not data or #palette == 0 then return end
+	if not palette or #palette == 0 then return end
+	if not data then
+		-- a single-biome section stores no data array: every cell is
+		-- palette[1] (the common case; this used to report nothing)
+		if #palette ~= 1 then return end
+		for i = 0, 63 do
+			callback(i % 4, math.floor(i / 16), math.floor((i % 16) / 4), palette[1])
+		end
+		return
+	end
 	local bits = 0
 	while (2 ^ bits) < #palette do
 		bits = bits + 1

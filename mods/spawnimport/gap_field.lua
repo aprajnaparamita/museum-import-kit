@@ -128,9 +128,34 @@ end
 -- Returns L, U maps ("x,z" -> number). L > U marks a locally infeasible
 -- pinch (the pins demand more than the slope cap allows) -- the caller's
 -- violations()/widening loop deals with it.
+-- Smooth value noise in [0,1] (pure: no core.*), ~`scale` columns per cell.
+local function hash2(x, z)
+	local n = math.sin(x * 127.1 + z * 311.7) * 43758.5453
+	return n - math.floor(n)
+end
+local function noise2(x, z, scale)
+	local fx, fz = x / scale, z / scale
+	local ix, iz = math.floor(fx), math.floor(fz)
+	local tx, tz = fx - ix, fz - iz
+	tx = tx * tx * (3 - 2 * tx)
+	tz = tz * tz * (3 - 2 * tz)
+	local a, b = hash2(ix, iz), hash2(ix + 1, iz)
+	local c, d = hash2(ix, iz + 1), hash2(ix + 1, iz + 1)
+	local ab, cd = a + (b - a) * tx, c + (d - c) * tx
+	return ab + (cd - ab) * tz
+end
+field.noise2 = noise2
+
+-- opts.jitter (0..1, default 0): the pin cones' slope varies per column
+-- between step*(1-jitter) and step. Cones at the full cap have straight
+-- 45-degree diamond contours (4-neighbour distance), and a ramp that
+-- hugs them reads as a square, chunk-shaped edge (owner 2026-09-28,
+-- Hopes Retreat: snow terraces in V shapes along an ice coast). Never
+-- steeper than step, so walkability is unchanged.
 function field.bounds(free, fixed, opts)
 	local step = (opts and opts.step) or 1.0
 	local aquatic = opts and opts.aquatic
+	local jitter = (opts and opts.jitter) or 0
 	local L, U = {}, {}
 	for key in pairs(free) do
 		L[key] = -math.huge
@@ -155,12 +180,17 @@ function field.bounds(free, fixed, opts)
 			local nkey = field.key(x + d[1], z + d[2])
 			if L[nkey] and edge_ok(key, nkey, aquatic) then
 				local changed = false
-				if L[key] - step > L[nkey] then
-					L[nkey] = L[key] - step
+				local st = step
+				if jitter > 0 then
+					st = step * (1 - jitter * (0.65 * noise2(x + d[1], z + d[2], 11)
+						+ 0.35 * noise2(x + d[1], z + d[2], 4)))
+				end
+				if L[key] - st > L[nkey] then
+					L[nkey] = L[key] - st
 					changed = true
 				end
-				if U[key] + step < U[nkey] then
-					U[nkey] = U[key] + step
+				if U[key] + st < U[nkey] then
+					U[nkey] = U[key] + st
 					changed = true
 				end
 				if changed and not queued[nkey] then
@@ -202,7 +232,8 @@ function field.solve(free, fixed, opts)
 	local omega = (opts and opts.omega) or 0.8
 	local iters = (opts and opts.iters) or 120
 	local aquatic = opts and opts.aquatic
-	local L, U = field.bounds(free, fixed, { step = step, aquatic = aquatic })
+	local L, U = field.bounds(free, fixed, { step = step, aquatic = aquatic,
+		jitter = opts and opts.jitter })
 	local h = {}
 	for key, v in pairs(fixed) do h[key] = v end
 	for key, s in pairs(free) do

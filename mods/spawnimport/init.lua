@@ -584,6 +584,24 @@ Job.__index = Job
 -- Every other Minecraft colour name is already the key.
 local BANNER_COLOR_KEY = { light_gray = "silver", gray = "grey" }
 
+-- sea-bed node -> Mineclonia seagrass surface (mcl_ocean/seagrass.lua)
+local SEAGRASS_SURFACE = {
+	["mcl_core:dirt"] = "dirt", ["mcl_core:sand"] = "sand", ["mcl_core:redsand"] = "redsand",
+	["mcl_core:gravel"] = "gravel", ["mcl_ocean:prismarine"] = "prismarine",
+	["mcl_ocean:prismarine_brick"] = "prismarine_brick", ["mcl_ocean:prismarine_dark"] = "prismarine_dark",
+}
+
+-- sea-bed node -> Mineclonia kelp surface name (mcl_ocean/kelp.lua
+-- kelp.surfaces); the kelp node is "mcl_ocean:kelp_" .. name
+local KELP_SURFACE = {
+	["mcl_core:dirt"] = "dirt", ["mcl_core:sand"] = "sand", ["mcl_core:redsand"] = "redsand",
+	["mcl_core:gravel"] = "gravel", ["mcl_core:stone"] = "stone", ["mcl_core:andesite"] = "andesite",
+	["mcl_core:cobble"] = "cobble", ["mcl_core:diorite"] = "diorite", ["mcl_core:clay"] = "clay",
+	["mcl_core:granite"] = "granite", ["mcl_core:sandstone"] = "sandstone",
+	["mcl_core:redsandstone"] = "redsandstone", ["mcl_ocean:prismarine"] = "prismarine",
+	["mcl_ocean:prismarine_brick"] = "prismarine_brick", ["mcl_ocean:prismarine_dark"] = "prismarine_dark",
+}
+
 local function new_job(p)
 	local self = setmetatable({}, Job)
 	self.player_name = p.player_name
@@ -720,6 +738,19 @@ local function new_job(p)
 	if p.footprint_path and self.chunk_bounds then
 		local real = gap_fill.load_real_heights(p.footprint_path)
 		if real then
+			-- The footprint can list chunks outside chunk_bounds (the
+			-- manifest trims travel corridors); those are never placed, so
+			-- they must not count as captured, or they sit untouched in the
+			-- ring as unmerged natural chunks (owner 2026-09-28, DayTown at
+			-- (-329, 10151); 6 such chunks in the 20-base set).
+			local cb = self.chunk_bounds
+			for key in pairs(real) do
+				local cx, cz = key:match("^(.-)_(.-)$")
+				cx, cz = tonumber(cx), tonumber(cz)
+				if cx < cb.x_min or cx > cb.x_max or cz < cb.z_min or cz > cb.z_max then
+					real[key] = nil
+				end
+			end
 			local t0 = core.get_us_time()
 			self.gap_real = real
 			self.gap_fill_chunks = gap_fill.ring_chunks(self.chunk_bounds, real, self.gap_placed)
@@ -729,6 +760,17 @@ local function new_job(p)
 				#self.gap_fill_chunks, elapsed_s, self.name))
 			for _, g in ipairs(self.gap_fill_chunks) do
 				self.cursor_list[#self.cursor_list + 1] = { is_gap = true, cx = g.cx, cz = g.cz }
+			end
+			-- The merge plan is built on the first gap entry, after every
+			-- captured chunk is placed. A base whose build is ringed by
+			-- chunks the download saved EMPTY has no ring here at all
+			-- (Arnthor base, 2026-09-28: 0 ring chunks, no merge anywhere),
+			-- yet those empty chunks become merge chunks at plan time
+			-- (place_one_chunk). Queue one placeholder entry, outside the
+			-- base and never in any plan, so the plan still gets built.
+			if #self.gap_fill_chunks == 0 then
+				self.cursor_list[#self.cursor_list + 1] = { is_gap = true,
+					cx = self.chunk_bounds.x_min - 1000, cz = self.chunk_bounds.z_min - 1000 }
 			end
 			-- Widening (gap_fill.build_plan) may pull natural chunks just
 			-- outside this base into the merge domain; it must never pull
@@ -1175,6 +1217,131 @@ function Job:place_one_chunk(entry)
 			banners[#banners + 1] = { i = n, color = name:match("^minecraft:(.-)_wall_banner$") }
 		end
 	end)
+
+	-- Overworld: a chunk the download saved with ZERO blocks (not even
+	-- bedrock) is missing data, not terrain -- the downloader writes every
+	-- chunk it never received as blank. Clearing it left see-through holes
+	-- down to the void (owner 2026-09-28, Arnthor base: 530 of 850 chunks).
+	-- Leave Mineclonia's terrain in place; build_plan then merges it like
+	-- a ring chunk. The nether/End keep the download's void (owner rule,
+	-- 2026-09-28: "void chunks from the download should remain void").
+	if n == 0 and blend3d.band(self) == "end" then
+		-- the End keeps the download's void, except holes (blend3d.build_plan)
+		self.end_empty = self.end_empty or {}
+		self.end_empty[chunk.xPos .. "_" .. chunk.zPos] = true
+	end
+	if n == 0 and not blend3d.band(self) then
+		self.empty_captured = self.empty_captured or {}
+		self.empty_captured[#self.empty_captured + 1] = { cx = chunk.xPos, cz = chunk.zPos }
+		return
+	end
+
+	-- Grass colour: Mineclonia tints dirt_with_grass through param2 (the
+	-- biome's _mcl_palette_index), set only by a normal placement; bulk
+	-- writes left every captured grass block at index 0, one flat colour,
+	-- while the merged ring is tinted by biome -- a hard, chunk-shaped
+	-- colour edge (owner 2026-09-28, Ravenholm). Tint each captured grass
+	-- block from its own biome cell (1.18+ section biomes), mapped the way
+	-- the merge maps biomes (wdl_climate.mcl_biome).
+	local grass_idx = nil
+	for i = 1, n do
+		if bn[i] == "mcl_core:dirt_with_grass" then grass_idx = grass_idx or {}; grass_idx[#grass_idx + 1] = i end
+	end
+	if grass_idx and chunk.sections then
+		local cells = {} -- "qx,qy,qz" (absolute source quarts) -> biome name
+		for _, section in ipairs(chunk.sections) do
+			if section.Y and section.biomes then
+				pcall(anvil.decode_section_biomes, section, function(qx, qy, qz, name)
+					cells[(chunk.xPos * 4 + qx) .. "," .. (section.Y * 4 + qy) .. "," .. (chunk.zPos * 4 + qz)] = name
+				end)
+			end
+		end
+		local tint_of = {}
+		for _, i in ipairs(grass_idx) do
+			local sx = bx[i] - self.anchor_x + self.origin_x
+			local sy = by[i] - self.dest_y_offset
+			local sz = bz[i] - self.anchor_z + self.origin_z
+			local name = cells[math.floor(sx / 4) .. "," .. math.floor(sy / 4) .. "," .. math.floor(sz / 4)]
+			if name then
+				local t = tint_of[name]
+				if t == nil then
+					local mcl = wdl_climate.mcl_biome(name)
+					local def = mcl and core.registered_biomes[mcl]
+					t = def and def._mcl_palette_index or false
+					tint_of[name] = t
+				end
+				if t then bp2[i] = t end
+			end
+		end
+	end
+
+	-- Kelp: Minecraft stacks one waterlogged kelp_plant per block, the
+	-- palette maps each to mcl_ocean:kelp_dirt, and every one became a
+	-- solid dirt block with its water gone (owner 2026-09-28, Fort
+	-- Alcazar: dirt pillars in a drained sea bed). Mineclonia draws a
+	-- whole column from ONE node that replaces the sea-bed block under it
+	-- (mcl_ocean:kelp_<surface>, param2 = 16 * height, mcl_ocean/kelp.lua);
+	-- the blocks the plant rises through are water. Rebuild each column
+	-- that way; kelp on an unsupported surface is dropped (water only).
+	local KELP = "mcl_ocean:kelp_dirt"
+	local kelp_idx = nil
+	for i = 1, n do
+		if bn[i] == KELP then kelp_idx = kelp_idx or {}; kelp_idx[#kelp_idx + 1] = i end
+	end
+	if kelp_idx then
+		local at = {}
+		for i = 1, n do at[bx[i] .. "," .. by[i] .. "," .. bz[i]] = i end
+		for _, i in ipairs(kelp_idx) do
+			local below = at[bx[i] .. "," .. (by[i] - 1) .. "," .. bz[i]]
+			if not (below and bn[below] == KELP) then
+				-- bottom of a column: measure it, root it in the sea bed
+				local h, y = 0, by[i]
+				while true do
+					local j = at[bx[i] .. "," .. y .. "," .. bz[i]]
+					if not (j and bn[j] == KELP) then break end
+					h, y = h + 1, y + 1
+				end
+				local surface = below and KELP_SURFACE[bn[below]]
+				if surface then
+					bn[below] = "mcl_ocean:kelp_" .. surface
+					bp2[below] = math.min(16 * h, 255)
+				end
+			end
+		end
+		for _, i in ipairs(kelp_idx) do
+			bn[i] = "mcl_core:water_source"
+			bp2[i] = 0
+		end
+	end
+	-- Seagrass has the same shape (mcl_ocean:seagrass_<surface> replaces
+	-- the sea bed, param2 3, +8 for the tall look; mcl_ocean/seagrass.lua)
+	-- and was mapped the same wrong way: seagrass and tall_seagrass
+	-- became dirt blocks standing on the sea bed.
+	local SEAGRASS = "mcl_ocean:seagrass_dirt"
+	local sg_idx = nil
+	for i = 1, n do
+		if bn[i] == SEAGRASS then sg_idx = sg_idx or {}; sg_idx[#sg_idx + 1] = i end
+	end
+	if sg_idx then
+		local at = {}
+		for i = 1, n do at[bx[i] .. "," .. by[i] .. "," .. bz[i]] = i end
+		for _, i in ipairs(sg_idx) do
+			local below = at[bx[i] .. "," .. (by[i] - 1) .. "," .. bz[i]]
+			if not (below and bn[below] == SEAGRASS) then
+				local above = at[bx[i] .. "," .. (by[i] + 1) .. "," .. bz[i]]
+				local tall = above and bn[above] == SEAGRASS
+				local surface = below and SEAGRASS_SURFACE[bn[below]]
+				if surface then
+					bn[below] = "mcl_ocean:seagrass_" .. surface
+					bp2[below] = tall and 11 or 3
+				end
+			end
+		end
+		for _, i in ipairs(sg_idx) do
+			bn[i] = "mcl_core:water_source"
+			bp2[i] = 0
+		end
+	end
 
 	-- A real end gateway (vanilla, and Mineclonia's schematic) is one
 	-- gateway block with bedrock directly above and below. Anything else
@@ -2020,8 +2187,32 @@ function Job:step()
 					-- height targets and no vegetation regrow (see
 					-- wgen_blend3d.lua)
 					self.gap_plan = blend3d.build_plan(self, self.gap_real, self.gap_fill_chunks)
+					-- End holes (empty chunks inside an island) are merge
+					-- chunks that aren't in the ring: queue them
+					for _, key in ipairs(self.gap_plan.holes or {}) do
+						local cx, cz = key:match("^(.-)_(.-)$")
+						self.cursor_list[#self.cursor_list + 1] = {
+							is_gap = true, cx = tonumber(cx), cz = tonumber(cz),
+						}
+						self.cursor_total = self.cursor_total + 1
+					end
 				else
-					self.gap_plan = gap_fill.build_plan(self, self.gap_real, self.gap_fill_chunks,
+					-- empty captured chunks (place_one_chunk) are merge
+					-- chunks too: no longer "placed", and handed to the
+					-- planner so the loop below queues them
+					local entries = self.gap_fill_chunks
+					if self.empty_captured then
+						entries = {}
+						for _, e in ipairs(self.gap_fill_chunks) do entries[#entries + 1] = e end
+						for _, e in ipairs(self.empty_captured) do
+							self.gap_placed[e.cx .. "_" .. e.cz] = nil
+							entries[#entries + 1] = e
+						end
+						core.log("action", string.format(
+							"[spawnimport] %s: %d empty captured chunk(s) merged as natural terrain",
+							self.name, #self.empty_captured))
+					end
+					self.gap_plan = gap_fill.build_plan(self, self.gap_real, entries,
 						{ avoid = self.gap_avoid })
 					-- worldgen-merge: per-column targets (WDL biome/temperature
 					-- map -> Mineclonia biome, surface material, tint, snow)

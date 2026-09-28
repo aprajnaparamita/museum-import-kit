@@ -299,6 +299,44 @@ do
 	check("domain itself is not frontier", not fr[field.key(1, 1)])
 end
 
+do
+	print("")
+	print("=== slope jitter: organic ramp edges, never steeper than the cap ===")
+	-- one pin at height 20 in the middle of flat natural ground at 0: the
+	-- ramp's contours are exact diamonds without jitter
+	local free, fixed = {}, {}
+	for x = -30, 30 do
+		for z = -30, 30 do free[field.key(x, z)] = 0 end
+	end
+	free[field.key(0, 0)] = nil
+	fixed[field.key(0, 0)] = 20
+	local h0 = field.solve(free, fixed, { step = 1.0 })
+	local hj = field.solve(free, fixed, { step = 1.0, jitter = 0.35 })
+	local worst = 0
+	for key, v in pairs(hj) do
+		local x, z = field.parse_key(key)
+		for _, d in ipairs(field.DIRS) do
+			local nv = hj[field.key(x + d[1], z + d[2])]
+			if nv and math.abs(nv - v) > worst then worst = math.abs(nv - v) end
+		end
+	end
+	check("jittered ramp never exceeds the slope cap", worst <= 1.0 + 1e-6, tostring(worst))
+	-- same L1 distance from the pin: identical heights without jitter,
+	-- different heights with it (the contour is no longer a diamond)
+	local ring0, ringj = {}, {}
+	for x = -10, 10 do
+		local z = 10 - math.abs(x)
+		ring0[h0[field.key(x, z)]] = true
+		ringj[hj[field.key(x, z)]] = true
+	end
+	local n0, nj = 0, 0
+	for _ in pairs(ring0) do n0 = n0 + 1 end
+	for _ in pairs(ringj) do nj = nj + 1 end
+	check("no jitter: a distance-10 ring is one height (diamond contour)", n0 == 1, tostring(n0))
+	check("jitter: the same ring varies in height (organic contour)", nj > 3, tostring(nj))
+	check("pin still met exactly", hj[field.key(0, 0)] == 20)
+end
+
 print("")
 if failures == 0 then
 	print("ALL GAP_FIELD TESTS PASSED")

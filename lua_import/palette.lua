@@ -331,6 +331,12 @@ local function tier1(base, props)
 		local facing = props.facing
 		local half = props.half
 		local hinge = props.hinge or "left"
+		-- Imports are north-south mirror images (z is not negated, see
+		-- auto_gallery_fill.py unmirror_real_map_walls), and a mirror
+		-- swaps left and right: a double door (right+left hinge pair)
+		-- arrived with both hinges in the middle (owner 2026-09-28,
+		-- Argonath Fortress). Swap the hinge so it lands on its real side.
+		hinge = (hinge == "left") and "right" or "left"
 		local is_open = props.open == "true"
 		local base_param2 = FACING_TO_FACEDIR[facing] or 0
 		local door_dir = (hinge == "left") and "1" or "2"

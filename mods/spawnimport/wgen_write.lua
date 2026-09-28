@@ -138,6 +138,9 @@ end
 -- line against the biome's own soil (owner: "square snow area connecting
 -- to rock ... should be more natural looking", 2026-09-25).
 local SCREE_FADE = 7
+-- grass tint: merge colour at the seam, the untouched terrain's own
+-- colour by this many columns out (the ring is 2 chunks wide)
+local TINT_FADE = 32
 
 -- Dimension-aware fallback materials (2026-09-26 audit): the old default
 -- was overworld dirt_with_grass/dirt (sand under water) for every band --
@@ -222,6 +225,15 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 			local B = col.B
 			if B then
 				local is_water = B < sea
+				-- the untouched terrain's own grass colour, read before the
+				-- column is rewritten (see the tint fade below)
+				local nat_tint = nil
+				if col.S and col.S >= ymin and col.S <= ymax then
+					local ni = area:index(x, col.S, z)
+					if core.get_item_group(cname(data[ni]), "biomecolor") > 0 then
+						nat_tint = p2data[ni]
+					end
+				end
 
 				-- materials: seam columns continue the captured column's
 				-- own top/filler where readable, else the target biome's.
@@ -311,11 +323,22 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 					p2data[idx] = 0
 				end
 
-				-- grass tint on the surface
+				-- grass tint on the surface. Near the base the merge's own
+				-- biome colour; toward the ring's outer edge it gives way to
+				-- the untouched terrain's colour (noise-jittered), or the
+				-- colour jumps along the ring's outer chunk line (owner
+				-- 2026-09-28, Ravenholm: "chunk borders on grass edges ...
+				-- are solid squares").
 				if col.tint then
 					local name = cname(top)
 					if core.get_item_group(name, "biomecolor") > 0 then
-						p2data[area:index(x, B, z)] = col.tint
+						local tint = col.tint
+						if nat_tint and col.sdist then
+							local frac = (col.sdist - 1) / TINT_FADE
+							if frac > 1 then frac = 1 end
+							if wdl.noise2(x, z, 7) < frac then tint = nat_tint end
+						end
+						p2data[area:index(x, B, z)] = tint
 					end
 				end
 			end

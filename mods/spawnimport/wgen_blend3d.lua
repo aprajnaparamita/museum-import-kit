@@ -183,17 +183,77 @@ function blend3d.build_plan(job, real, ring)
 		return x0, x0 + C - 1, z0, z0 + C - 1
 	end
 
-	local plan = { band = band, chunks = {}, chunk_order = {}, blend3d = true }
+	local plan = { band = band, chunks = {}, chunk_order = {}, blend3d = true, holes = {} }
 	local R = blend3d.RING + 1
-	for _, e in ipairs(ring) do
+
+	-- End holes (owner 2026-09-28, Krobar's bridge: "these chunks are
+	-- definitely not merged"): an empty download chunk with island terrain
+	-- running into it on at least 3 of its 4 sides is a hole in an island
+	-- -- missing data -- so the neighbouring terrain continues into it.
+	-- Every other empty chunk stays void (owner rule: download void is
+	-- void; Endhaven floats in a player-cleared area). Holes are merge
+	-- chunks, not mirror sources, and take terrain only from chunks with
+	-- blocks, extruding their edge columns (a mirror would copy islands
+	-- that merely sit near the edge).
+	local hole = {}
+	local work = {}
+	for _, e in ipairs(ring) do work[#work + 1] = e end
+	if band == "end" and job.end_empty then
+		local dy = job.dest_y_offset or 0
+		local ylo, yhi = BANDS["end"].lo + dy, BANDS["end"].hi + dy
+		local function face_terrain(cx, cz, fx, fz)
+			-- columns on chunk (cx,cz)'s face toward (fx,fz) that hold terrain
+			local x0, x1, z0, z1 = chunk_box(cx, cz)
+			if fx == 1 then x0 = x1 elseif fx == -1 then x1 = x0 end
+			if fz == 1 then z0 = z1 elseif fz == -1 then z1 = z0 end
+			local vm = core.get_voxel_manip()
+			local e1, e2 = vm:read_from_map({ x = x0, y = ylo, z = z0 }, { x = x1, y = yhi, z = z1 })
+			local a = VoxelArea:new({ MinEdge = e1, MaxEdge = e2 })
+			local data = vm:get_data()
+			local cols = 0
+			for x = x0, x1 do
+				for z = z0, z1 do
+					for y = ylo, yhi do
+						if capture_solid(data[a:index(x, y, z)]) then cols = cols + 1 break end
+					end
+				end
+			end
+			return cols
+		end
+		for key in pairs(job.end_empty) do
+			local cx, cz = key:match("^(.-)_(.-)$")
+			cx, cz = tonumber(cx), tonumber(cz)
+			local sides = 0
+			for _, f in ipairs({ { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } }) do
+				local nkey = (cx + f[1]) .. "_" .. (cz + f[2])
+				if captured[nkey] and not job.end_empty[nkey]
+					and face_terrain(cx + f[1], cz + f[2], -f[1], -f[2]) >= 4 then
+					sides = sides + 1
+				end
+			end
+			if sides >= 3 then
+				hole[key] = true
+				plan.holes[#plan.holes + 1] = key
+				work[#work + 1] = { cx = cx, cz = cz }
+			end
+		end
+		for key in pairs(hole) do captured[key] = nil end
+	end
+	local function has_blocks(key)
+		return captured[key] and not (job.end_empty and job.end_empty[key])
+	end
+
+	for _, e in ipairs(work) do
 		local key = e.cx .. "_" .. e.cz
+		local is_hole = hole[key]
 		if not captured[key] and not plan.chunks[key] then
 			local bx0, _, bz0 = chunk_box(e.cx, e.cz)
 			local near = {}
 			for ox = -R, R do
 				for oz = -R, R do
 					local ncx, ncz = e.cx + ox, e.cz + oz
-					if captured[ncx .. "_" .. ncz] then
+					local nkey = ncx .. "_" .. ncz
+					if (is_hole and has_blocks(nkey)) or (not is_hole and captured[nkey]) then
 						local x0, x1, z0, z1 = chunk_box(ncx, ncz)
 						near[#near + 1] = { x0, x1, z0, z1 }
 					end
@@ -224,14 +284,22 @@ function blend3d.build_plan(job, real, ring)
 							if z > b[4] then mz = b[4] - (z - b[4] - 1)
 							elseif z < b[3] then mz = b[3] + (b[3] - z - 1)
 							else mz = z end
+							if is_hole then mx, mz = x, z end -- extrude, don't mirror
 							mx = math.max(b[1], math.min(b[2], mx))
 							mz = math.max(b[3], math.min(b[4], mz))
 						end
 					end
 					local d = math.sqrt(best_d2)
 					local w = 0
-					if mx and d < D then
-						local t = (D - d) / (D - 1)
+					-- a hole's fill fades over a per-column length (10..30: a hole is at most 8 from terrain, so its inside fills and only an open side fades)
+					-- so it doesn't end in a straight line mid-chunk
+					local Dc = D
+					if is_hole then
+						local v = (0.6 * wdl.noise2(x, z, 11) + 0.4 * wdl.noise2(x, z, 5) - 0.5) * 2 + 0.5
+						Dc = 10 + 20 * math.max(0, math.min(1, v))
+					end
+					if mx and d < Dc then
+						local t = (Dc - d) / (Dc - 1)
 						if t > 1 then t = 1 end
 						-- organic edge: value noise shifts the fade mid-ring
 						-- only (t*(1-t) = 0 at both ends keeps them exact)

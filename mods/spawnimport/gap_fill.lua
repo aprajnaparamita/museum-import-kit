@@ -772,7 +772,8 @@ function gap_fill.build_plan(job, real, entries, opts)
 		-- as 60-90 block "steps" between two land columns.
 		local aquatic = {}
 		for _ = 1, 3 do
-			h = gap_field.solve(free, fixed, { step = step, aquatic = aquatic })
+			h = gap_field.solve(free, fixed, { step = step, aquatic = aquatic,
+				jitter = tonumber(core.settings:get("spawnimport_gap_slope_jitter")) or 0.35 })
 			-- collapse the clamp-midpoint zigzags the relaxation leaves
 			-- on sloped bands (the "square jogs"); free-free only, real
 			-- cliffs and pins untouched

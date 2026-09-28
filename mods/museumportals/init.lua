@@ -282,3 +282,40 @@ if core.registered_nodes["mcl_banners:hanging_banner"] then
 		end,
 	})
 end
+
+-- Stranded village mobs (owner 2026-09-28, Ravenholm: "a load of
+-- villagers out on the ocean"). Same cause as the stranded shulkers above:
+-- Mineclonia generated a village there before the import, the capture's
+-- ocean replaced its blocks, and its villagers and iron golem were left in
+-- open water (the download has no villagers at that spot). Remove a
+-- villager or iron golem in the overworld when it is fully submerged
+-- (water at its head), or in water with no opaque node within 10 blocks
+-- at its level (no shore or building). Checked every 2 s per mob.
+local VILLAGE_MOBS = { "mobs_mc:villager", "mobs_mc:iron_golem" }
+local OVERWORLD_BOTTOM = -200
+local function is_water(p)
+	return core.get_item_group(core.get_node(p).name, "water") > 0
+end
+for _, name in ipairs(VILLAGE_MOBS) do
+	local def = core.registered_entities[name]
+	if def and def.ai_step then
+		local orig = def.ai_step
+		def.ai_step = function(self, dtime)
+			orig(self, dtime)
+			self._museum_water_t = (self._museum_water_t or 0) + (dtime or 0.05)
+			if self._museum_water_t < 2 or self.removed then return end
+			self._museum_water_t = 0
+			local p = self.object and self.object:get_pos()
+			if not p or p.y < OVERWORLD_BOTTOM then return end
+			local np = vector.round(p)
+			if not is_water(np) then return end
+			local submerged = is_water(vector.offset(np, 0, 2, 0))
+			local shore = core.find_nodes_in_area(vector.offset(np, -10, -1, -10),
+				vector.offset(np, 10, 1, 10), { "group:opaque" })
+			if submerged or #shore == 0 then
+				core.log("action", "[museumportals] removing stranded " .. name .. " at " .. core.pos_to_string(np))
+				self:safe_remove()
+			end
+		end
+	end
+end

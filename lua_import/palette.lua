@@ -194,8 +194,9 @@ local function resolve_wood_family(base)
 		if starts_with(base, prefix) then
 			local rest = base:sub(#prefix + 1)
 			local mcl_s = mcl_species_key(s)
-			if rest == "log" then return "mcl_trees:tree_" .. mcl_s end
-			if rest == "wood" then return "mcl_trees:bark_" .. mcl_s end
+			-- nether woods say stem/hyphae where overworld woods say log/wood
+			if rest == "log" or rest == "stem" then return "mcl_trees:tree_" .. mcl_s end
+			if rest == "wood" or rest == "hyphae" then return "mcl_trees:bark_" .. mcl_s end
 			if rest == "planks" then return "mcl_trees:wood_" .. mcl_s end
 			if rest == "leaves" then return "mcl_trees:leaves_" .. mcl_s end
 			if rest == "sapling" then return "mcl_trees:sapling_" .. mcl_s end
@@ -211,10 +212,10 @@ local function resolve_wood_family(base)
 	if starts_with(base, "stripped_") then
 		for _, s in ipairs(WOOD_SPECIES) do
 			local mcl_s = mcl_species_key(s)
-			if base == "stripped_" .. s .. "_log" then
+			if base == "stripped_" .. s .. "_log" or base == "stripped_" .. s .. "_stem" then
 				return "mcl_trees:stripped_" .. mcl_s
 			end
-			if base == "stripped_" .. s .. "_wood" then
+			if base == "stripped_" .. s .. "_wood" or base == "stripped_" .. s .. "_hyphae" then
 				return "mcl_trees:bark_stripped_" .. mcl_s
 			end
 		end
@@ -224,6 +225,9 @@ end
 
 local function door_family_base(base)
 	if base == "iron_door" then return "mcl_doors:iron_door" end
+	-- Mineclonia registers no bamboo door (checked 2026-09-29); oak is the
+	-- nearest match and keeps the door working
+	if base == "bamboo_door" then return "mcl_doors:door_oak" end
 	for _, s in ipairs(WOOD_SPECIES) do
 		if base == s .. "_door" then return "mcl_doors:door_" .. mcl_species_key(s) end
 	end
@@ -232,6 +236,7 @@ end
 
 local function trapdoor_family_base(base)
 	if base == "iron_trapdoor" then return "mcl_doors:iron_trapdoor" end
+	if base == "bamboo_trapdoor" then return "mcl_doors:trapdoor_oak" end
 	for _, s in ipairs(WOOD_SPECIES) do
 		if base == s .. "_trapdoor" then return "mcl_doors:trapdoor_" .. mcl_species_key(s) end
 	end
@@ -474,6 +479,21 @@ local function tier1(base, props)
 	-- Tripwire: Mineclonia has no tripwire or hook (data.lua notes). They
 	-- fell through to stone and left stone blocks in doorways; the string
 	-- is near-invisible anyway, so leave the space open.
+	-- Light blocks (invisible light sources): no mapping, so they became
+	-- solid stone -- Space Valkyria III has 5,606 of them, which built a
+	-- stone room around its build (owner 2026-09-29). Mineclonia has the
+	-- same invisible node as mcl_core:light_0..14 (mcl_core/nodes_misc.lua);
+	-- Minecraft's level runs 0..15.
+	if base == "light" then
+		local level = math.floor(tonumber(props.level) or 15)
+		if level > 14 then level = 14 elseif level < 0 then level = 0 end
+		return Resolution("mcl_core:light_" .. level, "exact", "light level=" .. tostring(props.level), 0)
+	end
+	-- structure_void is invisible editor air
+	if base == "structure_void" then
+		return Resolution("air", "exact", "structure_void -> air", 0)
+	end
+
 	if base == "tripwire" or base == "tripwire_hook" then
 		return Resolution("air", "exact", base .. " (no Mineclonia equivalent) -> air", 0)
 	end
@@ -488,6 +508,15 @@ local function tier1(base, props)
 	-- are <name>_1.._4 with paramtype2 color4dir (low 2 bits = facing).
 	-- leaf_litter had no mapping and became stone blocks (owner
 	-- 2026-09-28, Fort Alcazar).
+	-- Candles: mcl_candles:candle_<n> / candle_lit_<n> (only the plain
+	-- colour is registered); coloured candles use the plain one
+	if base == "candle" or ends_with(base, "_candle") then
+		local n = math.floor(tonumber(props.candles) or 1)
+		if n < 1 then n = 1 elseif n > 4 then n = 4 end
+		local lit = props.lit == "true" and "lit_" or ""
+		return Resolution("mcl_candles:candle_" .. lit .. n, "exact", base .. " candles=" .. n, 0)
+	end
+
 	if base == "leaf_litter" or base == "pink_petals" or base == "wildflowers" then
 		local amount = tonumber(props.segment_amount or props.flower_amount) or 1
 		if amount < 1 then amount = 1 elseif amount > 4 then amount = 4 end
@@ -792,7 +821,9 @@ local function tier1(base, props)
 	-- sent every birch/spruce/jungle/acacia/dark_oak sign to the
 	-- DEFAULT_NODE fallback, i.e. it was placed as a solid stone block:
 	-- 1087 of 2514 signs in the test batch, verified in-world.
-	for _, wood in ipairs(WOOD_SPECIES) do
+	local SIGN_WOODS = { "bamboo" }
+	for _, w in ipairs(WOOD_SPECIES) do SIGN_WOODS[#SIGN_WOODS + 1] = w end
+	for _, wood in ipairs(SIGN_WOODS) do
 		if base == wood .. "_sign" then
 			local rotation = math.floor(tonumber(props.rotation) or 0) % 16
 			-- paramtype2 = degrotate: 16 Minecraft rotations over 240 steps.

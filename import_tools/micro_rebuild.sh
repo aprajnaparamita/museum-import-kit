@@ -149,7 +149,7 @@ log "backing up deployed auth/players"
 # up all three or the owner's position/inventory silently resets every
 # deploy (2026-09-26: caught the empty players/ dir being copied over the
 # real one).
-for f in auth.sqlite players.sqlite players; do
+for f in auth.sqlite auth.txt players.sqlite players; do
     if [ -e "$DEPLOYED/$f" ]; then
         cp -R "$DEPLOYED/$f" "$BACKUP/$f"
     fi
@@ -159,7 +159,7 @@ log "deploying staging -> live world"
 rm -rf "$DEPLOYED"
 mkdir -p "$DEPLOYED"
 cp -R "$STAGING/." "$DEPLOYED/"
-for f in auth.sqlite players.sqlite players; do
+for f in auth.sqlite auth.txt players.sqlite players; do
     if [ -e "$BACKUP/$f" ]; then
         rm -rf "$DEPLOYED/$f"
         cp -R "$BACKUP/$f" "$DEPLOYED/$f"

@@ -448,7 +448,10 @@ local function scan_chunk_columns(job, cx, cz)
 			end
 			local S = ceil_y and surface_from_runs(runs) or surface_from_tops(tops)
 			local mat = S and data[area:index(x, S, z)] or nil
-			cols[lx * C + lz + 1] = { S = S, mat = mat, T = top }
+			-- T is the top block's HEIGHT; Tc its content id (the seam
+			-- surface family needs the id: ice on a frozen sea)
+			cols[lx * C + lz + 1] = { S = S, mat = mat, T = top,
+				Tc = top and data[area:index(x, top, z)] or nil }
 		end
 	end
 	return cols
@@ -720,7 +723,11 @@ function gap_fill.build_plan(job, real, entries, opts)
 				local c = cols and cols[lx * C + lz + 1]
 				if not c then return nil end
 				local gname = c.mat and core.get_name_from_content_id(c.mat) or nil
-				local tname = c.T and core.get_name_from_content_id(c.T) or nil
+				-- (was get_name_from_content_id(c.T) -- T is a height, so
+				-- the "top block" was a random node and frozen seams were
+				-- never seen as snow: straight ice/water chunk edges,
+				-- owner 2026-09-29, Hopes Retreat)
+				local tname = c.Tc and core.get_name_from_content_id(c.Tc) or nil
 				return wgen_inputs.surface_family(tname, gname), c.mat
 			end)
 		local slow = nil

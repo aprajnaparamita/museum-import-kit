@@ -1,0 +1,357 @@
+Item	Category	Subcategory	Chests Assigned	Comments
+Smithing Templates	Armor		1	
+Horse Armor	Armor		1	
+Wolf Armor	Armor		1	
+Helmet	Armor		1	
+Chestplate	Armor		1	
+Leggings	Armor		1	
+Boots	Armor		1	
+Cobblestone	Block	Hard	4	
+Cobblestone Variants	Block	Hard	1	Slab, stairs, etc
+Mossy Cobblestone	Block	Hard	4	
+Mossy Cobblestone Variants	Block	Hard	1	Slab, stairs, etc
+Stone	Block	Hard	4	
+Stone Variants	Block	Hard	1	Slab, stairs, etc
+Smooth Stone	Block	Hard	4	
+Smooth Stone Slabs	Block	Hard	1	
+Stone Bricks	Block	Hard	4	
+Stone Brick Variants	Block	Hard	1	Slab, stairs, etc
+Mossy Stone Bricks	Block	Hard	4	
+Mossy Stone Brick Variants	Block	Hard	1	Slab, stairs, etc
+Deepslate	Block	Hard	4	
+Deepslate Variants	Block	Hard	1	Slabs, stairs, bricks, tiles, etc
+Diorite	Block	Hard	4	
+Diorite Variants	Block	Hard	1	Slab, stairs, etc
+Andesite	Block	Hard	4	
+Andesite Variants	Block	Hard	1	Slab, stairs, etc
+Granite	Block	Hard	4	
+Granite Variants	Block	Hard	1	Slab, stairs, etc
+Tuff	Block	Hard	4	
+Tuff Variants	Block	Hard	1	Slab, stairs, etc
+Bricks	Block	Hard	1	
+Packed Mud	Block	Hard	1	Includes mud bricks and variants
+Sandstone	Block	Hard	1	Includes variants
+Red Sandstone	Block	Hard	1	Includes variants
+Prismarine	Block	Hard	1	Includes variants
+Dark Prismarine	Block	Hard	1	Includes variants
+Prismarine Bricks	Block	Hard	1	Includes variants
+Ice	Block	Hard	1	Includes variants (packed, blue)
+Calcite	Block	Hard	1	
+Netherrack	Block	Hard	1	
+Nether Bricks	Block	Hard	1	Includes variants
+Red Nether Bricks	Block	Hard	1	Includes variants
+Basalt	Block	Hard	1	Includes variants
+Blackstone	Block	Hard	1	Includes variants
+End Stone	Block	Hard	1	Includes variants
+Purpur	Block	Hard	1	Includes variants
+Quartz Block	Block	Hard	1	Includes variants
+Amethyst	Block	Hard	1	Includes shards and clusters
+Copper Building Blocks	Block	Hard	1	All variants
+Ancient Debris	Block	Hard	1	
+Dripstone	Block	Hard	1	
+Magma Block	Block	Hard	1	
+Obsidian	Block	Hard	1	
+Crying Obsidian	Block	Hard	1	
+Bone Block	Block	Hard	1	
+Mushroom Blocks	Block	Soft	1	Blocks and stem
+Dirt	Block	Soft	3	
+Grass	Block	Soft	1	
+Dirt Variants	Block	Soft	1	Myeclium, podzol, coarse, etc
+Mud	Block	Soft	1	Mud block only
+Clay Block	Block	Soft	1	
+Gravel	Block	Soft	1	
+Sand	Block	Soft	1	
+Red Sand	Block	Soft	1	
+Moss Block	Block	Soft	1	
+Soul Sand	Block	Soft	1	
+Soul Soil	Block	Soft	1	
+Wart Block	Block	Soft	1	Includes warped wart block
+Snow Block	Block	Soft	1	
+Dyes	Color		1	All 16
+White Wool/Carpet/Banner/Bed	Color	Wool	1	
+Light Gray Wool/Carpet/Banner/Bed	Color	Wool	1	
+Gray Wool/Carpet/Banner/Bed	Color	Wool	1	
+Black Wool/Carpet/Banner/Bed	Color	Wool	1	
+Brown Wool/Carpet/Banner/Bed	Color	Wool	1	
+Red Wool/Carpet/Banner/Bed	Color	Wool	1	
+Orange Wool/Carpet/Banner/Bed	Color	Wool	1	
+Yellow Wool/Carpet/Banner/Bed	Color	Wool	1	
+Lime Wool/Carpet/Banner/Bed	Color	Wool	1	
+Green Wool/Carpet/Banner/Bed	Color	Wool	1	
+Cyan Wool/Carpet/Banner/Bed	Color	Wool	1	
+Light Blue Wool/Carpet/Banner/Bed	Color	Wool	1	
+Blue Wool/Carpet/Banner/Bed	Color	Wool	1	
+Purple Wool/Carpet/Banner/Bed	Color	Wool	1	
+Magenta Wool/Carpet/Banner/Bed	Color	Wool	1	
+Pink Wool/Carpet/Banner/Bed	Color	Wool	1	
+White Concrete/Powder	Color	Concrete	1	
+Light Gray Concrete/Powder	Color	Concrete	1	
+Gray Concrete/Powder	Color	Concrete	1	
+Black Concrete/Powder	Color	Concrete	1	
+Brown Concrete/Powder	Color	Concrete	1	
+Red Concrete/Powder	Color	Concrete	1	
+Orange Concrete/Powder	Color	Concrete	1	
+Yellow Concrete/Powder	Color	Concrete	1	
+Lime Concrete/Powder	Color	Concrete	1	
+Green Concrete/Powder	Color	Concrete	1	
+Cyan Concrete/Powder	Color	Concrete	1	
+Light Blue Concrete/Powder	Color	Concrete	1	
+Blue Concrete/Powder	Color	Concrete	1	
+Purple Concrete/Powder	Color	Concrete	1	
+Magenta Concrete/Powder	Color	Concrete	1	
+Pink Concrete/Powder	Color	Concrete	1	
+Terracotta	Color	Terracotta	1	
+White Terracotta/Glazed	Color	Terracotta	1	
+Light Gray Terracotta/Glazed	Color	Terracotta	1	
+Gray Terracotta/Glazed	Color	Terracotta	1	
+Black Terracotta/Glazed	Color	Terracotta	1	
+Brown Terracotta/Glazed	Color	Terracotta	1	
+Red Terracotta/Glazed	Color	Terracotta	1	
+Orange Terracotta/Glazed	Color	Terracotta	1	
+Yellow Terracotta/Glazed	Color	Terracotta	1	
+Lime Terracotta/Glazed	Color	Terracotta	1	
+Green Terracotta/Glazed	Color	Terracotta	1	
+Cyan Terracotta/Glazed	Color	Terracotta	1	
+Light Blue Terracotta/Glazed	Color	Terracotta	1	
+Blue Terracotta/Glazed	Color	Terracotta	1	
+Purple Terracotta/Glazed	Color	Terracotta	1	
+Magenta Terracotta/Glazed	Color	Terracotta	1	
+Pink Terracotta/Glazed	Color	Terracotta	1	
+Glass/Pane	Color	Glass	1	
+White Stained Glass/Pane	Color	Glass	1	
+Light Gray Stained Glass/Pane	Color	Glass	1	
+Gray Stained Glass/Pane	Color	Glass	1	
+Black Stained Glass/Pane	Color	Glass	1	
+Brown Stained Glass/Pane	Color	Glass	1	
+Red Stained Glass/Pane	Color	Glass	1	
+Orange Stained Glass/Pane	Color	Glass	1	
+Yellow Stained Glass/Pane	Color	Glass	1	
+Lime Stained Glass/Pane	Color	Glass	1	
+Green Stained Glass/Pane	Color	Glass	1	
+Cyan Stained Glass/Pane	Color	Glass	1	
+Light Blue Stained Glass/Pane	Color	Glass	1	
+Blue Stained Glass/Pane	Color	Glass	1	
+Purple Stained Glass/Pane	Color	Glass	1	
+Magenta Stained Glass/Pane	Color	Glass	1	
+Pink Stained Glass/Pane	Color	Glass	1	
+Tinted Glass	Color	Glass	1	
+Armor Stand	Décor		1	
+Flower Pot	Décor		1	
+Decorated Pot	Décor		1	
+Painting (Random variant)	Décor		1	
+Item Frame	Décor		1	
+Iron Bars	Décor		1	
+Chain	Décor		1	
+Bell	Exploration		1	
+Cobweb	Exploration		1	
+Heart Of The Sea/Conduit	Exploration		1	
+Music Discs	Exploration		1	
+Echo Shard	Exploration		1	
+Fire Charge	Exploration		1	
+Banner Patterns	Exploration		1	
+Pottery Sherds	Exploration		1	
+Nametag	Exploration		1	
+Totem Of Undying	Exploration		1	
+Pointed Dripstone	Exploration		1	
+Signs	Exploration		1	
+Flint	Exploration		1	
+Clay Ball	Exploration		1	
+Prismarine Shard/Crystal	Exploration		1	
+Sponge	Exploration		1	
+Snowball	Exploration		1	
+Workstations, etc	Exploration		1	Anything in the wiki workstation page that doesn't have another category
+Furnaces	Exploration		1	Includes smoker and blast furnace
+Chests	Exploration		1	All storage block: chests, barrel, shulker chests, etc
+Bee Nest/hive	Exploration		1	
+Ladder	Exploration		1	
+Scaffolding	Exploration		1	
+Beacon	Exploration		1	
+Sculk	Exploration		1	Includes all related blocks: shrieker, sensor, etc
+Paper	Exploration		1	
+Book	Exploration		1	
+Enchanted Books	Exploration		1	Bulk enchanted book storage handled elsewhere
+Bookshelf	Exploration		1	Including chiseled bookshelf
+Maps	Exploration		1	
+Glass Bottle	Exploration		1	
+Bottle O' Enchanting	Exploration		1	
+Potions	Exploration		1	Bulk potion storage handled elsewhere
+Sweet Berries	Food		1	
+Wheat	Food		1	Including hay bales
+Beets	Food		1	Including seeds
+Carrot	Food		1	Including golden carrot
+Potato	Food		1	Including baked and poisonous
+Pumpkin	Food		1	Including seeds
+Melon	Food		1	Including seeds and glistering melon
+Cocoa Beans	Food		1	
+Apple	Food		1	Including golden and enchanted
+Bread	Food		1	
+Pumpkin Pie	Food		1	
+Cookie	Food		1	
+Cake	Food		1	
+Rabbit	Food		1	Cooked and raw
+Mutton	Food		1	Cooked and raw
+Chicken	Food		1	Cooked and raw
+Porkchop	Food		1	Cooked and raw
+Steak	Food		1	Cooked and raw
+Cod	Food		1	Cooked and raw
+Salmon	Food		1	Cooked and raw
+Tropical Fish	Food		1	Cooked and raw
+Pufferfish	Food		1	
+Soups	Food		1	Anything in a bowl
+Sugar	Food		1	
+Candles	Light		1	
+Sea Lantern	Light		1	
+Glowstone	Light		1	
+Shroomlight	Light		1	
+End Rod	Light		1	
+Torch/Soul Torch	Light		1	
+Lantern/Soul Lantern	Light		1	
+Campfire/Soul Campfire	Light		1	
+Glow Lichen	Light		1	
+Jack O' Lantern	Light		1	
+Shulker Shell	Mob drop	Hostile	1	
+Ominous Banner	Mob drop	Hostile	1	
+Trial Chamber Specific Loot	Mob drop	Hostile	1	Trial keys, heavy core
+Nether Star	Mob drop	Hostile	1	
+Nautilus Shell	Mob drop	Hostile	1	
+Wither Rose	Mob drop	Hostile	1	
+Leather	Mob drop	Neutral	1	
+Rabbit Hide	Mob drop	Neutral	1	
+Rabbit's Foot	Mob drop	Neutral	1	
+Ink Sac	Mob drop	Neutral	1	Including glow ink sac
+Feather	Mob drop	Neutral	1	
+Egg	Mob drop	Neutral	1	
+Armadillo Scute	Mob drop	Neutral	1	
+Scute	Mob drop	Neutral	1	
+Turtle Egg	Mob drop	Neutral	1	
+Sniffer Egg	Mob drop	Neutral	1	
+Honey	Mob drop	Neutral	1	Bottle and block
+Honeycomb	Mob drop	Neutral	1	Item and block
+Goat Horns	Mob drop	Neutral	1	All goat horns
+Slime	Mob drop	Hostile	1	Block and ball
+Pearlescent Froglight	Mob drop	Hostile	1	
+Verdant Froglight	Mob drop	Hostile	1	
+Ochre Froglight	Mob drop	Hostile	1	
+String	Mob drop	Hostile	1	
+Rotten Flesh	Mob drop	Hostile	1	
+Arrow	Mob drop	Hostile	1	All variants
+Bone	Mob drop	Hostile	1	Including bonemeal
+Gunpowder	Mob drop	Hostile	1	
+Spider Eye	Mob drop	Hostile	1	
+Fermented Spider Eye	Mob drop	Hostile	1	
+Ender Pearl	Mob drop	Hostile	1	Including eye of ender
+Blaze Rod	Mob drop	Hostile	1	Including blaze powder
+Magma Cream	Mob drop	Hostile	1	
+Breeze	Mob drop	Hostile	1	Breeze rod and wind charge
+Ghast Tear	Mob drop	Hostile	1	
+Phantom Membrane	Mob drop	Hostile	1	
+Heads	Mob drop	Hostile	1	Wither skulls, dragon head, etc
+Dragon Egg	Mob drop	Hostile	1	
+Nether Wart	Plant	Nether	1	
+Mushrooms/Fungus	Plant		1	Includes both mushroom and both fungus types
+Nether Sprouts/Vines/Etc	Plant	Nether	1	Miscellaneous nether plants
+Chorus Flower	Plant	End	1	Flower, fruit, etc
+Saplings	Plant	Overworld	1	All sapling types, including mangrove propagule
+Leaves	Plant	Overworld	1	All leaf types
+Flowers	Plant	Overworld	1	All flower types
+Short Grass/Tall Grass/Ferns/Dead Bush	Plant	Overworld	1	
+Vines	Plant	Overworld	1	
+Lily Pad	Plant	Overworld	1	
+Cactus	Plant	Overworld	1	
+Sugarcane	Plant	Overworld	1	
+Bamboo	Plant	Overworld	1	
+Glow Berries	Plant	Overworld	1	
+Moss Carpet	Plant	Overworld	1	
+Dripleaf	Plant	Overworld	1	
+Azalea	Plant	Overworld	1	
+Misc Overworld Plants	Plant	Overworld	1	Miscellaneous overworld plant type items that do not have another category, such as spore blossoms and hanging roots
+Mangrove Roots	Plant	Overworld	1	
+Seagrass	Plant	Overworld	1	
+Sea Pickle	Plant	Overworld	1	
+Kelp	Plant	Overworld	1	
+Dried Kelp	Plant	Overworld	1	Including dried kelp block
+Coral	Plant	Overworld	1	All variants including blocks
+Torchflower	Plant	Overworld	1	Including seeds
+Pitcher Plant	Plant	Overworld	1	Including pods
+Misc Seeds	Plant	Overworld	1	Catch-all for any seeds
+Netherite	Precious		1	Block, ingot, and scrap
+Emerald	Precious		1	Block and gem
+Coal	Precious		1	Block, coal, and charcoal
+Copper ingot	Precious		1	Block, ingot, and nugget
+Iron	Precious		1	Block, ingot, and nugget
+Lapis Lazuli	Precious		1	Block and item
+Gold	Precious		1	Block, ingot, and nugget
+Redstone	Precious		1	Block and dust
+Diamond	Precious		1	Block and gem
+Nether Quartz	Precious		1	Item only
+Buttons	Redstone		1	All types
+Pressure Plates	Redstone		1	All types
+Fence Gates	Redstone		1	All types
+Fences	Redstone		1	All types. Only included for proximity to fence gates
+Trapdoors	Redstone		1	All types
+Doors	Redstone		1	All types
+Redstone Torch	Redstone		1	
+Redstone Repeater	Redstone		1	
+Redstone Comparator	Redstone		1	
+Lever	Redstone		1	
+Hopper	Redstone		1	
+Observer	Redstone		1	
+Dispenser	Redstone		1	
+Dropper	Redstone		1	
+Crafter	Redstone		1	
+Piston	Redstone		1	
+Sticky Piston	Redstone		1	
+Note Block	Redstone		1	
+Jukebox	Redstone		1	
+TNT	Redstone		1	
+Redstone Lamp	Redstone		1	
+Daylight Detector	Redstone		1	
+Tripwire Hook	Redstone		1	
+Lightning Rod	Redstone		1	
+Target	Redstone		1	
+Bucket	Tool		1	Empty and any filled
+Misc Tools	Tool		1	Any tool not included elsewhere: compass, shears, flint and steel, etc.
+Lead	Tool		1	
+Fishing Rod	Tool		1	Including "on a stick" variants
+Pickaxe	Tool		1	
+Axe	Tool		1	
+Shovel	Tool		1	
+Hoe	Tool		1	
+Boats	Transport		1	All types
+Rail	Transport		1	
+Powered Rail	Transport		1	
+Detector Rail	Transport		1	
+Activator Rail	Transport		1	
+Minecarts	Transport		1	All types
+Firework Rocket	Transport		1	
+Saddle	Transport		1	
+Elytra	Transport		1	
+Bow	Weapon		1	
+Crossbow	Weapon		1	
+Shield	Weapon		1	
+Mace	Weapon		1	
+Trident	Weapon		1	
+Sword	Weapon		1	
+Oak Log	Wood		1	Log and wood, regular and stripped
+Oak Planks	Wood		1	Planks, slabs, and stairs
+Birch Log	Wood		1	Log and wood, regular and stripped
+Birch Planks	Wood		1	Planks, slabs, and stairs
+Spruce Log	Wood		1	Log and wood, regular and stripped
+Spruce Planks	Wood		1	Planks, slabs, and stairs
+Jungle Log	Wood		1	Log and wood, regular and stripped
+Jungle Planks	Wood		1	Planks, slabs, and stairs
+Dark Oak Log	Wood		1	Log and wood, regular and stripped
+Dark Oak Planks	Wood		1	Planks, slabs, and stairs
+Acacia Log	Wood		1	Log and wood, regular and stripped
+Acacia Planks	Wood		1	Planks, slabs, and stairs
+Mangrove Log	Wood		1	Log and wood, regular and stripped
+Mangrove Planks	Wood		1	Planks, slabs, and stairs
+Cherry Log	Wood		1	Log and wood, regular and stripped
+Cherry Planks	Wood		1	Planks, slabs, and stairs
+Block Of Bamboo	Wood		1	Regular and stripped
+Bamboo Planks	Wood		1	Planks, slabs, and stairs
+Warped Stem	Wood		1	Stem and hyphae, regular and stripped
+Warped Planks	Wood		1	Planks, slabs, and stairs
+Crimson Stem	Wood		1	Stem and hyphae, regular and stripped
+Crimson Planks	Wood		1	Planks, slabs, and stairs
+Stick	Wood		1	

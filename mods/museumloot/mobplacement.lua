@@ -1,18 +1,27 @@
 -- Mob placement for the 2b2t museum -- a NEW pass, sibling to (not part of)
 -- the chest-loot pipeline in init.lua. Spawns villagers into detected
--- villages, a wild shulker or two into detected end cities, and a witch
--- into detected witch huts, then makes every spawned mob permanent (never
--- despawns).
+-- villages and a wild shulker or two into detected end cities, then makes
+-- every spawned mob permanent (never despawns).
+--
+-- WITCH SPAWNING IS DISABLED (owner 2026-10-02): witch-hut detection is a
+-- cauldron + spruce-wood heuristic and it false-positives on ordinary
+-- player rooms (two live hits: Tactical Nuke's storage room 2026-09-17, a
+-- nametagged "LagMachine" witch in a player structure 2026-09-18), so
+-- witches turn up in builds that are not witch huts at all. A witch hut is
+-- not a common structure, and the witch is an overworld swamp mob -- it can
+-- never legitimately be in the Nether or the End. The detection code below
+-- is kept (see WITCH_SPAWNING_ENABLED) but the spawn entry point returns 0
+-- immediately, so this mod never adds a witch. Witches captured in a world
+-- download and captured witch-hut spawners
+-- (mods/spawnimport/init.lua's SPAWNER_MOBS table, data-driven from the
+-- download's own SpawnData) are untouched -- those are the download's own
+-- contents, not something this pass invents.
 --
 -- Wired in from init.lua's run_loot_for_base, right after stage 3 (loot
 -- fill) for a base -- see the `mobplacement.spawn_mobs_for_base(...)` call
 -- there. Deliberately reuses the SAME container list + structure matches
 -- that structures.lua already computed for loot (no second emerge/scan of
 -- the base for village/end_city -- see spawn_mobs_for_base's own comment).
--- The one exception is witch-hut detection, which needs its own bbox-wide
--- node scan (witch huts have no chest at all in vanilla Mineclonia, so no
--- container ever carries a "witch_hut" structure_match to piggy-back on --
--- see WITCH_HUT_* below).
 --
 -- All node/entity names below were verified against
 -- /Users/dara/dev/mineclonia in this session with `grep -rn "register_node"
@@ -729,6 +738,13 @@ local WITCH_HUT_SPRUCE = { "mcl_trees:wood_spruce", "mcl_trees:tree_spruce" }
 local WITCH_HUT_SPRUCE_RADIUS = 3
 local WITCH_HUT_CLUSTER_RADIUS = 20
 
+-- Owner 2026-10-02: turn witch spawning OFF. The cauldron+spruce
+-- heuristic below cannot be made reliable without parsing the .mts
+-- schematic (its own note admits the false positives), a witch hut is not
+-- a common structure, and a witch must never appear in the Nether or the
+-- End. Flip this back to true only if the owner asks for it again.
+local WITCH_SPAWNING_ENABLED = false
+
 -- Same y-tiling approach (and same reason -- the 150M-node
 -- find_nodes_in_area/VoxelManip volume cap) as init.lua's
 -- discover_containers_for_base -- duplicated here rather than shared
@@ -771,6 +787,17 @@ local function spawn_witches_for_base(bounds, dimension, containers)
 	-- spawn_mobs_for_base already has from the loot pass) and checks
 	-- real container proximity first -- ground truth instead of a
 	-- second heuristic guess.
+	--
+	-- Owner 2026-10-02: disabled outright (see WITCH_SPAWNING_ENABLED).
+	-- The guards below (dimension + container proximity + player-structure
+	-- zone) all stayed heuristic and the witch still turned up in builds
+	-- that are not witch huts -- so the whole pass stops here instead.
+	if not WITCH_SPAWNING_ENABLED then
+		core.log("action", string.format(
+			"[museummobs] witch spawn disabled (owner 2026-10-02, witch-hut detection false-positives):"
+			.. " base dimension=%s", tostring(dimension)))
+		return 0
+	end
 	if dimension ~= "overworld" then
 		core.log("action", string.format(
 			"[museummobs] witch spawn skipped: base dimension=%s (overworld-only mob)", tostring(dimension)))

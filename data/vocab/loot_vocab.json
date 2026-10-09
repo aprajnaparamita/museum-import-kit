@@ -1,0 +1,2562 @@
+{
+  "0": {
+    "dimension": "overworld",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: ender_pearls_16stack bundle, dim=overworld]"
+    ],
+    "name": "ender_pearls_16stack_overworld",
+    "rarity_rank": 4,
+    "theme": "ender_pearls_16stack"
+  },
+  "1": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: cobblestone bundle, dim=overworld]"
+    ],
+    "name": "cobblestone_overworld",
+    "rarity_rank": 5,
+    "theme": "cobblestone"
+  },
+  "2": {
+    "dimension": "overworld",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: enchanted_golden_apples_64stack bundle, dim=overworld]"
+    ],
+    "name": "enchanted_golden_apples_64stack_overworld",
+    "rarity_rank": 5,
+    "theme": "enchanted_golden_apples_64stack"
+  },
+  "3": {
+    "dimension": "nether",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: ender_pearls_16stack bundle, dim=nether]"
+    ],
+    "name": "ender_pearls_16stack_nether",
+    "rarity_rank": 5,
+    "theme": "ender_pearls_16stack"
+  },
+  "4": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: cobblestone bundle, dim=nether]"
+    ],
+    "name": "cobblestone_nether",
+    "rarity_rank": 6,
+    "theme": "cobblestone"
+  },
+  "5": {
+    "dimension": "nether",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: enchanted_golden_apples_64stack bundle, dim=nether]"
+    ],
+    "name": "enchanted_golden_apples_64stack_nether",
+    "rarity_rank": 6,
+    "theme": "enchanted_golden_apples_64stack"
+  },
+  "6": {
+    "dimension": "end",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: ender_pearls_16stack bundle, dim=end]"
+    ],
+    "name": "ender_pearls_16stack_end",
+    "rarity_rank": 6,
+    "theme": "ender_pearls_16stack"
+  },
+  "7": {
+    "dimension": "overworld",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: experience_bottles_64stack bundle, dim=overworld]"
+    ],
+    "name": "experience_bottles_64stack_overworld",
+    "rarity_rank": 6,
+    "theme": "experience_bottles_64stack"
+  },
+  "8": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: cobblestone bundle, dim=end]"
+    ],
+    "name": "cobblestone_end",
+    "rarity_rank": 7,
+    "theme": "cobblestone"
+  },
+  "9": {
+    "dimension": "end",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: enchanted_golden_apples_64stack bundle, dim=end]"
+    ],
+    "name": "enchanted_golden_apples_64stack_end",
+    "rarity_rank": 7,
+    "theme": "enchanted_golden_apples_64stack"
+  },
+  "10": {
+    "dimension": "nether",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: experience_bottles_64stack bundle, dim=nether]"
+    ],
+    "name": "experience_bottles_64stack_nether",
+    "rarity_rank": 7,
+    "theme": "experience_bottles_64stack"
+  },
+  "11": {
+    "dimension": "end",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: experience_bottles_64stack bundle, dim=end]"
+    ],
+    "name": "experience_bottles_64stack_end",
+    "rarity_rank": 8,
+    "theme": "experience_bottles_64stack"
+  },
+  "12": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: obsidian_bulk bundle, dim=overworld]"
+    ],
+    "name": "obsidian_bulk_overworld",
+    "rarity_rank": 8,
+    "theme": "obsidian_bulk"
+  },
+  "13": {
+    "dimension": "overworld",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: totems_of_undying bundle, dim=overworld]"
+    ],
+    "name": "totems_of_undying_overworld",
+    "rarity_rank": 8,
+    "theme": "totems_of_undying"
+  },
+  "14": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: obsidian_bulk bundle, dim=nether]"
+    ],
+    "name": "obsidian_bulk_nether",
+    "rarity_rank": 9,
+    "theme": "obsidian_bulk"
+  },
+  "15": {
+    "dimension": "overworld",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: splash_healing_max bundle, dim=overworld]"
+    ],
+    "name": "splash_healing_max_overworld",
+    "rarity_rank": 9,
+    "theme": "splash_healing_max"
+  },
+  "16": {
+    "dimension": "nether",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: totems_of_undying bundle, dim=nether]"
+    ],
+    "name": "totems_of_undying_nether",
+    "rarity_rank": 9,
+    "theme": "totems_of_undying"
+  },
+  "17": {
+    "dimension": "overworld",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: cobwebs_pvp_trap bundle, dim=overworld]"
+    ],
+    "name": "cobwebs_pvp_trap_overworld",
+    "rarity_rank": 10,
+    "theme": "cobwebs_pvp_trap"
+  },
+  "18": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: obsidian_bulk bundle, dim=end]"
+    ],
+    "name": "obsidian_bulk_end",
+    "rarity_rank": 10,
+    "theme": "obsidian_bulk"
+  },
+  "19": {
+    "dimension": "overworld",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: splash_harming_max bundle, dim=overworld]"
+    ],
+    "name": "splash_harming_max_overworld",
+    "rarity_rank": 10,
+    "theme": "splash_harming_max"
+  },
+  "20": {
+    "dimension": "nether",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: splash_healing_max bundle, dim=nether]"
+    ],
+    "name": "splash_healing_max_nether",
+    "rarity_rank": 10,
+    "theme": "splash_healing_max"
+  },
+  "21": {
+    "dimension": "end",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: totems_of_undying bundle, dim=end]"
+    ],
+    "name": "totems_of_undying_end",
+    "rarity_rank": 10,
+    "theme": "totems_of_undying"
+  },
+  "22": {
+    "dimension": "nether",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: cobwebs_pvp_trap bundle, dim=nether]"
+    ],
+    "name": "cobwebs_pvp_trap_nether",
+    "rarity_rank": 11,
+    "theme": "cobwebs_pvp_trap"
+  },
+  "23": {
+    "dimension": "overworld",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: fireworks_rockets_64stack bundle, dim=overworld]"
+    ],
+    "name": "fireworks_rockets_64stack_overworld",
+    "rarity_rank": 11,
+    "theme": "fireworks_rockets_64stack"
+  },
+  "24": {
+    "dimension": "nether",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: splash_harming_max bundle, dim=nether]"
+    ],
+    "name": "splash_harming_max_nether",
+    "rarity_rank": 11,
+    "theme": "splash_harming_max"
+  },
+  "25": {
+    "dimension": "end",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: splash_healing_max bundle, dim=end]"
+    ],
+    "name": "splash_healing_max_end",
+    "rarity_rank": 11,
+    "theme": "splash_healing_max"
+  },
+  "26": {
+    "dimension": "overworld",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: arrows_tipped bundle, dim=overworld]"
+    ],
+    "name": "arrows_tipped_overworld",
+    "rarity_rank": 12,
+    "theme": "arrows_tipped"
+  },
+  "27": {
+    "dimension": "end",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: cobwebs_pvp_trap bundle, dim=end]"
+    ],
+    "name": "cobwebs_pvp_trap_end",
+    "rarity_rank": 12,
+    "theme": "cobwebs_pvp_trap"
+  },
+  "28": {
+    "dimension": "nether",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: fireworks_rockets_64stack bundle, dim=nether]"
+    ],
+    "name": "fireworks_rockets_64stack_nether",
+    "rarity_rank": 12,
+    "theme": "fireworks_rockets_64stack"
+  },
+  "29": {
+    "dimension": "end",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: splash_harming_max bundle, dim=end]"
+    ],
+    "name": "splash_harming_max_end",
+    "rarity_rank": 12,
+    "theme": "splash_harming_max"
+  },
+  "30": {
+    "dimension": "overworld",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: strength_swiftness_splash_max bundle, dim=overworld]"
+    ],
+    "name": "strength_swiftness_splash_max_overworld",
+    "rarity_rank": 12,
+    "theme": "strength_swiftness_splash_max"
+  },
+  "31": {
+    "dimension": "nether",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: arrows_tipped bundle, dim=nether]"
+    ],
+    "name": "arrows_tipped_nether",
+    "rarity_rank": 13,
+    "theme": "arrows_tipped"
+  },
+  "32": {
+    "dimension": "end",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: fireworks_rockets_64stack bundle, dim=end]"
+    ],
+    "name": "fireworks_rockets_64stack_end",
+    "rarity_rank": 13,
+    "theme": "fireworks_rockets_64stack"
+  },
+  "33": {
+    "dimension": "nether",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: strength_swiftness_splash_max bundle, dim=nether]"
+    ],
+    "name": "strength_swiftness_splash_max_nether",
+    "rarity_rank": 13,
+    "theme": "strength_swiftness_splash_max"
+  },
+  "34": {
+    "dimension": "overworld",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: TNT bundle, dim=overworld]"
+    ],
+    "name": "TNT_overworld",
+    "rarity_rank": 14,
+    "theme": "TNT"
+  },
+  "35": {
+    "dimension": "end",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: arrows_tipped bundle, dim=end]"
+    ],
+    "name": "arrows_tipped_end",
+    "rarity_rank": 14,
+    "theme": "arrows_tipped"
+  },
+  "36": {
+    "dimension": "overworld",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: invisibility_splash_extended_max bundle, dim=overworld]"
+    ],
+    "name": "invisibility_splash_extended_max_overworld",
+    "rarity_rank": 14,
+    "theme": "invisibility_splash_extended_max"
+  },
+  "37": {
+    "dimension": "end",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: strength_swiftness_splash_max bundle, dim=end]"
+    ],
+    "name": "strength_swiftness_splash_max_end",
+    "rarity_rank": 14,
+    "theme": "strength_swiftness_splash_max"
+  },
+  "38": {
+    "dimension": "nether",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: TNT bundle, dim=nether]"
+    ],
+    "name": "TNT_nether",
+    "rarity_rank": 15,
+    "theme": "TNT"
+  },
+  "39": {
+    "dimension": "overworld",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: golden_carrots_baked_potato bundle, dim=overworld]"
+    ],
+    "name": "golden_carrots_baked_potato_overworld",
+    "rarity_rank": 15,
+    "theme": "golden_carrots_baked_potato"
+  },
+  "40": {
+    "dimension": "nether",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: invisibility_splash_extended_max bundle, dim=nether]"
+    ],
+    "name": "invisibility_splash_extended_max_nether",
+    "rarity_rank": 15,
+    "theme": "invisibility_splash_extended_max"
+  },
+  "41": {
+    "dimension": "end",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: TNT bundle, dim=end]"
+    ],
+    "name": "TNT_end",
+    "rarity_rank": 16,
+    "theme": "TNT"
+  },
+  "42": {
+    "dimension": "nether",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: golden_carrots_baked_potato bundle, dim=nether]"
+    ],
+    "name": "golden_carrots_baked_potato_nether",
+    "rarity_rank": 16,
+    "theme": "golden_carrots_baked_potato"
+  },
+  "43": {
+    "dimension": "end",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: invisibility_splash_extended_max bundle, dim=end]"
+    ],
+    "name": "invisibility_splash_extended_max_end",
+    "rarity_rank": 16,
+    "theme": "invisibility_splash_extended_max"
+  },
+  "44": {
+    "dimension": "end",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: golden_carrots_baked_potato bundle, dim=end]"
+    ],
+    "name": "golden_carrots_baked_potato_end",
+    "rarity_rank": 17,
+    "theme": "golden_carrots_baked_potato"
+  },
+  "45": {
+    "dimension": "overworld",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: cooked_meat_fish bundle, dim=overworld]"
+    ],
+    "name": "cooked_meat_fish_overworld",
+    "rarity_rank": 18,
+    "theme": "cooked_meat_fish"
+  },
+  "46": {
+    "dimension": "overworld",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: golden_apples bundle, dim=overworld]"
+    ],
+    "name": "golden_apples_overworld",
+    "rarity_rank": 18,
+    "theme": "golden_apples"
+  },
+  "47": {
+    "dimension": "nether",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: cooked_meat_fish bundle, dim=nether]"
+    ],
+    "name": "cooked_meat_fish_nether",
+    "rarity_rank": 19,
+    "theme": "cooked_meat_fish"
+  },
+  "48": {
+    "dimension": "nether",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: golden_apples bundle, dim=nether]"
+    ],
+    "name": "golden_apples_nether",
+    "rarity_rank": 19,
+    "theme": "golden_apples"
+  },
+  "49": {
+    "dimension": "overworld",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: bread_baked_goods bundle, dim=overworld]"
+    ],
+    "name": "bread_baked_goods_overworld",
+    "rarity_rank": 20,
+    "theme": "bread_baked_goods"
+  },
+  "50": {
+    "dimension": "end",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: cooked_meat_fish bundle, dim=end]"
+    ],
+    "name": "cooked_meat_fish_end",
+    "rarity_rank": 20,
+    "theme": "cooked_meat_fish"
+  },
+  "51": {
+    "dimension": "end",
+    "group": "consumables",
+    "items": [
+      "[TBD stage 3: golden_apples bundle, dim=end]"
+    ],
+    "name": "golden_apples_end",
+    "rarity_rank": 20,
+    "theme": "golden_apples"
+  },
+  "52": {
+    "dimension": "nether",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: bread_baked_goods bundle, dim=nether]"
+    ],
+    "name": "bread_baked_goods_nether",
+    "rarity_rank": 21,
+    "theme": "bread_baked_goods"
+  },
+  "53": {
+    "dimension": "end",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: bread_baked_goods bundle, dim=end]"
+    ],
+    "name": "bread_baked_goods_end",
+    "rarity_rank": 22,
+    "theme": "bread_baked_goods"
+  },
+  "54": {
+    "dimension": "overworld",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: netherite_armor_max bundle, dim=overworld]"
+    ],
+    "name": "netherite_armor_max_overworld",
+    "rarity_rank": 22,
+    "theme": "netherite_armor_max"
+  },
+  "55": {
+    "dimension": "overworld",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: sweet_berries_melon_block bundle, dim=overworld]"
+    ],
+    "name": "sweet_berries_melon_block_overworld",
+    "rarity_rank": 22,
+    "theme": "sweet_berries_melon_block"
+  },
+  "56": {
+    "dimension": "nether",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: netherite_armor_max bundle, dim=nether]"
+    ],
+    "name": "netherite_armor_max_nether",
+    "rarity_rank": 23,
+    "theme": "netherite_armor_max"
+  },
+  "57": {
+    "dimension": "nether",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: sweet_berries_melon_block bundle, dim=nether]"
+    ],
+    "name": "sweet_berries_melon_block_nether",
+    "rarity_rank": 23,
+    "theme": "sweet_berries_melon_block"
+  },
+  "58": {
+    "dimension": "end",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: netherite_armor_max bundle, dim=end]"
+    ],
+    "name": "netherite_armor_max_end",
+    "rarity_rank": 24,
+    "theme": "netherite_armor_max"
+  },
+  "59": {
+    "dimension": "end",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: sweet_berries_melon_block bundle, dim=end]"
+    ],
+    "name": "sweet_berries_melon_block_end",
+    "rarity_rank": 24,
+    "theme": "sweet_berries_melon_block"
+  },
+  "60": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: dirt_gravel_sand bundle, dim=overworld]"
+    ],
+    "name": "dirt_gravel_sand_overworld",
+    "rarity_rank": 25,
+    "theme": "dirt_gravel_sand"
+  },
+  "61": {
+    "dimension": "overworld",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: swords_netherite_max bundle, dim=overworld]"
+    ],
+    "name": "swords_netherite_max_overworld",
+    "rarity_rank": 25,
+    "theme": "swords_netherite_max"
+  },
+  "62": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: dirt_gravel_sand bundle, dim=nether]"
+    ],
+    "name": "dirt_gravel_sand_nether",
+    "rarity_rank": 26,
+    "theme": "dirt_gravel_sand"
+  },
+  "63": {
+    "dimension": "nether",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: swords_netherite_max bundle, dim=nether]"
+    ],
+    "name": "swords_netherite_max_nether",
+    "rarity_rank": 26,
+    "theme": "swords_netherite_max"
+  },
+  "64": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: dirt_gravel_sand bundle, dim=end]"
+    ],
+    "name": "dirt_gravel_sand_end",
+    "rarity_rank": 27,
+    "theme": "dirt_gravel_sand"
+  },
+  "65": {
+    "dimension": "end",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: swords_netherite_max bundle, dim=end]"
+    ],
+    "name": "swords_netherite_max_end",
+    "rarity_rank": 27,
+    "theme": "swords_netherite_max"
+  },
+  "66": {
+    "dimension": "overworld",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: axes_netherite_max bundle, dim=overworld]"
+    ],
+    "name": "axes_netherite_max_overworld",
+    "rarity_rank": 28,
+    "theme": "axes_netherite_max"
+  },
+  "67": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: lanterns_torches bundle, dim=overworld]"
+    ],
+    "name": "lanterns_torches_overworld",
+    "rarity_rank": 28,
+    "theme": "lanterns_torches"
+  },
+  "68": {
+    "dimension": "nether",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: axes_netherite_max bundle, dim=nether]"
+    ],
+    "name": "axes_netherite_max_nether",
+    "rarity_rank": 29,
+    "theme": "axes_netherite_max"
+  },
+  "69": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: lanterns_torches bundle, dim=nether]"
+    ],
+    "name": "lanterns_torches_nether",
+    "rarity_rank": 29,
+    "theme": "lanterns_torches"
+  },
+  "70": {
+    "dimension": "end",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: axes_netherite_max bundle, dim=end]"
+    ],
+    "name": "axes_netherite_max_end",
+    "rarity_rank": 30,
+    "theme": "axes_netherite_max"
+  },
+  "71": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: lanterns_torches bundle, dim=end]"
+    ],
+    "name": "lanterns_torches_end",
+    "rarity_rank": 30,
+    "theme": "lanterns_torches"
+  },
+  "72": {
+    "dimension": "overworld",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: netherite_tools_max bundle, dim=overworld]"
+    ],
+    "name": "netherite_tools_max_overworld",
+    "rarity_rank": 30,
+    "theme": "netherite_tools_max"
+  },
+  "73": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: stone bundle, dim=overworld]"
+    ],
+    "name": "stone_overworld",
+    "rarity_rank": 30,
+    "theme": "stone"
+  },
+  "74": {
+    "dimension": "nether",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: netherite_tools_max bundle, dim=nether]"
+    ],
+    "name": "netherite_tools_max_nether",
+    "rarity_rank": 31,
+    "theme": "netherite_tools_max"
+  },
+  "75": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: stone bundle, dim=nether]"
+    ],
+    "name": "stone_nether",
+    "rarity_rank": 31,
+    "theme": "stone"
+  },
+  "76": {
+    "dimension": "overworld",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: cake_pumpkin_pie_cookies bundle, dim=overworld]"
+    ],
+    "name": "cake_pumpkin_pie_cookies_overworld",
+    "rarity_rank": 32,
+    "theme": "cake_pumpkin_pie_cookies"
+  },
+  "77": {
+    "dimension": "end",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: netherite_tools_max bundle, dim=end]"
+    ],
+    "name": "netherite_tools_max_end",
+    "rarity_rank": 32,
+    "theme": "netherite_tools_max"
+  },
+  "78": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: stone bundle, dim=end]"
+    ],
+    "name": "stone_end",
+    "rarity_rank": 32,
+    "theme": "stone"
+  },
+  "79": {
+    "dimension": "nether",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: cake_pumpkin_pie_cookies bundle, dim=nether]"
+    ],
+    "name": "cake_pumpkin_pie_cookies_nether",
+    "rarity_rank": 33,
+    "theme": "cake_pumpkin_pie_cookies"
+  },
+  "80": {
+    "dimension": "end",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: cake_pumpkin_pie_cookies bundle, dim=end]"
+    ],
+    "name": "cake_pumpkin_pie_cookies_end",
+    "rarity_rank": 34,
+    "theme": "cake_pumpkin_pie_cookies"
+  },
+  "81": {
+    "dimension": "overworld",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: elytra_max bundle, dim=overworld]"
+    ],
+    "name": "elytra_max_overworld",
+    "rarity_rank": 35,
+    "theme": "elytra_max"
+  },
+  "82": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: logs_all bundle, dim=overworld]"
+    ],
+    "name": "logs_all_overworld",
+    "rarity_rank": 35,
+    "theme": "logs_all"
+  },
+  "83": {
+    "dimension": "nether",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: elytra_max bundle, dim=nether]"
+    ],
+    "name": "elytra_max_nether",
+    "rarity_rank": 36,
+    "theme": "elytra_max"
+  },
+  "84": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: logs_all bundle, dim=nether]"
+    ],
+    "name": "logs_all_nether",
+    "rarity_rank": 36,
+    "theme": "logs_all"
+  },
+  "85": {
+    "dimension": "end",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: elytra_max bundle, dim=end]"
+    ],
+    "name": "elytra_max_end",
+    "rarity_rank": 37,
+    "theme": "elytra_max"
+  },
+  "86": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: logs_all bundle, dim=end]"
+    ],
+    "name": "logs_all_end",
+    "rarity_rank": 37,
+    "theme": "logs_all"
+  },
+  "87": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: planks_all bundle, dim=overworld]"
+    ],
+    "name": "planks_all_overworld",
+    "rarity_rank": 38,
+    "theme": "planks_all"
+  },
+  "88": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: planks_all bundle, dim=nether]"
+    ],
+    "name": "planks_all_nether",
+    "rarity_rank": 39,
+    "theme": "planks_all"
+  },
+  "89": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: planks_all bundle, dim=end]"
+    ],
+    "name": "planks_all_end",
+    "rarity_rank": 40,
+    "theme": "planks_all"
+  },
+  "90": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: stairs_slabs_walls bundle, dim=overworld]"
+    ],
+    "name": "stairs_slabs_walls_overworld",
+    "rarity_rank": 40,
+    "theme": "stairs_slabs_walls"
+  },
+  "91": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: stairs_slabs_walls bundle, dim=nether]"
+    ],
+    "name": "stairs_slabs_walls_nether",
+    "rarity_rank": 41,
+    "theme": "stairs_slabs_walls"
+  },
+  "92": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: doors_trapdoors_fences bundle, dim=overworld]"
+    ],
+    "name": "doors_trapdoors_fences_overworld",
+    "rarity_rank": 42,
+    "theme": "doors_trapdoors_fences"
+  },
+  "93": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: stairs_slabs_walls bundle, dim=end]"
+    ],
+    "name": "stairs_slabs_walls_end",
+    "rarity_rank": 42,
+    "theme": "stairs_slabs_walls"
+  },
+  "94": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: doors_trapdoors_fences bundle, dim=nether]"
+    ],
+    "name": "doors_trapdoors_fences_nether",
+    "rarity_rank": 43,
+    "theme": "doors_trapdoors_fences"
+  },
+  "95": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: doors_trapdoors_fences bundle, dim=end]"
+    ],
+    "name": "doors_trapdoors_fences_end",
+    "rarity_rank": 44,
+    "theme": "doors_trapdoors_fences"
+  },
+  "96": {
+    "dimension": "overworld",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: fire_resistance_splash_max bundle, dim=overworld]"
+    ],
+    "name": "fire_resistance_splash_max_overworld",
+    "rarity_rank": 50,
+    "theme": "fire_resistance_splash_max"
+  },
+  "97": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: stone_variants_igneous bundle, dim=overworld]"
+    ],
+    "name": "stone_variants_igneous_overworld",
+    "rarity_rank": 50,
+    "theme": "stone_variants_igneous"
+  },
+  "98": {
+    "dimension": "nether",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: fire_resistance_splash_max bundle, dim=nether]"
+    ],
+    "name": "fire_resistance_splash_max_nether",
+    "rarity_rank": 51,
+    "theme": "fire_resistance_splash_max"
+  },
+  "99": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: stone_variants_igneous bundle, dim=nether]"
+    ],
+    "name": "stone_variants_igneous_nether",
+    "rarity_rank": 51,
+    "theme": "stone_variants_igneous"
+  },
+  "100": {
+    "dimension": "end",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: fire_resistance_splash_max bundle, dim=end]"
+    ],
+    "name": "fire_resistance_splash_max_end",
+    "rarity_rank": 52,
+    "theme": "fire_resistance_splash_max"
+  },
+  "101": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: stone_variants_igneous bundle, dim=end]"
+    ],
+    "name": "stone_variants_igneous_end",
+    "rarity_rank": 52,
+    "theme": "stone_variants_igneous"
+  },
+  "102": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: netherrack_basalt_blackstone bundle, dim=overworld]"
+    ],
+    "name": "netherrack_basalt_blackstone_overworld",
+    "rarity_rank": 55,
+    "theme": "netherrack_basalt_blackstone"
+  },
+  "103": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: netherrack_basalt_blackstone bundle, dim=nether]"
+    ],
+    "name": "netherrack_basalt_blackstone_nether",
+    "rarity_rank": 56,
+    "theme": "netherrack_basalt_blackstone"
+  },
+  "104": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: netherrack_basalt_blackstone bundle, dim=end]"
+    ],
+    "name": "netherrack_basalt_blackstone_end",
+    "rarity_rank": 57,
+    "theme": "netherrack_basalt_blackstone"
+  },
+  "105": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: end_stone_purpur bundle, dim=overworld]"
+    ],
+    "name": "end_stone_purpur_overworld",
+    "rarity_rank": 58,
+    "theme": "end_stone_purpur"
+  },
+  "106": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: end_stone_purpur bundle, dim=nether]"
+    ],
+    "name": "end_stone_purpur_nether",
+    "rarity_rank": 59,
+    "theme": "end_stone_purpur"
+  },
+  "107": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: end_stone_purpur bundle, dim=end]"
+    ],
+    "name": "end_stone_purpur_end",
+    "rarity_rank": 60,
+    "theme": "end_stone_purpur"
+  },
+  "108": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: deepslate bundle, dim=overworld]"
+    ],
+    "name": "deepslate_overworld",
+    "rarity_rank": 62,
+    "theme": "deepslate"
+  },
+  "109": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: deepslate bundle, dim=nether]"
+    ],
+    "name": "deepslate_nether",
+    "rarity_rank": 63,
+    "theme": "deepslate"
+  },
+  "110": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: deepslate bundle, dim=end]"
+    ],
+    "name": "deepslate_end",
+    "rarity_rank": 64,
+    "theme": "deepslate"
+  },
+  "111": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: sandstone bundle, dim=overworld]"
+    ],
+    "name": "sandstone_overworld",
+    "rarity_rank": 68,
+    "theme": "sandstone"
+  },
+  "112": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: sandstone bundle, dim=nether]"
+    ],
+    "name": "sandstone_nether",
+    "rarity_rank": 69,
+    "theme": "sandstone"
+  },
+  "113": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: sandstone bundle, dim=end]"
+    ],
+    "name": "sandstone_end",
+    "rarity_rank": 70,
+    "theme": "sandstone"
+  },
+  "114": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: wool_carpet bundle, dim=overworld]"
+    ],
+    "name": "wool_carpet_overworld",
+    "rarity_rank": 70,
+    "theme": "wool_carpet"
+  },
+  "115": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: wool_carpet bundle, dim=nether]"
+    ],
+    "name": "wool_carpet_nether",
+    "rarity_rank": 71,
+    "theme": "wool_carpet"
+  },
+  "116": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: glass_stained bundle, dim=overworld]"
+    ],
+    "name": "glass_stained_overworld",
+    "rarity_rank": 72,
+    "theme": "glass_stained"
+  },
+  "117": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: wool_carpet bundle, dim=end]"
+    ],
+    "name": "wool_carpet_end",
+    "rarity_rank": 72,
+    "theme": "wool_carpet"
+  },
+  "118": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: glass_stained bundle, dim=nether]"
+    ],
+    "name": "glass_stained_nether",
+    "rarity_rank": 73,
+    "theme": "glass_stained"
+  },
+  "119": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: glass_stained bundle, dim=end]"
+    ],
+    "name": "glass_stained_end",
+    "rarity_rank": 74,
+    "theme": "glass_stained"
+  },
+  "120": {
+    "dimension": "overworld",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: rotten_flesh_bone_string bundle, dim=overworld]"
+    ],
+    "name": "rotten_flesh_bone_string_overworld",
+    "rarity_rank": 75,
+    "theme": "rotten_flesh_bone_string"
+  },
+  "121": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: terracotta_concrete bundle, dim=overworld]"
+    ],
+    "name": "terracotta_concrete_overworld",
+    "rarity_rank": 75,
+    "theme": "terracotta_concrete"
+  },
+  "122": {
+    "dimension": "nether",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: rotten_flesh_bone_string bundle, dim=nether]"
+    ],
+    "name": "rotten_flesh_bone_string_nether",
+    "rarity_rank": 76,
+    "theme": "rotten_flesh_bone_string"
+  },
+  "123": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: terracotta_concrete bundle, dim=nether]"
+    ],
+    "name": "terracotta_concrete_nether",
+    "rarity_rank": 76,
+    "theme": "terracotta_concrete"
+  },
+  "124": {
+    "dimension": "end",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: rotten_flesh_bone_string bundle, dim=end]"
+    ],
+    "name": "rotten_flesh_bone_string_end",
+    "rarity_rank": 77,
+    "theme": "rotten_flesh_bone_string"
+  },
+  "125": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: terracotta_concrete bundle, dim=end]"
+    ],
+    "name": "terracotta_concrete_end",
+    "rarity_rank": 77,
+    "theme": "terracotta_concrete"
+  },
+  "126": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: bricks_general bundle, dim=overworld]"
+    ],
+    "name": "bricks_general_overworld",
+    "rarity_rank": 78,
+    "theme": "bricks_general"
+  },
+  "127": {
+    "dimension": "overworld",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: gunpowder_spider_eye bundle, dim=overworld]"
+    ],
+    "name": "gunpowder_spider_eye_overworld",
+    "rarity_rank": 78,
+    "theme": "gunpowder_spider_eye"
+  },
+  "128": {
+    "dimension": "overworld",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: shields bundle, dim=overworld]"
+    ],
+    "name": "shields_overworld",
+    "rarity_rank": 78,
+    "theme": "shields"
+  },
+  "129": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: bricks_general bundle, dim=nether]"
+    ],
+    "name": "bricks_general_nether",
+    "rarity_rank": 79,
+    "theme": "bricks_general"
+  },
+  "130": {
+    "dimension": "nether",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: gunpowder_spider_eye bundle, dim=nether]"
+    ],
+    "name": "gunpowder_spider_eye_nether",
+    "rarity_rank": 79,
+    "theme": "gunpowder_spider_eye"
+  },
+  "131": {
+    "dimension": "nether",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: shields bundle, dim=nether]"
+    ],
+    "name": "shields_nether",
+    "rarity_rank": 79,
+    "theme": "shields"
+  },
+  "132": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: bricks_general bundle, dim=end]"
+    ],
+    "name": "bricks_general_end",
+    "rarity_rank": 80,
+    "theme": "bricks_general"
+  },
+  "133": {
+    "dimension": "end",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: gunpowder_spider_eye bundle, dim=end]"
+    ],
+    "name": "gunpowder_spider_eye_end",
+    "rarity_rank": 80,
+    "theme": "gunpowder_spider_eye"
+  },
+  "134": {
+    "dimension": "overworld",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: leather_armor bundle, dim=overworld]"
+    ],
+    "name": "leather_armor_overworld",
+    "rarity_rank": 80,
+    "theme": "leather_armor"
+  },
+  "135": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: prismarine bundle, dim=overworld]"
+    ],
+    "name": "prismarine_overworld",
+    "rarity_rank": 80,
+    "theme": "prismarine"
+  },
+  "136": {
+    "dimension": "end",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: shields bundle, dim=end]"
+    ],
+    "name": "shields_end",
+    "rarity_rank": 80,
+    "theme": "shields"
+  },
+  "137": {
+    "dimension": "nether",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: leather_armor bundle, dim=nether]"
+    ],
+    "name": "leather_armor_nether",
+    "rarity_rank": 81,
+    "theme": "leather_armor"
+  },
+  "138": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: prismarine bundle, dim=nether]"
+    ],
+    "name": "prismarine_nether",
+    "rarity_rank": 81,
+    "theme": "prismarine"
+  },
+  "139": {
+    "dimension": "overworld",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: copper_blocks bundle, dim=overworld]"
+    ],
+    "name": "copper_blocks_overworld",
+    "rarity_rank": 82,
+    "theme": "copper_blocks"
+  },
+  "140": {
+    "dimension": "end",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: leather_armor bundle, dim=end]"
+    ],
+    "name": "leather_armor_end",
+    "rarity_rank": 82,
+    "theme": "leather_armor"
+  },
+  "141": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: prismarine bundle, dim=end]"
+    ],
+    "name": "prismarine_end",
+    "rarity_rank": 82,
+    "theme": "prismarine"
+  },
+  "142": {
+    "dimension": "nether",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: copper_blocks bundle, dim=nether]"
+    ],
+    "name": "copper_blocks_nether",
+    "rarity_rank": 83,
+    "theme": "copper_blocks"
+  },
+  "143": {
+    "dimension": "end",
+    "group": "blocks",
+    "items": [
+      "[TBD stage 3: copper_blocks bundle, dim=end]"
+    ],
+    "name": "copper_blocks_end",
+    "rarity_rank": 84,
+    "theme": "copper_blocks"
+  },
+  "144": {
+    "dimension": "overworld",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: coal bundle, dim=overworld]"
+    ],
+    "name": "coal_overworld",
+    "rarity_rank": 85,
+    "theme": "coal"
+  },
+  "145": {
+    "dimension": "nether",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: coal bundle, dim=nether]"
+    ],
+    "name": "coal_nether",
+    "rarity_rank": 86,
+    "theme": "coal"
+  },
+  "146": {
+    "dimension": "end",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: coal bundle, dim=end]"
+    ],
+    "name": "coal_end",
+    "rarity_rank": 87,
+    "theme": "coal"
+  },
+  "147": {
+    "dimension": "overworld",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: ender_pearl_eye_of_ender bundle, dim=overworld]"
+    ],
+    "name": "ender_pearl_eye_of_ender_overworld",
+    "rarity_rank": 88,
+    "theme": "ender_pearl_eye_of_ender"
+  },
+  "148": {
+    "dimension": "overworld",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: iron bundle, dim=overworld]"
+    ],
+    "name": "iron_overworld",
+    "rarity_rank": 88,
+    "theme": "iron"
+  },
+  "149": {
+    "dimension": "overworld",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: wood_stone_tools bundle, dim=overworld]"
+    ],
+    "name": "wood_stone_tools_overworld",
+    "rarity_rank": 88,
+    "theme": "wood_stone_tools"
+  },
+  "150": {
+    "dimension": "nether",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: ender_pearl_eye_of_ender bundle, dim=nether]"
+    ],
+    "name": "ender_pearl_eye_of_ender_nether",
+    "rarity_rank": 89,
+    "theme": "ender_pearl_eye_of_ender"
+  },
+  "151": {
+    "dimension": "nether",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: iron bundle, dim=nether]"
+    ],
+    "name": "iron_nether",
+    "rarity_rank": 89,
+    "theme": "iron"
+  },
+  "152": {
+    "dimension": "nether",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: wood_stone_tools bundle, dim=nether]"
+    ],
+    "name": "wood_stone_tools_nether",
+    "rarity_rank": 89,
+    "theme": "wood_stone_tools"
+  },
+  "153": {
+    "dimension": "end",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: ender_pearl_eye_of_ender bundle, dim=end]"
+    ],
+    "name": "ender_pearl_eye_of_ender_end",
+    "rarity_rank": 90,
+    "theme": "ender_pearl_eye_of_ender"
+  },
+  "154": {
+    "dimension": "end",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: iron bundle, dim=end]"
+    ],
+    "name": "iron_end",
+    "rarity_rank": 90,
+    "theme": "iron"
+  },
+  "155": {
+    "dimension": "overworld",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: raw_produce_garden bundle, dim=overworld]"
+    ],
+    "name": "raw_produce_garden_overworld",
+    "rarity_rank": 90,
+    "theme": "raw_produce_garden"
+  },
+  "156": {
+    "dimension": "end",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: wood_stone_tools bundle, dim=end]"
+    ],
+    "name": "wood_stone_tools_end",
+    "rarity_rank": 90,
+    "theme": "wood_stone_tools"
+  },
+  "157": {
+    "dimension": "nether",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: raw_produce_garden bundle, dim=nether]"
+    ],
+    "name": "raw_produce_garden_nether",
+    "rarity_rank": 91,
+    "theme": "raw_produce_garden"
+  },
+  "158": {
+    "dimension": "overworld",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: iron_tools bundle, dim=overworld]"
+    ],
+    "name": "iron_tools_overworld",
+    "rarity_rank": 92,
+    "theme": "iron_tools"
+  },
+  "159": {
+    "dimension": "end",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: raw_produce_garden bundle, dim=end]"
+    ],
+    "name": "raw_produce_garden_end",
+    "rarity_rank": 92,
+    "theme": "raw_produce_garden"
+  },
+  "160": {
+    "dimension": "nether",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: iron_tools bundle, dim=nether]"
+    ],
+    "name": "iron_tools_nether",
+    "rarity_rank": 93,
+    "theme": "iron_tools"
+  },
+  "161": {
+    "dimension": "end",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: iron_tools bundle, dim=end]"
+    ],
+    "name": "iron_tools_end",
+    "rarity_rank": 94,
+    "theme": "iron_tools"
+  },
+  "162": {
+    "dimension": "overworld",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: seeds_bulk bundle, dim=overworld]"
+    ],
+    "name": "seeds_bulk_overworld",
+    "rarity_rank": 95,
+    "theme": "seeds_bulk"
+  },
+  "163": {
+    "dimension": "overworld",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: swords_iron bundle, dim=overworld]"
+    ],
+    "name": "swords_iron_overworld",
+    "rarity_rank": 95,
+    "theme": "swords_iron"
+  },
+  "164": {
+    "dimension": "nether",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: seeds_bulk bundle, dim=nether]"
+    ],
+    "name": "seeds_bulk_nether",
+    "rarity_rank": 96,
+    "theme": "seeds_bulk"
+  },
+  "165": {
+    "dimension": "nether",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: swords_iron bundle, dim=nether]"
+    ],
+    "name": "swords_iron_nether",
+    "rarity_rank": 96,
+    "theme": "swords_iron"
+  },
+  "166": {
+    "dimension": "end",
+    "group": "food",
+    "items": [
+      "[TBD stage 3: seeds_bulk bundle, dim=end]"
+    ],
+    "name": "seeds_bulk_end",
+    "rarity_rank": 97,
+    "theme": "seeds_bulk"
+  },
+  "167": {
+    "dimension": "end",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: swords_iron bundle, dim=end]"
+    ],
+    "name": "swords_iron_end",
+    "rarity_rank": 97,
+    "theme": "swords_iron"
+  },
+  "168": {
+    "dimension": "overworld",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: shears_compass_clock_lead bundle, dim=overworld]"
+    ],
+    "name": "shears_compass_clock_lead_overworld",
+    "rarity_rank": 98,
+    "theme": "shears_compass_clock_lead"
+  },
+  "169": {
+    "dimension": "nether",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: shears_compass_clock_lead bundle, dim=nether]"
+    ],
+    "name": "shears_compass_clock_lead_nether",
+    "rarity_rank": 99,
+    "theme": "shears_compass_clock_lead"
+  },
+  "170": {
+    "dimension": "overworld",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: iron_armor bundle, dim=overworld]"
+    ],
+    "name": "iron_armor_overworld",
+    "rarity_rank": 100,
+    "theme": "iron_armor"
+  },
+  "171": {
+    "dimension": "overworld",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: redstone bundle, dim=overworld]"
+    ],
+    "name": "redstone_overworld",
+    "rarity_rank": 100,
+    "theme": "redstone"
+  },
+  "172": {
+    "dimension": "overworld",
+    "group": "enchant",
+    "items": [
+      "[TBD stage 3: regular_enchanted_books bundle, dim=overworld]"
+    ],
+    "name": "regular_enchanted_books_overworld",
+    "rarity_rank": 100,
+    "theme": "regular_enchanted_books"
+  },
+  "173": {
+    "dimension": "end",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: shears_compass_clock_lead bundle, dim=end]"
+    ],
+    "name": "shears_compass_clock_lead_end",
+    "rarity_rank": 100,
+    "theme": "shears_compass_clock_lead"
+  },
+  "174": {
+    "dimension": "nether",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: iron_armor bundle, dim=nether]"
+    ],
+    "name": "iron_armor_nether",
+    "rarity_rank": 101,
+    "theme": "iron_armor"
+  },
+  "175": {
+    "dimension": "nether",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: redstone bundle, dim=nether]"
+    ],
+    "name": "redstone_nether",
+    "rarity_rank": 101,
+    "theme": "redstone"
+  },
+  "176": {
+    "dimension": "nether",
+    "group": "enchant",
+    "items": [
+      "[TBD stage 3: regular_enchanted_books bundle, dim=nether]"
+    ],
+    "name": "regular_enchanted_books_nether",
+    "rarity_rank": 101,
+    "theme": "regular_enchanted_books"
+  },
+  "177": {
+    "dimension": "overworld",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: blaze_rod_powder_ghast_tear bundle, dim=overworld]"
+    ],
+    "name": "blaze_rod_powder_ghast_tear_overworld",
+    "rarity_rank": 102,
+    "theme": "blaze_rod_powder_ghast_tear"
+  },
+  "178": {
+    "dimension": "end",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: iron_armor bundle, dim=end]"
+    ],
+    "name": "iron_armor_end",
+    "rarity_rank": 102,
+    "theme": "iron_armor"
+  },
+  "179": {
+    "dimension": "end",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: redstone bundle, dim=end]"
+    ],
+    "name": "redstone_end",
+    "rarity_rank": 102,
+    "theme": "redstone"
+  },
+  "180": {
+    "dimension": "end",
+    "group": "enchant",
+    "items": [
+      "[TBD stage 3: regular_enchanted_books bundle, dim=end]"
+    ],
+    "name": "regular_enchanted_books_end",
+    "rarity_rank": 102,
+    "theme": "regular_enchanted_books"
+  },
+  "181": {
+    "dimension": "nether",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: blaze_rod_powder_ghast_tear bundle, dim=nether]"
+    ],
+    "name": "blaze_rod_powder_ghast_tear_nether",
+    "rarity_rank": 103,
+    "theme": "blaze_rod_powder_ghast_tear"
+  },
+  "182": {
+    "dimension": "end",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: blaze_rod_powder_ghast_tear bundle, dim=end]"
+    ],
+    "name": "blaze_rod_powder_ghast_tear_end",
+    "rarity_rank": 104,
+    "theme": "blaze_rod_powder_ghast_tear"
+  },
+  "183": {
+    "dimension": "overworld",
+    "group": "enchant",
+    "items": [
+      "[TBD stage 3: brewing_ingredients bundle, dim=overworld]"
+    ],
+    "name": "brewing_ingredients_overworld",
+    "rarity_rank": 105,
+    "theme": "brewing_ingredients"
+  },
+  "184": {
+    "dimension": "overworld",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: gold bundle, dim=overworld]"
+    ],
+    "name": "gold_overworld",
+    "rarity_rank": 105,
+    "theme": "gold"
+  },
+  "185": {
+    "dimension": "overworld",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: water_breathing_splash bundle, dim=overworld]"
+    ],
+    "name": "water_breathing_splash_overworld",
+    "rarity_rank": 105,
+    "theme": "water_breathing_splash"
+  },
+  "186": {
+    "dimension": "nether",
+    "group": "enchant",
+    "items": [
+      "[TBD stage 3: brewing_ingredients bundle, dim=nether]"
+    ],
+    "name": "brewing_ingredients_nether",
+    "rarity_rank": 106,
+    "theme": "brewing_ingredients"
+  },
+  "187": {
+    "dimension": "nether",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: gold bundle, dim=nether]"
+    ],
+    "name": "gold_nether",
+    "rarity_rank": 106,
+    "theme": "gold"
+  },
+  "188": {
+    "dimension": "nether",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: water_breathing_splash bundle, dim=nether]"
+    ],
+    "name": "water_breathing_splash_nether",
+    "rarity_rank": 106,
+    "theme": "water_breathing_splash"
+  },
+  "189": {
+    "dimension": "end",
+    "group": "enchant",
+    "items": [
+      "[TBD stage 3: brewing_ingredients bundle, dim=end]"
+    ],
+    "name": "brewing_ingredients_end",
+    "rarity_rank": 107,
+    "theme": "brewing_ingredients"
+  },
+  "190": {
+    "dimension": "end",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: gold bundle, dim=end]"
+    ],
+    "name": "gold_end",
+    "rarity_rank": 107,
+    "theme": "gold"
+  },
+  "191": {
+    "dimension": "end",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: water_breathing_splash bundle, dim=end]"
+    ],
+    "name": "water_breathing_splash_end",
+    "rarity_rank": 107,
+    "theme": "water_breathing_splash"
+  },
+  "192": {
+    "dimension": "overworld",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: bows_crossbows bundle, dim=overworld]"
+    ],
+    "name": "bows_crossbows_overworld",
+    "rarity_rank": 110,
+    "theme": "bows_crossbows"
+  },
+  "193": {
+    "dimension": "overworld",
+    "group": "enchant",
+    "items": [
+      "[TBD stage 3: nether_wart_blaze_powder_fermented bundle, dim=overworld]"
+    ],
+    "name": "nether_wart_blaze_powder_fermented_overworld",
+    "rarity_rank": 110,
+    "theme": "nether_wart_blaze_powder_fermented"
+  },
+  "194": {
+    "dimension": "overworld",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: phantom_membrane bundle, dim=overworld]"
+    ],
+    "name": "phantom_membrane_overworld",
+    "rarity_rank": 110,
+    "theme": "phantom_membrane"
+  },
+  "195": {
+    "dimension": "nether",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: bows_crossbows bundle, dim=nether]"
+    ],
+    "name": "bows_crossbows_nether",
+    "rarity_rank": 111,
+    "theme": "bows_crossbows"
+  },
+  "196": {
+    "dimension": "nether",
+    "group": "enchant",
+    "items": [
+      "[TBD stage 3: nether_wart_blaze_powder_fermented bundle, dim=nether]"
+    ],
+    "name": "nether_wart_blaze_powder_fermented_nether",
+    "rarity_rank": 111,
+    "theme": "nether_wart_blaze_powder_fermented"
+  },
+  "197": {
+    "dimension": "nether",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: phantom_membrane bundle, dim=nether]"
+    ],
+    "name": "phantom_membrane_nether",
+    "rarity_rank": 111,
+    "theme": "phantom_membrane"
+  },
+  "198": {
+    "dimension": "end",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: bows_crossbows bundle, dim=end]"
+    ],
+    "name": "bows_crossbows_end",
+    "rarity_rank": 112,
+    "theme": "bows_crossbows"
+  },
+  "199": {
+    "dimension": "end",
+    "group": "enchant",
+    "items": [
+      "[TBD stage 3: nether_wart_blaze_powder_fermented bundle, dim=end]"
+    ],
+    "name": "nether_wart_blaze_powder_fermented_end",
+    "rarity_rank": 112,
+    "theme": "nether_wart_blaze_powder_fermented"
+  },
+  "200": {
+    "dimension": "end",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: phantom_membrane bundle, dim=end]"
+    ],
+    "name": "phantom_membrane_end",
+    "rarity_rank": 112,
+    "theme": "phantom_membrane"
+  },
+  "201": {
+    "dimension": "overworld",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: fishing_rod bundle, dim=overworld]"
+    ],
+    "name": "fishing_rod_overworld",
+    "rarity_rank": 115,
+    "theme": "fishing_rod"
+  },
+  "202": {
+    "dimension": "overworld",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: slime_ball_magma_cream bundle, dim=overworld]"
+    ],
+    "name": "slime_ball_magma_cream_overworld",
+    "rarity_rank": 115,
+    "theme": "slime_ball_magma_cream"
+  },
+  "203": {
+    "dimension": "overworld",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: weakness_poison_lingering bundle, dim=overworld]"
+    ],
+    "name": "weakness_poison_lingering_overworld",
+    "rarity_rank": 115,
+    "theme": "weakness_poison_lingering"
+  },
+  "204": {
+    "dimension": "nether",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: fishing_rod bundle, dim=nether]"
+    ],
+    "name": "fishing_rod_nether",
+    "rarity_rank": 116,
+    "theme": "fishing_rod"
+  },
+  "205": {
+    "dimension": "nether",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: slime_ball_magma_cream bundle, dim=nether]"
+    ],
+    "name": "slime_ball_magma_cream_nether",
+    "rarity_rank": 116,
+    "theme": "slime_ball_magma_cream"
+  },
+  "206": {
+    "dimension": "nether",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: weakness_poison_lingering bundle, dim=nether]"
+    ],
+    "name": "weakness_poison_lingering_nether",
+    "rarity_rank": 116,
+    "theme": "weakness_poison_lingering"
+  },
+  "207": {
+    "dimension": "end",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: fishing_rod bundle, dim=end]"
+    ],
+    "name": "fishing_rod_end",
+    "rarity_rank": 117,
+    "theme": "fishing_rod"
+  },
+  "208": {
+    "dimension": "end",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: slime_ball_magma_cream bundle, dim=end]"
+    ],
+    "name": "slime_ball_magma_cream_end",
+    "rarity_rank": 117,
+    "theme": "slime_ball_magma_cream"
+  },
+  "209": {
+    "dimension": "end",
+    "group": "potions",
+    "items": [
+      "[TBD stage 3: weakness_poison_lingering bundle, dim=end]"
+    ],
+    "name": "weakness_poison_lingering_end",
+    "rarity_rank": 117,
+    "theme": "weakness_poison_lingering"
+  },
+  "210": {
+    "dimension": "overworld",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: diamond_tools bundle, dim=overworld]"
+    ],
+    "name": "diamond_tools_overworld",
+    "rarity_rank": 118,
+    "theme": "diamond_tools"
+  },
+  "211": {
+    "dimension": "nether",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: diamond_tools bundle, dim=nether]"
+    ],
+    "name": "diamond_tools_nether",
+    "rarity_rank": 119,
+    "theme": "diamond_tools"
+  },
+  "212": {
+    "dimension": "end",
+    "group": "tools",
+    "items": [
+      "[TBD stage 3: diamond_tools bundle, dim=end]"
+    ],
+    "name": "diamond_tools_end",
+    "rarity_rank": 120,
+    "theme": "diamond_tools"
+  },
+  "213": {
+    "dimension": "overworld",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: swords_diamond bundle, dim=overworld]"
+    ],
+    "name": "swords_diamond_overworld",
+    "rarity_rank": 120,
+    "theme": "swords_diamond"
+  },
+  "214": {
+    "dimension": "nether",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: swords_diamond bundle, dim=nether]"
+    ],
+    "name": "swords_diamond_nether",
+    "rarity_rank": 121,
+    "theme": "swords_diamond"
+  },
+  "215": {
+    "dimension": "end",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: swords_diamond bundle, dim=end]"
+    ],
+    "name": "swords_diamond_end",
+    "rarity_rank": 122,
+    "theme": "swords_diamond"
+  },
+  "216": {
+    "dimension": "overworld",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: diamond_armor bundle, dim=overworld]"
+    ],
+    "name": "diamond_armor_overworld",
+    "rarity_rank": 125,
+    "theme": "diamond_armor"
+  },
+  "217": {
+    "dimension": "nether",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: diamond_armor bundle, dim=nether]"
+    ],
+    "name": "diamond_armor_nether",
+    "rarity_rank": 126,
+    "theme": "diamond_armor"
+  },
+  "218": {
+    "dimension": "end",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: diamond_armor bundle, dim=end]"
+    ],
+    "name": "diamond_armor_end",
+    "rarity_rank": 127,
+    "theme": "diamond_armor"
+  },
+  "219": {
+    "dimension": "overworld",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: emerald bundle, dim=overworld]"
+    ],
+    "name": "emerald_overworld",
+    "rarity_rank": 128,
+    "theme": "emerald"
+  },
+  "220": {
+    "dimension": "nether",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: emerald bundle, dim=nether]"
+    ],
+    "name": "emerald_nether",
+    "rarity_rank": 129,
+    "theme": "emerald"
+  },
+  "221": {
+    "dimension": "overworld",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: diamond bundle, dim=overworld]"
+    ],
+    "name": "diamond_overworld",
+    "rarity_rank": 130,
+    "theme": "diamond"
+  },
+  "222": {
+    "dimension": "end",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: emerald bundle, dim=end]"
+    ],
+    "name": "emerald_end",
+    "rarity_rank": 130,
+    "theme": "emerald"
+  },
+  "223": {
+    "dimension": "overworld",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: gold_helmet_boots bundle, dim=overworld]"
+    ],
+    "name": "gold_helmet_boots_overworld",
+    "rarity_rank": 130,
+    "theme": "gold_helmet_boots"
+  },
+  "224": {
+    "dimension": "nether",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: diamond bundle, dim=nether]"
+    ],
+    "name": "diamond_nether",
+    "rarity_rank": 131,
+    "theme": "diamond"
+  },
+  "225": {
+    "dimension": "nether",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: gold_helmet_boots bundle, dim=nether]"
+    ],
+    "name": "gold_helmet_boots_nether",
+    "rarity_rank": 131,
+    "theme": "gold_helmet_boots"
+  },
+  "226": {
+    "dimension": "end",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: diamond bundle, dim=end]"
+    ],
+    "name": "diamond_end",
+    "rarity_rank": 132,
+    "theme": "diamond"
+  },
+  "227": {
+    "dimension": "end",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: gold_helmet_boots bundle, dim=end]"
+    ],
+    "name": "gold_helmet_boots_end",
+    "rarity_rank": 132,
+    "theme": "gold_helmet_boots"
+  },
+  "228": {
+    "dimension": "overworld",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: lapis bundle, dim=overworld]"
+    ],
+    "name": "lapis_overworld",
+    "rarity_rank": 132,
+    "theme": "lapis"
+  },
+  "229": {
+    "dimension": "nether",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: lapis bundle, dim=nether]"
+    ],
+    "name": "lapis_nether",
+    "rarity_rank": 133,
+    "theme": "lapis"
+  },
+  "230": {
+    "dimension": "end",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: lapis bundle, dim=end]"
+    ],
+    "name": "lapis_end",
+    "rarity_rank": 134,
+    "theme": "lapis"
+  },
+  "231": {
+    "dimension": "overworld",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: smithing_templates_trims bundle, dim=overworld]"
+    ],
+    "name": "smithing_templates_trims_overworld",
+    "rarity_rank": 140,
+    "theme": "smithing_templates_trims"
+  },
+  "232": {
+    "dimension": "nether",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: smithing_templates_trims bundle, dim=nether]"
+    ],
+    "name": "smithing_templates_trims_nether",
+    "rarity_rank": 141,
+    "theme": "smithing_templates_trims"
+  },
+  "233": {
+    "dimension": "end",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: smithing_templates_trims bundle, dim=end]"
+    ],
+    "name": "smithing_templates_trims_end",
+    "rarity_rank": 142,
+    "theme": "smithing_templates_trims"
+  },
+  "234": {
+    "dimension": "overworld",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: horse_wolf_armor bundle, dim=overworld]"
+    ],
+    "name": "horse_wolf_armor_overworld",
+    "rarity_rank": 145,
+    "theme": "horse_wolf_armor"
+  },
+  "235": {
+    "dimension": "nether",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: horse_wolf_armor bundle, dim=nether]"
+    ],
+    "name": "horse_wolf_armor_nether",
+    "rarity_rank": 146,
+    "theme": "horse_wolf_armor"
+  },
+  "236": {
+    "dimension": "end",
+    "group": "armor",
+    "items": [
+      "[TBD stage 3: horse_wolf_armor bundle, dim=end]"
+    ],
+    "name": "horse_wolf_armor_end",
+    "rarity_rank": 147,
+    "theme": "horse_wolf_armor"
+  },
+  "237": {
+    "dimension": "overworld",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: netherite_block bundle, dim=overworld]"
+    ],
+    "name": "netherite_block_overworld",
+    "rarity_rank": 160,
+    "theme": "netherite_block"
+  },
+  "238": {
+    "dimension": "nether",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: netherite_block bundle, dim=nether]"
+    ],
+    "name": "netherite_block_nether",
+    "rarity_rank": 161,
+    "theme": "netherite_block"
+  },
+  "239": {
+    "dimension": "end",
+    "group": "minerals",
+    "items": [
+      "[TBD stage 3: netherite_block bundle, dim=end]"
+    ],
+    "name": "netherite_block_end",
+    "rarity_rank": 162,
+    "theme": "netherite_block"
+  },
+  "240": {
+    "dimension": "overworld",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: mace_max bundle, dim=overworld]"
+    ],
+    "name": "mace_max_overworld",
+    "rarity_rank": 175,
+    "theme": "mace_max"
+  },
+  "241": {
+    "dimension": "overworld",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: wither_skull_trophy bundle, dim=overworld]"
+    ],
+    "name": "wither_skull_trophy_overworld",
+    "rarity_rank": 175,
+    "theme": "wither_skull_trophy"
+  },
+  "242": {
+    "dimension": "nether",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: mace_max bundle, dim=nether]"
+    ],
+    "name": "mace_max_nether",
+    "rarity_rank": 176,
+    "theme": "mace_max"
+  },
+  "243": {
+    "dimension": "nether",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: wither_skull_trophy bundle, dim=nether]"
+    ],
+    "name": "wither_skull_trophy_nether",
+    "rarity_rank": 176,
+    "theme": "wither_skull_trophy"
+  },
+  "244": {
+    "dimension": "end",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: mace_max bundle, dim=end]"
+    ],
+    "name": "mace_max_end",
+    "rarity_rank": 177,
+    "theme": "mace_max"
+  },
+  "245": {
+    "dimension": "end",
+    "group": "mob_drops",
+    "items": [
+      "[TBD stage 3: wither_skull_trophy bundle, dim=end]"
+    ],
+    "name": "wither_skull_trophy_end",
+    "rarity_rank": 177,
+    "theme": "wither_skull_trophy"
+  },
+  "246": {
+    "dimension": "overworld",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: trident_max bundle, dim=overworld]"
+    ],
+    "name": "trident_max_overworld",
+    "rarity_rank": 180,
+    "theme": "trident_max"
+  },
+  "247": {
+    "dimension": "nether",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: trident_max bundle, dim=nether]"
+    ],
+    "name": "trident_max_nether",
+    "rarity_rank": 181,
+    "theme": "trident_max"
+  },
+  "248": {
+    "dimension": "end",
+    "group": "combat",
+    "items": [
+      "[TBD stage 3: trident_max bundle, dim=end]"
+    ],
+    "name": "trident_max_end",
+    "rarity_rank": 182,
+    "theme": "trident_max"
+  },
+  "249": {
+    "dimension": "overworld",
+    "group": "enchant",
+    "items": [
+      "[TBD stage 3: enchanted_books_god_max bundle, dim=overworld]"
+    ],
+    "name": "enchanted_books_god_max_overworld",
+    "rarity_rank": 195,
+    "theme": "enchanted_books_god_max"
+  },
+  "250": {
+    "dimension": "nether",
+    "group": "enchant",
+    "items": [
+      "[TBD stage 3: enchanted_books_god_max bundle, dim=nether]"
+    ],
+    "name": "enchanted_books_god_max_nether",
+    "rarity_rank": 196,
+    "theme": "enchanted_books_god_max"
+  },
+  "251": {
+    "dimension": "end",
+    "group": "enchant",
+    "items": [
+      "[TBD stage 3: enchanted_books_god_max bundle, dim=end]"
+    ],
+    "name": "enchanted_books_god_max_end",
+    "rarity_rank": 197,
+    "theme": "enchanted_books_god_max"
+  },
+  "252": {
+    "dimension": "any",
+    "group": "universal",
+    "items": [
+      "[TBD stage 3: full enchanted netherite Tux-style kit (per pvpkits.kit_standard)]"
+    ],
+    "name": "pvp_kit_standard",
+    "rarity_rank": 252,
+    "theme": "pvp_kit_standard"
+  },
+  "253": {
+    "dimension": "any",
+    "group": "universal",
+    "items": [
+      "[TBD stage 3: 5-9 nested kit shulkers, mixed archetypes (pvpkits.build_closet)]"
+    ],
+    "name": "pvp_kit_closet",
+    "rarity_rank": 253,
+    "theme": "pvp_kit_closet"
+  },
+  "254": {
+    "dimension": "any",
+    "group": "universal",
+    "items": [
+      "[TBD stage 3: generic-misc roll, stage-3 dim/biome bias via cluster scan]"
+    ],
+    "name": "fallback_local_misc",
+    "rarity_rank": 254,
+    "theme": "fallback_local_misc"
+  },
+  "255": {
+    "dimension": "any",
+    "group": "universal",
+    "items": [
+      "[TBD stage 3: deliberately empty (the ~3-5% texture-from-searches rule)]"
+    ],
+    "name": "empty_chest",
+    "rarity_rank": 255,
+    "theme": "empty_chest"
+  }
+}

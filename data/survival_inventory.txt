@@ -1,0 +1,1868 @@
+# Mineclonia survival inventory — token-optimized
+# Categories mirror the in-game creative inventory tabs.
+# Mod prefixes (mcl_*:) dropped. Ready for loot-table use.
+# Itemstack entries (potions / enchanted books) keep only
+# meta fields that distinguish variants; cosmetic
+# descriptions stripped.
+
+## Building Blocks (blocks) — 584 items
+  amethyst_block
+  budding_amethyst_block
+  calcite
+  tinted_glass
+  bamboo_mosaic
+  basalt
+  basalt_polished
+  basalt_smooth
+  blackstone
+  blackstone_brick_polished
+  blackstone_brick_polished_cracked
+  blackstone_chiseled_polished
+  blackstone_gilded
+  blackstone_polished
+  nether_gold
+  quartz_brick
+  soul_soil
+  concrete_black
+  concrete_blue
+  concrete_brown
+  concrete_cyan
+  concrete_green
+  concrete_grey
+  concrete_light_blue
+  concrete_lime
+  concrete_magenta
+  concrete_orange
+  concrete_pink
+  concrete_powder_black
+  concrete_powder_blue
+  concrete_powder_brown
+  concrete_powder_cyan
+  concrete_powder_green
+  concrete_powder_grey
+  concrete_powder_light_blue
+  concrete_powder_lime
+  concrete_powder_magenta
+  concrete_powder_orange
+  concrete_powder_pink
+  concrete_powder_purple
+  concrete_powder_red
+  concrete_powder_silver
+  concrete_powder_white
+  concrete_powder_yellow
+  concrete_purple
+  concrete_red
+  concrete_silver
+  concrete_white
+  concrete_yellow
+  glazed_terracotta_black
+  glazed_terracotta_blue
+  glazed_terracotta_brown
+  glazed_terracotta_cyan
+  glazed_terracotta_green
+  glazed_terracotta_grey
+  glazed_terracotta_light_blue
+  glazed_terracotta_lime
+  glazed_terracotta_magenta
+  glazed_terracotta_orange
+  glazed_terracotta_pink
+  glazed_terracotta_purple
+  glazed_terracotta_red
+  glazed_terracotta_silver
+  glazed_terracotta_white
+  glazed_terracotta_yellow
+  hardened_clay
+  hardened_clay_black
+  hardened_clay_blue
+  hardened_clay_brown
+  hardened_clay_cyan
+  hardened_clay_green
+  hardened_clay_grey
+  hardened_clay_light_blue
+  hardened_clay_lime
+  hardened_clay_magenta
+  hardened_clay_orange
+  hardened_clay_pink
+  hardened_clay_purple
+  hardened_clay_red
+  hardened_clay_silver
+  hardened_clay_white
+  hardened_clay_yellow
+  block
+  block_chiseled
+  block_chiseled_preserved
+  block_cut
+  block_cut_preserved
+  block_exposed
+  block_exposed_chiseled
+  block_exposed_chiseled_preserved
+  block_exposed_cut
+  block_exposed_cut_preserved
+  block_exposed_grate
+  block_exposed_grate_preserved
+  block_exposed_preserved
+  block_grate
+  block_grate_preserved
+  block_oxidized
+  block_oxidized_chiseled
+  block_oxidized_chiseled_preserved
+  block_oxidized_cut
+  block_oxidized_cut_preserved
+  block_oxidized_grate
+  block_oxidized_grate_preserved
+  block_oxidized_preserved
+  block_preserved
+  block_raw
+  block_weathered
+  block_weathered_chiseled
+  block_weathered_chiseled_preserved
+  block_weathered_cut
+  block_weathered_cut_preserved
+  block_weathered_grate
+  block_weathered_grate_preserved
+  block_weathered_preserved
+  bulb_exposed_off
+  bulb_exposed_off_preserved
+  bulb_off
+  bulb_off_preserved
+  bulb_oxidized_off
+  bulb_oxidized_off_preserved
+  bulb_weathered_off
+  bulb_weathered_off_preserved
+  stone_with_copper
+  andesite
+  andesite_smooth
+  bedrock
+  blue_ice
+  bone_block
+  brick_block
+  clay
+  coalblock
+  coarse_dirt
+  cobble
+  crying_obsidian
+  diamondblock
+  diorite
+  diorite_smooth
+  dirt
+  dirt_with_grass
+  emeraldblock
+  glass
+  glass_black
+  glass_blue
+  glass_brown
+  glass_cyan
+  glass_green
+  glass_grey
+  glass_light_blue
+  glass_lime
+  glass_magenta
+  glass_orange
+  glass_pink
+  glass_purple
+  glass_red
+  glass_silver
+  glass_white
+  glass_yellow
+  goldblock
+  granite
+  granite_smooth
+  gravel
+  ice
+  ironblock
+  lapisblock
+  mossycobble
+  mycelium
+  obsidian
+  packed_ice
+  podzol
+  redsand
+  redsandstone
+  redsandstonecarved
+  redsandstonesmooth
+  redsandstonesmooth2
+  sand
+  sandstone
+  sandstonecarved
+  sandstonesmooth
+  sandstonesmooth2
+  snowblock
+  stone
+  stone_smooth
+  stone_with_coal
+  stone_with_diamond
+  stone_with_emerald
+  stone_with_gold
+  stone_with_iron
+  stone_with_lapis
+  stone_with_redstone
+  stonebrick
+  stonebrickcarved
+  stonebrickcracked
+  stonebrickmossy
+  crimson_nylium
+  warped_nylium
+  deepslate
+  deepslate_bricks
+  deepslate_bricks_cracked
+  deepslate_chiseled
+  deepslate_cobbled
+  deepslate_polished
+  deepslate_reinforced
+  deepslate_tiles
+  deepslate_tiles_cracked
+  deepslate_with_coal
+  deepslate_with_copper
+  deepslate_with_diamond
+  deepslate_with_emerald
+  deepslate_with_gold
+  deepslate_with_iron
+  deepslate_with_lapis
+  deepslate_with_redstone
+  tuff
+  tuff_bricks
+  tuff_chiseled
+  tuff_chiseled_bricks
+  tuff_polished
+  dripstone_block
+  end_bricks
+  end_stone
+  purpur_block
+  purpur_pillar
+  hay_block
+  melon
+  pumpkin
+  pumpkin_face
+  pumpkin_face_light
+  moss
+  rooted_dirt
+  mangrove_mud_roots
+  monster_egg_cobble
+  monster_egg_deepslate
+  monster_egg_stone
+  monster_egg_stonebrick
+  monster_egg_stonebrickcarved
+  monster_egg_stonebrickcracked
+  monster_egg_stonebrickmossy
+  mud
+  mud_bricks
+  packed_mud
+  brown_mushroom_block_cap_111111
+  brown_mushroom_block_stem
+  brown_mushroom_block_stem_full
+  red_mushroom_block_cap_111111
+  red_mushroom_block_stem
+  red_mushroom_block_stem_full
+  ancient_debris
+  chiseled_nether_brick
+  cracked_nether_brick
+  glowstone
+  magma
+  nether_brick
+  nether_wart_block
+  netheriteblock
+  netherrack
+  quartz_block
+  quartz_chiseled
+  quartz_ore
+  quartz_pillar
+  quartz_smooth
+  red_nether_brick
+  soul_sand
+  brain_coral_block
+  bubble_coral_block
+  dead_brain_coral_block
+  dead_bubble_coral_block
+  dead_fire_coral_block
+  dead_horn_coral_block
+  dead_tube_coral_block
+  dried_kelp_block
+  fire_coral_block
+  horn_coral_block
+  prismarine
+  prismarine_brick
+  prismarine_dark
+  sea_lantern
+  tube_coral_block
+  pale_moss
+  raw_gold_block
+  raw_iron_block
+  catalyst
+  sculk
+  sponge
+  sponge_wet
+  sponge_wet_river_water
+  slab_acacia
+  slab_acacia_bark
+  slab_andesite
+  slab_andesite_smooth
+  slab_bamboo
+  slab_bamboo_mosaic
+  slab_birch
+  slab_birch_bark
+  slab_blackstone
+  slab_blackstone_brick_polished
+  slab_blackstone_polished
+  slab_brick_block
+  slab_cherry_blossom
+  slab_cherry_blossom_bark
+  slab_cobble
+  slab_concrete_black
+  slab_concrete_blue
+  slab_concrete_brown
+  slab_concrete_cyan
+  slab_concrete_green
+  slab_concrete_grey
+  slab_concrete_light_blue
+  slab_concrete_lime
+  slab_concrete_magenta
+  slab_concrete_orange
+  slab_concrete_pink
+  slab_concrete_purple
+  slab_concrete_red
+  slab_concrete_silver
+  slab_concrete_white
+  slab_concrete_yellow
+  slab_copper_cut
+  slab_copper_cut_preserved
+  slab_copper_exposed_cut
+  slab_copper_exposed_cut_preserved
+  slab_copper_oxidized_cut
+  slab_copper_oxidized_cut_preserved
+  slab_copper_weathered_cut
+  slab_copper_weathered_cut_preserved
+  slab_crimson
+  slab_crimson_bark
+  slab_dark_oak
+  slab_dark_oak_bark
+  slab_deepslate_bricks
+  slab_deepslate_bricks_cracked
+  slab_deepslate_cobbled
+  slab_deepslate_polished
+  slab_deepslate_tiles
+  slab_deepslate_tiles_cracked
+  slab_diorite
+  slab_diorite_smooth
+  slab_end_bricks
+  slab_end_stone
+  slab_goldblock
+  slab_granite
+  slab_granite_smooth
+  slab_hardened_clay
+  slab_hardened_clay_black
+  slab_hardened_clay_blue
+  slab_hardened_clay_brown
+  slab_hardened_clay_cyan
+  slab_hardened_clay_green
+  slab_hardened_clay_grey
+  slab_hardened_clay_light_blue
+  slab_hardened_clay_lime
+  slab_hardened_clay_magenta
+  slab_hardened_clay_orange
+  slab_hardened_clay_pink
+  slab_hardened_clay_purple
+  slab_hardened_clay_red
+  slab_hardened_clay_silver
+  slab_hardened_clay_white
+  slab_hardened_clay_yellow
+  slab_ironblock
+  slab_jungle
+  slab_jungle_bark
+  slab_lapisblock
+  slab_mangrove
+  slab_mangrove_bark
+  slab_mossycobble
+  slab_mud_brick
+  slab_nether_brick
+  slab_oak
+  slab_oak_bark
+  slab_pale_oak
+  slab_pale_oak_bark
+  slab_prismarine
+  slab_prismarine_brick
+  slab_prismarine_dark
+  slab_purpur_block
+  slab_quartz_smooth
+  slab_quartzblock
+  slab_red_nether_brick
+  slab_redsandstone
+  slab_redsandstonesmooth
+  slab_redsandstonesmooth2
+  slab_resin_brick
+  slab_sandstone
+  slab_sandstonesmooth
+  slab_sandstonesmooth2
+  slab_spruce
+  slab_spruce_bark
+  slab_stone
+  slab_stone_rough
+  slab_stonebrick
+  slab_stonebrickcracked
+  slab_stonebrickmossy
+  slab_tuff
+  slab_tuff_bricks
+  slab_tuff_polished
+  slab_warped
+  slab_warped_bark
+  stair_acacia
+  stair_acacia_bark
+  stair_andesite
+  stair_andesite_smooth
+  stair_bamboo
+  stair_bamboo_mosaic
+  stair_birch
+  stair_birch_bark
+  stair_blackstone
+  stair_blackstone_brick_polished
+  stair_blackstone_polished
+  stair_brick_block
+  stair_cherry_blossom
+  stair_cherry_blossom_bark
+  stair_cobble
+  stair_concrete_black
+  stair_concrete_blue
+  stair_concrete_brown
+  stair_concrete_cyan
+  stair_concrete_green
+  stair_concrete_grey
+  stair_concrete_light_blue
+  stair_concrete_lime
+  stair_concrete_magenta
+  stair_concrete_orange
+  stair_concrete_pink
+  stair_concrete_purple
+  stair_concrete_red
+  stair_concrete_silver
+  stair_concrete_white
+  stair_concrete_yellow
+  stair_copper_cut
+  stair_copper_cut_preserved
+  stair_copper_exposed_cut
+  stair_copper_exposed_cut_preserved
+  stair_copper_oxidized_cut
+  stair_copper_oxidized_cut_preserved
+  stair_copper_weathered_cut
+  stair_copper_weathered_cut_preserved
+  stair_crimson
+  stair_crimson_bark
+  stair_dark_oak
+  stair_dark_oak_bark
+  stair_deepslate_bricks
+  stair_deepslate_bricks_cracked
+  stair_deepslate_cobbled
+  stair_deepslate_polished
+  stair_deepslate_tiles
+  stair_deepslate_tiles_cracked
+  stair_diorite
+  stair_diorite_smooth
+  stair_end_bricks
+  stair_end_stone
+  stair_goldblock
+  stair_granite
+  stair_granite_smooth
+  stair_hardened_clay
+  stair_hardened_clay_black
+  stair_hardened_clay_blue
+  stair_hardened_clay_brown
+  stair_hardened_clay_cyan
+  stair_hardened_clay_green
+  stair_hardened_clay_grey
+  stair_hardened_clay_light_blue
+  stair_hardened_clay_lime
+  stair_hardened_clay_magenta
+  stair_hardened_clay_orange
+  stair_hardened_clay_pink
+  stair_hardened_clay_purple
+  stair_hardened_clay_red
+  stair_hardened_clay_silver
+  stair_hardened_clay_white
+  stair_hardened_clay_yellow
+  stair_ironblock
+  stair_jungle
+  stair_jungle_bark
+  stair_lapisblock
+  stair_mangrove
+  stair_mangrove_bark
+  stair_mossycobble
+  stair_mud_brick
+  stair_nether_brick
+  stair_oak
+  stair_oak_bark
+  stair_pale_oak
+  stair_pale_oak_bark
+  stair_prismarine
+  stair_prismarine_brick
+  stair_prismarine_dark
+  stair_purpur_block
+  stair_quartz_smooth
+  stair_quartzblock
+  stair_red_nether_brick
+  stair_redsandstone
+  stair_redsandstonesmooth
+  stair_redsandstonesmooth2
+  stair_resin_brick
+  stair_sandstone
+  stair_sandstonesmooth
+  stair_sandstonesmooth2
+  stair_spruce
+  stair_spruce_bark
+  stair_stone
+  stair_stone_rough
+  stair_stonebrick
+  stair_stonebrickcracked
+  stair_stonebrickmossy
+  stair_tuff
+  stair_tuff_bricks
+  stair_tuff_polished
+  stair_warped
+  stair_warped_bark
+  bark_acacia
+  bark_birch
+  bark_cherry_blossom
+  bark_crimson
+  bark_dark_oak
+  bark_jungle
+  bark_mangrove
+  bark_oak
+  bark_pale_oak
+  bark_spruce
+  bark_stripped_acacia
+  bark_stripped_birch
+  bark_stripped_cherry_blossom
+  bark_stripped_crimson
+  bark_stripped_dark_oak
+  bark_stripped_jungle
+  bark_stripped_mangrove
+  bark_stripped_oak
+  bark_stripped_pale_oak
+  bark_stripped_spruce
+  bark_stripped_warped
+  bark_warped
+  stripped_acacia
+  stripped_bamboo
+  stripped_birch
+  stripped_cherry_blossom
+  stripped_crimson
+  stripped_dark_oak
+  stripped_jungle
+  stripped_mangrove
+  stripped_oak
+  stripped_pale_oak
+  stripped_spruce
+  stripped_warped
+  tree_acacia
+  tree_bamboo
+  tree_birch
+  tree_cherry_blossom
+  tree_crimson
+  tree_dark_oak
+  tree_jungle
+  tree_mangrove
+  tree_oak
+  tree_pale_oak
+  tree_spruce
+  tree_warped
+  wood_acacia
+  wood_bamboo
+  wood_birch
+  wood_cherry_blossom
+  wood_crimson
+  wood_dark_oak
+  wood_jungle
+  wood_mangrove
+  wood_oak
+  wood_pale_oak
+  wood_spruce
+  wood_warped
+  black
+  blue
+  brown
+  cyan
+  green
+  grey
+  light_blue
+  lime
+  magenta
+  orange
+  pink
+  purple
+  red
+  silver
+  white
+  yellow
+
+## Decoration Blocks (deco) — 441 items
+  amethyst_cluster
+  large_amethyst_bud
+  medium_amethyst_bud
+  small_amethyst_bud
+  tinted_glass
+  anvil
+  anvil_damage_1
+  anvil_damage_2
+  armor_stand
+  scaffolding
+  banner_item_black
+  banner_item_blue
+  banner_item_brown
+  banner_item_cyan
+  banner_item_green
+  banner_item_grey
+  banner_item_light_blue
+  banner_item_lime
+  banner_item_magenta
+  banner_item_orange
+  banner_item_pink
+  banner_item_purple
+  banner_item_red
+  banner_item_silver
+  banner_item_white
+  banner_item_yellow
+  barrel_closed
+  beacon
+  bed_black_bottom
+  bed_blue_bottom
+  bed_brown_bottom
+  bed_cyan_bottom
+  bed_green_bottom
+  bed_grey_bottom
+  bed_light_blue_bottom
+  bed_lime_bottom
+  bed_magenta_bottom
+  bed_orange_bottom
+  bed_pink_bottom
+  bed_purple_bottom
+  bed_red_bottom
+  bed_silver_bottom
+  bed_white_bottom
+  bed_yellow_bottom
+  respawn_anchor
+  bee_nest
+  beehive
+  bell
+  polishedbrickwall_short_pillar
+  polishedwall_short_pillar
+  soul_torch
+  wall_short_pillar
+  blast_furnace
+  bookshelf
+  chiseled_bookshelf
+  campfire_lit
+  soul_campfire_lit
+  candle_1
+  candle_1 "wield_overlay=mcl_candles_item_black.png,inventory_overlay=mcl_candles_item_black.png,palette_index=4"
+  candle_1 "wield_overlay=mcl_candles_item_blue.png,inventory_overlay=mcl_candles_item_blue.png,palette_index=6"
+  candle_1 "wield_overlay=mcl_candles_item_brown.png,inventory_overlay=mcl_candles_item_brown.png,palette_index=12"
+  candle_1 "wield_overlay=mcl_candles_item_cyan.png,inventory_overlay=mcl_candles_item_cyan.png,palette_index=8"
+  candle_1 "wield_overlay=mcl_candles_item_green.png,inventory_overlay=mcl_candles_item_green.png,palette_index=9"
+  candle_1 "wield_overlay=mcl_candles_item_grey.png,inventory_overlay=mcl_candles_item_grey.png,palette_index=3"
+  candle_1 "wield_overlay=mcl_candles_item_light_blue.png,inventory_overlay=mcl_candles_item_light_blue.png,palette_index=7"
+  candle_1 "wield_overlay=mcl_candles_item_lime.png,inventory_overlay=mcl_candles_item_lime.png,palette_index=10"
+  candle_1 "wield_overlay=mcl_candles_item_magenta.png,inventory_overlay=mcl_candles_item_magenta.png,palette_index=15"
+  candle_1 "wield_overlay=mcl_candles_item_orange.png,inventory_overlay=mcl_candles_item_orange.png,palette_index=13"
+  candle_1 "wield_overlay=mcl_candles_item_pink.png,inventory_overlay=mcl_candles_item_pink.png,palette_index=16"
+  candle_1 "wield_overlay=mcl_candles_item_purple.png,inventory_overlay=mcl_candles_item_purple.png,palette_index=5"
+  candle_1 "wield_overlay=mcl_candles_item_red.png,inventory_overlay=mcl_candles_item_red.png,palette_index=14"
+  candle_1 "wield_overlay=mcl_candles_item_silver.png,inventory_overlay=mcl_candles_item_silver.png,palette_index=2"
+  candle_1 "wield_overlay=mcl_candles_item_white.png,inventory_overlay=mcl_candles_item_white.png,palette_index=1"
+  candle_1 "wield_overlay=mcl_candles_item_yellow.png,inventory_overlay=mcl_candles_item_yellow.png,palette_index=11"
+  cartography_table
+  cauldron
+  black_shulker_box
+  blue_shulker_box
+  brown_shulker_box
+  chest
+  cyan_shulker_box
+  dark_green_shulker_box
+  dark_grey_shulker_box
+  ender_chest
+  green_shulker_box
+  grey_shulker_box
+  lightblue_shulker_box
+  magenta_shulker_box
+  orange_shulker_box
+  pink_shulker_box
+  red_shulker_box
+  trapped_chest
+  violet_shulker_box
+  white_shulker_box
+  yellow_shulker_box
+  lodestone
+  composter
+  conduit
+  copper_torch
+  door
+  door_exposed
+  door_exposed_preserved
+  door_oxidized
+  door_oxidized_preserved
+  door_preserved
+  door_weathered
+  door_weathered_preserved
+  trapdoor
+  trapdoor_exposed
+  trapdoor_exposed_preserved
+  trapdoor_oxidized
+  trapdoor_oxidized_preserved
+  trapdoor_preserved
+  trapdoor_weathered
+  trapdoor_weathered_preserved
+  cactus
+  cactus_flower
+  cobweb
+  deadbush
+  glow_lichen
+  grass_path
+  ladder
+  reeds
+  slimeblock
+  snow
+  vine
+  crafting_table
+  crimson_fungus
+  crimson_roots
+  nether_sprouts
+  shroomlight
+  twisting_vines
+  warped_fungus
+  warped_roots
+  warped_wart_block
+  weeping_vines
+  deepslatebrickswall_short_pillar
+  deepslatecobbledwall_short_pillar
+  deepslatepolishedwall_short_pillar
+  deepslatetileswall_short_pillar
+  tuffbrickswall_short_pillar
+  tuffpolishedwall_short_pillar
+  tuffwall_short_pillar
+  door_acacia
+  door_bamboo
+  door_birch
+  door_cherry_blossom
+  door_crimson
+  door_dark_oak
+  door_jungle
+  door_mangrove
+  door_oak
+  door_pale_oak
+  door_spruce
+  door_warped
+  iron_door
+  iron_trapdoor
+  trapdoor_acacia
+  trapdoor_bamboo
+  trapdoor_birch
+  trapdoor_cherry_blossom
+  trapdoor_crimson
+  trapdoor_dark_oak
+  trapdoor_jungle
+  trapdoor_mangrove
+  trapdoor_oak
+  trapdoor_pale_oak
+  trapdoor_spruce
+  trapdoor_warped
+  table
+  chorus_flower
+  chorus_plant
+  dragon_egg
+  end_rod
+  soil
+  acacia_fence
+  acacia_fence_gate
+  bamboo_fence
+  bamboo_fence_gate
+  birch_fence
+  birch_fence_gate
+  cherry_blossom_fence
+  cherry_blossom_fence_gate
+  crimson_fence
+  crimson_fence_gate
+  dark_oak_fence
+  dark_oak_fence_gate
+  jungle_fence
+  jungle_fence_gate
+  mangrove_fence
+  mangrove_fence_gate
+  nether_brick_fence
+  nether_brick_fence_gate
+  oak_fence
+  oak_fence_gate
+  pale_oak_fence
+  pale_oak_fence_gate
+  red_nether_brick_fence
+  red_nether_brick_fence_gate
+  spruce_fence
+  spruce_fence_gate
+  warped_fence
+  warped_fence_gate
+  fletching_table
+  flower_pot
+  allium
+  azure_bluet
+  blue_orchid
+  bush
+  cornflower
+  dandelion
+  double_fern
+  double_grass
+  eyeblossom
+  eyeblossom_open
+  fern
+  firefly_bush
+  leaf_litter
+  lilac
+  lily_of_the_valley
+  oxeye_daisy
+  peony
+  pink_petals
+  poppy
+  rose_bush
+  short_dry_grass
+  sunflower
+  tall_dry_grass
+  tallgrass
+  tulip_orange
+  tulip_pink
+  tulip_red
+  tulip_white
+  waterlily
+  wildflowers
+  wither_rose
+  furnace
+  grindstone
+  creeper
+  dragon
+  piglin
+  skeleton
+  steve
+  wither_skeleton
+  zombie
+  honey_block
+  honeycomb_block
+  hopper
+  frame
+  glow_frame
+  jukebox
+  chain
+  copper_chain
+  copper_chain_exposed
+  copper_chain_exposed_preserved
+  copper_chain_oxidized
+  copper_chain_oxidized_preserved
+  copper_chain_preserved
+  copper_chain_weathered
+  copper_chain_weathered_preserved
+  copper_lantern_exposed_floor
+  copper_lantern_exposed_floor_preserved
+  copper_lantern_floor
+  copper_lantern_floor_preserved
+  copper_lantern_oxidized_floor
+  copper_lantern_oxidized_floor_preserved
+  copper_lantern_weathered_floor
+  copper_lantern_weathered_floor_preserved
+  lantern_floor
+  soul_lantern_floor
+  lectern
+  loom
+  azalea
+  azalea_flowering
+  hanging_roots
+  moss_carpet
+  spore_blossom
+  mangrove_roots
+  propagule
+  mushroom_brown
+  mushroom_red
+  brain_coral
+  brain_coral_fan
+  bubble_coral
+  bubble_coral_fan
+  dead_brain_coral
+  dead_brain_coral_fan
+  dead_bubble_coral
+  dead_bubble_coral_fan
+  dead_fire_coral
+  dead_fire_coral_fan
+  dead_horn_coral
+  dead_horn_coral_fan
+  dead_tube_coral
+  dead_tube_coral_fan
+  fire_coral
+  fire_coral_fan
+  horn_coral
+  horn_coral_fan
+  kelp
+  sea_pickle_1_dead_brain_coral_block
+  seagrass
+  tube_coral
+  tube_coral_fan
+  painting
+  painting "height=1,title=Ancient Octopus,width=1,placed_painting=mcl_paintings:ancient_octopus"
+  painting "height=1,title=Balding Man,width=1,placed_painting=mcl_paintings:balding_man"
+  painting "height=1,title=Battle Axe,width=2,placed_painting=mcl_paintings:battle_axe"
+  painting "height=1,title=Butcher Knives,width=1,placed_painting=mcl_paintings:butcher_knives"
+  painting "height=1,title=Cooking Utensils,width=2,placed_painting=mcl_paintings:cooking_utensils"
+  painting "height=2,title=Decorative Swords,width=2,placed_painting=mcl_paintings:decorative_swords"
+  painting "height=1,title=Dense Jungle Forest,width=2,placed_painting=mcl_paintings:dense_jungle_forest"
+  painting "height=2,title=Desert Castle,width=2,placed_painting=mcl_paintings:desert_castle"
+  painting "height=3,title=Elf Utopia,width=4,placed_painting=mcl_paintings:elf_utopia"
+  painting "height=1,title=Endless Dunes,width=2,placed_painting=mcl_paintings:endless_dunes"
+  painting "height=2,title=Froggy Pond,width=2,placed_painting=mcl_paintings:froggy_pond"
+  painting "height=3,title=Gloom Gloom Mountain,width=4,placed_painting=mcl_paintings:gloom_gloom_mountain"
+  painting "height=2,title=Green Banner,width=1,placed_painting=mcl_paintings:green_banner"
+  painting "height=1,title=Green Bottles,width=2,placed_painting=mcl_paintings:green_bottles"
+  painting "height=2,title=Moonshine Tundra,width=2,placed_painting=mcl_paintings:moonshine_tundra"
+  painting "height=4,title=Mountain Tower,width=4,placed_painting=mcl_paintings:mountain_tower"
+  painting "height=1,title=Notes,width=1,placed_painting=mcl_paintings:notes"
+  painting "height=1,title=Poster,width=1,placed_painting=mcl_paintings:poster"
+  painting "height=2,title=Quest Board,width=4,placed_painting=mcl_paintings:quest_board"
+  painting "height=2,title=Red Banner,width=1,placed_painting=mcl_paintings:blue_banner"
+  painting "height=2,title=Sarmatian Decoration,width=2,placed_painting=mcl_paintings:sarmatian_decoration"
+  painting "height=1,title=Snowy Mountain,width=1,placed_painting=mcl_paintings:snowy_mountain"
+  painting "height=2,title=Support Truss,width=2,placed_painting=mcl_paintings:support_truss"
+  painting "height=1,title=Viking Shield,width=1,placed_painting=mcl_paintings:viking_shield"
+  painting "height=4,title=Volendam Costume,width=4,placed_painting=mcl_paintings:volendam_costume"
+  painting "height=4,title=Waterfall Bridge,width=4,placed_painting=mcl_paintings:waterfall_bridge"
+  hanging_moss
+  pale_moss_carpet
+  resinbrick_short_pillar
+  bar_flat
+  copper_bar_exposed_flat
+  copper_bar_exposed_flat_preserved
+  copper_bar_flat
+  copper_bar_flat_preserved
+  copper_bar_oxidized_flat
+  copper_bar_oxidized_flat_preserved
+  copper_bar_weathered_flat
+  copper_bar_weathered_flat_preserved
+  pane_black_flat
+  pane_blue_flat
+  pane_brown_flat
+  pane_cyan_flat
+  pane_green_flat
+  pane_grey_flat
+  pane_light_blue_flat
+  pane_lime_flat
+  pane_magenta_flat
+  pane_natural_flat
+  pane_orange_flat
+  pane_pink_flat
+  pane_purple_flat
+  pane_red_flat
+  pane_silver_flat
+  pane_white_flat
+  pane_yellow_flat
+  end_portal_frame
+  pot
+  vein
+  hanging_sign_acacia
+  hanging_sign_bamboo
+  hanging_sign_birch
+  hanging_sign_cherry_blossom
+  hanging_sign_crimson
+  hanging_sign_dark_oak
+  hanging_sign_jungle
+  hanging_sign_mangrove
+  hanging_sign_oak
+  hanging_sign_pale_oak
+  hanging_sign_spruce
+  hanging_sign_warped
+  wall_sign_acacia
+  wall_sign_bamboo
+  wall_sign_birch
+  wall_sign_cherry_blossom
+  wall_sign_crimson
+  wall_sign_dark_oak
+  wall_sign_jungle
+  wall_sign_mangrove
+  wall_sign_oak
+  wall_sign_pale_oak
+  wall_sign_spruce
+  wall_sign_warped
+  smoker
+  stonecutter
+  heavy_core
+  torch
+  leaves_acacia
+  leaves_azalea
+  leaves_azalea_flowering
+  leaves_birch
+  leaves_cherry_blossom
+  leaves_dark_oak
+  leaves_jungle
+  leaves_mangrove
+  leaves_oak
+  leaves_pale_oak
+  leaves_spruce
+  sapling_acacia
+  sapling_birch
+  sapling_cherry_blossom
+  sapling_dark_oak
+  sapling_jungle
+  sapling_oak
+  sapling_pale_oak
+  sapling_spruce
+  andesite_short_pillar
+  brick_short_pillar
+  cobble_short_pillar
+  diorite_short_pillar
+  endbricks_short_pillar
+  granite_short_pillar
+  mossycobble_short_pillar
+  mudbrick_short_pillar
+  netherbrick_short_pillar
+  prismarine_short_pillar
+  rednetherbrick_short_pillar
+  redsandstone_short_pillar
+  sandstone_short_pillar
+  stonebrick_short_pillar
+  stonebrickmossy_short_pillar
+  black_carpet
+  blue_carpet
+  brown_carpet
+  cyan_carpet
+  green_carpet
+  grey_carpet
+  light_blue_carpet
+  lime_carpet
+  magenta_carpet
+  orange_carpet
+  pink_carpet
+  purple_carpet
+  red_carpet
+  silver_carpet
+  white_carpet
+  yellow_carpet
+
+## Redstone (redstone) — 94 items
+  bell
+  button_acacia_off
+  button_bamboo_off
+  button_birch_off
+  button_cherry_blossom_off
+  button_crimson_off
+  button_dark_oak_off
+  button_jungle_off
+  button_mangrove_off
+  button_oak_off
+  button_pale_oak_off
+  button_polished_blackstone_off
+  button_spruce_off
+  button_stone_off
+  button_warped_off
+  comparator_off_comp
+  bulb_exposed_off
+  bulb_exposed_off_preserved
+  bulb_off
+  bulb_off_preserved
+  bulb_oxidized_off
+  bulb_oxidized_off_preserved
+  bulb_weathered_off
+  bulb_weathered_off_preserved
+  trapdoor
+  trapdoor_exposed
+  trapdoor_exposed_preserved
+  trapdoor_oxidized
+  trapdoor_oxidized_preserved
+  trapdoor_preserved
+  trapdoor_weathered
+  trapdoor_weathered_preserved
+  daylight_detector
+  dispenser
+  dropper
+  iron_trapdoor
+  trapdoor_acacia
+  trapdoor_bamboo
+  trapdoor_birch
+  trapdoor_cherry_blossom
+  trapdoor_crimson
+  trapdoor_dark_oak
+  trapdoor_jungle
+  trapdoor_mangrove
+  trapdoor_oak
+  trapdoor_pale_oak
+  trapdoor_spruce
+  trapdoor_warped
+  acacia_fence_gate
+  bamboo_fence_gate
+  birch_fence_gate
+  cherry_blossom_fence_gate
+  crimson_fence_gate
+  dark_oak_fence_gate
+  jungle_fence_gate
+  mangrove_fence_gate
+  nether_brick_fence_gate
+  oak_fence_gate
+  pale_oak_fence_gate
+  red_nether_brick_fence_gate
+  spruce_fence_gate
+  warped_fence_gate
+  hopper
+  lectern
+  lever_off
+  activator_rail
+  golden_rail
+  noteblock
+  observer_off
+  piston_off
+  piston_sticky_off
+  pressure_plate_acacia_off
+  pressure_plate_bamboo_off
+  pressure_plate_birch_off
+  pressure_plate_cherry_blossom_off
+  pressure_plate_crimson_off
+  pressure_plate_dark_oak_off
+  pressure_plate_heavy_off
+  pressure_plate_jungle_off
+  pressure_plate_light_off
+  pressure_plate_mangrove_off
+  pressure_plate_oak_off
+  pressure_plate_pale_oak_off
+  pressure_plate_polished_blackstone_off
+  pressure_plate_spruce_off
+  pressure_plate_stone_off
+  pressure_plate_warped_off
+  redstone
+  lamp_off
+  redstone_torch_on
+  redstoneblock
+  repeater_off_1
+  target_off
+  tnt
+
+## Transportation (rail) — 34 items
+  boat_acacia
+  boat_acacia_chest
+  boat_bamboo
+  boat_bamboo_chest
+  boat_birch
+  boat_birch_chest
+  boat_cherry_blossom
+  boat_cherry_blossom_chest
+  boat_dark_oak
+  boat_dark_oak_chest
+  boat_jungle
+  boat_jungle_chest
+  boat_mangrove
+  boat_mangrove_chest
+  boat_oak
+  boat_oak_chest
+  boat_pale_oak
+  boat_pale_oak_chest
+  boat_spruce
+  boat_spruce_chest
+  chorus_fruit
+  activator_rail
+  chest_minecart
+  detector_rail
+  furnace_minecart
+  golden_rail
+  hopper_minecart
+  minecart
+  rail
+  tnt_minecart
+  carrot_on_a_stick
+  saddle
+  warped_fungus_on_a_stick
+  ender_pearl
+
+## Food (food) — 40 items
+  apple
+  apple_gold
+  apple_gold_enchanted
+  chorus_fruit
+  beetroot_item
+  beetroot_soup
+  bread
+  carrot_item
+  carrot_item_gold
+  cookie
+  melon_item
+  potato_item
+  potato_item_baked
+  potato_item_poison
+  pumpkin_pie
+  sweet_berry
+  clownfish_raw
+  fish_cooked
+  fish_raw
+  pufferfish_raw
+  salmon_cooked
+  salmon_raw
+  honey_bottle
+  glow_berry
+  beef
+  chicken
+  cooked_beef
+  cooked_chicken
+  cooked_mutton
+  cooked_porkchop
+  cooked_rabbit
+  milk_bucket
+  mutton
+  porkchop
+  rabbit
+  rabbit_stew
+  rotten_flesh
+  spider_eye
+  mushroom_stew
+  dried_kelp
+
+## Tools (tools) — 60 items
+  clock
+  compass
+  compass_recovery
+  book_enchanted "enchantments={efficiency=3}"
+  book_enchanted "enchantments={efficiency=2}"
+  book_enchanted "enchantments={efficiency=4}"
+  book_enchanted "enchantments={efficiency=1}"
+  book_enchanted "enchantments={efficiency=5}"
+  book_enchanted "enchantments={fortune=3}"
+  book_enchanted "enchantments={fortune=2}"
+  book_enchanted "enchantments={fortune=1}"
+  book_enchanted "enchantments={luck_of_the_sea=3}"
+  book_enchanted "enchantments={luck_of_the_sea=2}"
+  book_enchanted "enchantments={luck_of_the_sea=1}"
+  book_enchanted "enchantments={lure=3}"
+  book_enchanted "enchantments={lure=2}"
+  book_enchanted "enchantments={lure=1}"
+  book_enchanted "enchantments={mending=1}"
+  book_enchanted "enchantments={silk_touch=1}"
+  book_enchanted "enchantments={unbreaking=3}"
+  book_enchanted "enchantments={unbreaking=2}"
+  book_enchanted "enchantments={unbreaking=1}"
+  book_enchanted "enchantments={curse_of_vanishing=1}"
+  hoe_copper
+  hoe_diamond
+  hoe_gold
+  hoe_iron
+  hoe_netherite
+  hoe_stone
+  hoe_wood
+  flint_and_steel
+  fishing_rod
+  carrot_on_a_stick
+  nametag
+  warped_fungus_on_a_stick
+  spyglass
+  brush
+  axe_copper
+  axe_diamond
+  axe_gold
+  axe_iron
+  axe_netherite
+  axe_stone
+  axe_wood
+  pick_copper
+  pick_diamond
+  pick_gold
+  pick_iron
+  pick_netherite
+  pick_stone
+  pick_wood
+  shears
+  shovel_copper
+  shovel_diamond
+  shovel_gold
+  shovel_iron
+  shovel_netherite
+  shovel_stone
+  shovel_wood
+  screwdriver
+
+## Combat (combat) — 173 items
+  boots_chain
+  boots_copper
+  boots_diamond
+  boots_gold
+  boots_iron
+  boots_leather
+  boots_netherite
+  chestplate_chain
+  chestplate_copper
+  chestplate_diamond
+  chestplate_gold
+  chestplate_iron
+  chestplate_leather
+  chestplate_netherite
+  elytra
+  helmet_chain
+  helmet_copper
+  helmet_diamond
+  helmet_gold
+  helmet_iron
+  helmet_leather
+  helmet_netherite
+  leggings_chain
+  leggings_copper
+  leggings_diamond
+  leggings_gold
+  leggings_iron
+  leggings_leather
+  leggings_netherite
+  arrow
+  bow
+  crossbow
+  book_enchanted "enchantments={blast_protection=3}"
+  book_enchanted "enchantments={blast_protection=2}"
+  book_enchanted "enchantments={blast_protection=4}"
+  book_enchanted "enchantments={blast_protection=1}"
+  book_enchanted "enchantments={feather_falling=3}"
+  book_enchanted "enchantments={feather_falling=2}"
+  book_enchanted "enchantments={feather_falling=4}"
+  book_enchanted "enchantments={feather_falling=1}"
+  book_enchanted "enchantments={fire_protection=3}"
+  book_enchanted "enchantments={fire_protection=2}"
+  book_enchanted "enchantments={fire_protection=4}"
+  book_enchanted "enchantments={fire_protection=1}"
+  book_enchanted "enchantments={projectile_protection=3}"
+  book_enchanted "enchantments={projectile_protection=2}"
+  book_enchanted "enchantments={projectile_protection=4}"
+  book_enchanted "enchantments={projectile_protection=1}"
+  book_enchanted "enchantments={protection=3}"
+  book_enchanted "enchantments={protection=2}"
+  book_enchanted "enchantments={protection=4}"
+  book_enchanted "enchantments={protection=1}"
+  book_enchanted "enchantments={thorns=3}"
+  book_enchanted "enchantments={thorns=2}"
+  book_enchanted "enchantments={thorns=1}"
+  book_enchanted "enchantments={bane_of_arthropods=3}"
+  book_enchanted "enchantments={bane_of_arthropods=2}"
+  book_enchanted "enchantments={bane_of_arthropods=4}"
+  book_enchanted "enchantments={bane_of_arthropods=1}"
+  book_enchanted "enchantments={bane_of_arthropods=5}"
+  book_enchanted "enchantments={breach=3}"
+  book_enchanted "enchantments={breach=2}"
+  book_enchanted "enchantments={breach=4}"
+  book_enchanted "enchantments={breach=1}"
+  book_enchanted "enchantments={channeling=1}"
+  book_enchanted "enchantments={density=3}"
+  book_enchanted "enchantments={density=2}"
+  book_enchanted "enchantments={density=4}"
+  book_enchanted "enchantments={density=1}"
+  book_enchanted "enchantments={density=5}"
+  book_enchanted "enchantments={depth_strider=3}"
+  book_enchanted "enchantments={depth_strider=2}"
+  book_enchanted "enchantments={depth_strider=1}"
+  book_enchanted "enchantments={fire_aspect=2}"
+  book_enchanted "enchantments={fire_aspect=1}"
+  book_enchanted "enchantments={flame=1}"
+  book_enchanted "enchantments={frost_walker=2}"
+  book_enchanted "enchantments={frost_walker=1}"
+  book_enchanted "enchantments={impaling=3}"
+  book_enchanted "enchantments={impaling=2}"
+  book_enchanted "enchantments={impaling=4}"
+  book_enchanted "enchantments={impaling=1}"
+  book_enchanted "enchantments={impaling=5}"
+  book_enchanted "enchantments={infinity=1}"
+  book_enchanted "enchantments={knockback=2}"
+  book_enchanted "enchantments={knockback=1}"
+  book_enchanted "enchantments={looting=3}"
+  book_enchanted "enchantments={looting=2}"
+  book_enchanted "enchantments={looting=1}"
+  book_enchanted "enchantments={loyalty=3}"
+  book_enchanted "enchantments={loyalty=2}"
+  book_enchanted "enchantments={loyalty=1}"
+  book_enchanted "enchantments={mending=1}"
+  book_enchanted "enchantments={multishot=1}"
+  book_enchanted "enchantments={piercing=3}"
+  book_enchanted "enchantments={piercing=2}"
+  book_enchanted "enchantments={piercing=4}"
+  book_enchanted "enchantments={piercing=1}"
+  book_enchanted "enchantments={power=3}"
+  book_enchanted "enchantments={power=2}"
+  book_enchanted "enchantments={power=4}"
+  book_enchanted "enchantments={power=1}"
+  book_enchanted "enchantments={power=5}"
+  book_enchanted "enchantments={punch=2}"
+  book_enchanted "enchantments={punch=1}"
+  book_enchanted "enchantments={quick_charge=3}"
+  book_enchanted "enchantments={quick_charge=2}"
+  book_enchanted "enchantments={quick_charge=1}"
+  book_enchanted "enchantments={respiration=3}"
+  book_enchanted "enchantments={respiration=2}"
+  book_enchanted "enchantments={respiration=1}"
+  book_enchanted "enchantments={riptide=3}"
+  book_enchanted "enchantments={riptide=2}"
+  book_enchanted "enchantments={riptide=1}"
+  book_enchanted "enchantments={sharpness=3}"
+  book_enchanted "enchantments={sharpness=2}"
+  book_enchanted "enchantments={sharpness=4}"
+  book_enchanted "enchantments={sharpness=1}"
+  book_enchanted "enchantments={sharpness=5}"
+  book_enchanted "enchantments={smite=3}"
+  book_enchanted "enchantments={smite=2}"
+  book_enchanted "enchantments={smite=4}"
+  book_enchanted "enchantments={smite=1}"
+  book_enchanted "enchantments={smite=5}"
+  book_enchanted "enchantments={soul_speed=3}"
+  book_enchanted "enchantments={soul_speed=2}"
+  book_enchanted "enchantments={soul_speed=1}"
+  book_enchanted "enchantments={unbreaking=3}"
+  book_enchanted "enchantments={unbreaking=2}"
+  book_enchanted "enchantments={unbreaking=1}"
+  book_enchanted "enchantments={wind_burst=3}"
+  book_enchanted "enchantments={wind_burst=2}"
+  book_enchanted "enchantments={wind_burst=1}"
+  book_enchanted "enchantments={curse_of_binding=1}"
+  book_enchanted "enchantments={curse_of_vanishing=1}"
+  copper_horse_armor
+  diamond_horse_armor
+  gold_horse_armor
+  iron_horse_armor
+  leather_horse_armor
+  fire_resistance_arrow
+  harming_arrow
+  healing_arrow
+  infestation_arrow
+  invisibility_arrow
+  leaping_arrow
+  luck_arrow
+  night_vision_arrow
+  oozing_arrow
+  poison_arrow
+  regeneration_arrow
+  slow_falling_arrow
+  slowness_arrow
+  strength_arrow
+  swiftness_arrow
+  turtle_master_arrow
+  water_breathing_arrow
+  weakness_arrow
+  weaving_arrow
+  wind_charged_arrow
+  withering_arrow
+  shield
+  snowball
+  mace
+  sword_copper
+  sword_diamond
+  sword_gold
+  sword_iron
+  sword_netherite
+  sword_stone
+  sword_wood
+  totem
+  trident
+
+## Brewing (brew) — 239 items
+  stand_000
+  sugar
+  carrot_item_gold
+  pufferfish_raw
+  blaze_powder
+  ghast_tear
+  gunpowder
+  magma_cream
+  rabbit_foot
+  spider_eye
+  glowstone_dust
+  nether_wart_item
+  awkward
+  awkward_lingering
+  awkward_splash
+  dragon_breath
+  fermented_spider_eye
+  fire_resistance "potion_plus=1"
+  fire_resistance
+  fire_resistance_arrow "potion_plus=1"
+  fire_resistance_arrow
+  fire_resistance_lingering "potion_plus=1"
+  fire_resistance_lingering
+  fire_resistance_splash "potion_plus=1"
+  fire_resistance_splash
+  glass_bottle
+  harming "potion_potent=1"
+  harming
+  harming_arrow "potion_potent=1"
+  harming_arrow
+  harming_lingering "potion_potent=1"
+  harming_lingering
+  harming_splash "potion_potent=1"
+  harming_splash
+  healing "potion_potent=1"
+  healing
+  healing_arrow "potion_potent=1"
+  healing_arrow
+  healing_lingering "potion_potent=1"
+  healing_lingering
+  healing_splash "potion_potent=1"
+  healing_splash
+  infestation "potion_plus=1"
+  infestation
+  infestation_arrow "potion_plus=1"
+  infestation_arrow
+  infestation_lingering "potion_plus=1"
+  infestation_lingering
+  infestation_splash "potion_plus=1"
+  infestation_splash
+  invisibility "potion_plus=1"
+  invisibility
+  invisibility_arrow "potion_plus=1"
+  invisibility_arrow
+  invisibility_lingering "potion_plus=1"
+  invisibility_lingering
+  invisibility_splash "potion_plus=1"
+  invisibility_splash
+  leaping "potion_plus=1"
+  leaping "potion_potent=1"
+  leaping
+  leaping_arrow "potion_plus=1"
+  leaping_arrow "potion_potent=1"
+  leaping_arrow
+  leaping_lingering "potion_plus=1"
+  leaping_lingering "potion_potent=1"
+  leaping_lingering
+  leaping_splash "potion_plus=1"
+  leaping_splash "potion_potent=1"
+  leaping_splash
+  luck "potion_plus=1"
+  luck "potion_potent=1"
+  luck
+  luck_arrow "potion_plus=1"
+  luck_arrow "potion_potent=1"
+  luck_arrow
+  luck_lingering "potion_plus=1"
+  luck_lingering "potion_potent=1"
+  luck_lingering
+  luck_splash "potion_plus=1"
+  luck_splash "potion_potent=1"
+  luck_splash
+  mundane
+  mundane_lingering
+  mundane_splash
+  night_vision "potion_plus=1"
+  night_vision
+  night_vision_arrow "potion_plus=1"
+  night_vision_arrow
+  night_vision_lingering "potion_plus=1"
+  night_vision_lingering
+  night_vision_splash "potion_plus=1"
+  night_vision_splash
+  ominous "potion_potent=1"
+  ominous
+  oozing "potion_plus=1"
+  oozing
+  oozing_arrow "potion_plus=1"
+  oozing_arrow
+  oozing_lingering "potion_plus=1"
+  oozing_lingering
+  oozing_splash "potion_plus=1"
+  oozing_splash
+  poison "potion_plus=1"
+  poison "potion_potent=1"
+  poison
+  poison_arrow "potion_plus=1"
+  poison_arrow "potion_potent=1"
+  poison_arrow
+  poison_lingering "potion_plus=1"
+  poison_lingering "potion_potent=1"
+  poison_lingering
+  poison_splash "potion_plus=1"
+  poison_splash "potion_potent=1"
+  poison_splash
+  regeneration "potion_plus=1"
+  regeneration "potion_potent=1"
+  regeneration
+  regeneration_arrow "potion_plus=1"
+  regeneration_arrow "potion_potent=1"
+  regeneration_arrow
+  regeneration_lingering "potion_plus=1"
+  regeneration_lingering "potion_potent=1"
+  regeneration_lingering
+  regeneration_splash "potion_plus=1"
+  regeneration_splash "potion_potent=1"
+  regeneration_splash
+  river_water
+  slow_falling "potion_plus=1"
+  slow_falling
+  slow_falling_arrow "potion_plus=1"
+  slow_falling_arrow
+  slow_falling_lingering "potion_plus=1"
+  slow_falling_lingering
+  slow_falling_splash "potion_plus=1"
+  slow_falling_splash
+  slowness "potion_plus=1"
+  slowness "potion_potent=3"
+  slowness
+  slowness_arrow "potion_plus=1"
+  slowness_arrow "potion_potent=3"
+  slowness_arrow
+  slowness_lingering "potion_plus=1"
+  slowness_lingering "potion_potent=3"
+  slowness_lingering
+  slowness_splash "potion_plus=1"
+  slowness_splash "potion_potent=3"
+  slowness_splash
+  speckled_melon
+  strength "potion_plus=1"
+  strength "potion_potent=1"
+  strength
+  strength_arrow "potion_plus=1"
+  strength_arrow "potion_potent=1"
+  strength_arrow
+  strength_lingering "potion_plus=1"
+  strength_lingering "potion_potent=1"
+  strength_lingering
+  strength_splash "potion_plus=1"
+  strength_splash "potion_potent=1"
+  strength_splash
+  swiftness "potion_plus=1"
+  swiftness "potion_potent=1"
+  swiftness
+  swiftness_arrow "potion_plus=1"
+  swiftness_arrow "potion_potent=1"
+  swiftness_arrow
+  swiftness_lingering "potion_plus=1"
+  swiftness_lingering "potion_potent=1"
+  swiftness_lingering
+  swiftness_splash "potion_plus=1"
+  swiftness_splash "potion_potent=1"
+  swiftness_splash
+  thick
+  thick_lingering
+  thick_splash
+  turtle_master "potion_plus=1"
+  turtle_master "potion_potent=1"
+  turtle_master
+  turtle_master_arrow "potion_plus=1"
+  turtle_master_arrow "potion_potent=1"
+  turtle_master_arrow
+  turtle_master_lingering "potion_plus=1"
+  turtle_master_lingering "potion_potent=1"
+  turtle_master_lingering
+  turtle_master_splash "potion_plus=1"
+  turtle_master_splash "potion_potent=1"
+  turtle_master_splash
+  water
+  water_breathing "potion_plus=1"
+  water_breathing
+  water_breathing_arrow "potion_plus=1"
+  water_breathing_arrow
+  water_breathing_lingering "potion_plus=1"
+  water_breathing_lingering
+  water_breathing_splash "potion_plus=1"
+  water_breathing_splash
+  water_lingering
+  water_splash
+  weakness "potion_plus=1"
+  weakness "potion_potent=1"
+  weakness
+  weakness_arrow "potion_plus=1"
+  weakness_arrow "potion_potent=1"
+  weakness_arrow
+  weakness_lingering "potion_plus=1"
+  weakness_lingering "potion_potent=1"
+  weakness_lingering
+  weakness_splash "potion_plus=1"
+  weakness_splash "potion_potent=1"
+  weakness_splash
+  weaving "potion_plus=1"
+  weaving
+  weaving_arrow "potion_plus=1"
+  weaving_arrow
+  weaving_lingering "potion_plus=1"
+  weaving_lingering
+  weaving_splash "potion_plus=1"
+  weaving_splash
+  wind_charged "potion_plus=1"
+  wind_charged
+  wind_charged_arrow "potion_plus=1"
+  wind_charged_arrow
+  wind_charged_lingering "potion_plus=1"
+  wind_charged_lingering
+  wind_charged_splash "potion_plus=1"
+  wind_charged_splash
+  withering "potion_plus=1"
+  withering "potion_potent=1"
+  withering
+  withering_arrow "potion_plus=1"
+  withering_arrow "potion_potent=1"
+  withering_arrow
+  withering_lingering "potion_plus=1"
+  withering_lingering "potion_potent=1"
+  withering_lingering
+  withering_splash "potion_plus=1"
+  withering_splash "potion_potent=1"
+  withering_splash
+
+## Materials (matr) — 82 items
+  amethyst_shard
+  book
+  cocoa_beans
+  copper_ingot
+  copper_nugget
+  raw_copper
+  bowl
+  brick
+  charcoal_lump
+  clay_lump
+  coal_lump
+  diamond
+  emerald
+  flint
+  gold_ingot
+  gold_nugget
+  iron_ingot
+  iron_nugget
+  lapis
+  paper
+  reeds
+  stick
+  sugar
+  black
+  blue
+  brown
+  cyan
+  green
+  grey
+  light_blue
+  lime
+  magenta
+  orange
+  pink
+  purple
+  red
+  silver
+  white
+  yellow
+  chorus_fruit_popped
+  beetroot_seeds
+  melon_seeds
+  pumpkin_seeds
+  wheat_item
+  wheat_seeds
+  leaf_litter
+  pink_petals
+  wildflowers
+  honey_bottle
+  honeycomb
+  blaze_powder
+  blaze_rod
+  bone
+  breeze_rod
+  feather
+  glow_ink_sac
+  gunpowder
+  heart_of_the_sea
+  ink_sac
+  leather
+  magma_cream
+  nautilus_shell
+  nether_star
+  rabbit_hide
+  shulker_shell
+  slimeball
+  string
+  glowstone_dust
+  nether_wart_item
+  netherbrick
+  netherite_ingot
+  netherite_scrap
+  quartz
+  prismarine_crystals
+  prismarine_shard
+  resin_brick
+  resin_clump
+  raw_gold
+  raw_iron
+  redstone
+  echo_shard
+  egg
+
+## Miscellaneous (misc) — 95 items
+  bolt
+  coast
+  dune
+  eye
+  flow
+  rib
+  sentry
+  silence
+  snout
+  spire
+  tide
+  vex
+  ward
+  wayfinder
+  wild
+  bamboo_small
+  pattern_bricks
+  pattern_creeper
+  pattern_curly_border
+  pattern_flow
+  pattern_flower
+  pattern_globe
+  pattern_guster
+  pattern_piglin
+  pattern_skull
+  pattern_thing
+  bone_meal
+  writable_book
+  bucket_axolotl
+  bucket_cod
+  bucket_empty
+  bucket_lava
+  bucket_pufferfish
+  bucket_river_water
+  bucket_salmon
+  bucket_tropical_fish
+  bucket_water
+  cake
+  wind_charge
+  pointed_dripstone
+  crystal
+  ender_eye
+  bottle
+  fire_charge
+  rocket_1
+  rocket_2
+  rocket_3
+  record_13
+  record_blocks
+  record_chirp
+  record_far
+  record_mall
+  record_mellohi
+  record_strad
+  record_wait
+  rod
+  rod_exposed
+  rod_exposed_preserved
+  rod_oxidized
+  rod_oxidized_preserved
+  rod_preserved
+  rod_weathered
+  rod_weathered_preserved
+  dripleaf_big
+  dripleaf_small
+  empty_map
+  netherite_upgrade_template
+  block_of_resin
+  chiseled_resin_brick
+  resin_brick_block
+  angler
+  archer
+  arms_up
+  blade
+  brewer
+  burn
+  danger
+  explorer
+  friend
+  guster
+  heart
+  heartbreak
+  howl
+  miner
+  mourner
+  plenty
+  prize
+  scrape
+  sheaf
+  shelter
+  skull
+  snort
+  bucket_powder_snow
+  ominous_trial_key
+  trial_key

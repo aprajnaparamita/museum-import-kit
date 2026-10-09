@@ -1,0 +1,21 @@
+Category,Blocks/Items,Examples
+Natural X,Stuff you'd find in the natural world,"Saplings, Cactus, Tall Grass, Leaves, etc."
+Wood X,Anything that has something to do with wood,"Logs, Planks, Sticks, Fences, Boats, Signs, etc."
+Mob Drops,Anything a mob might have dropped that is not a food or a potion ingredient,"Rotten Flesh, Eggs, Ender Pearls, Feathers, etc."
+Food X,Any type of food,"Porkchops, Beef, Chicken, Bread, Carrots, etc."
+Stone X,Anything that has something to do with stone,"Stone, Cobblestone, Granite, Obsidian, etc."
+Colorful,Anything that has dye-color variants,"Wool, Terracotta, Dyes, Glass, Concrete, etc."
+Combat,Any kind of weapon,"Armor, Swords, Bow, TNT, Trident, etc."
+Minerals,Anything mined out of underground,"Coal, Iron, Gold, Diamonds, etc."
+Tools,All tools that you have but do not need at the moment,"Hoe, Shovel, Fishing Rod, etc."
+Mining,All tools that you need when going mining,"Torches, Pickaxes, Buckets, etc."
+Brewing,Anything that has something to do with brewing/potions,"Potions, potion ingredients, Cauldrons, Brewing Stands, etc."
+Nether X,"All blocks and items pertaining to the Nether dimension, unless used for potions, in which those items would be in another category","Netherrack, Nether Bricks, Nether Brick Stairs and Slabs, Gold Nuggets, etc."
+End,All blocks and items pertaining to the End dimension,"End Stone, Chorus Plants, Shulker Boxes, etc."
+Mechanism,Anything that has something to do with redstone,"Redstone, Redstone Torches, Redstone Repeaters, Piston, etc."
+Miscellaneous,All other things that do not fit into any of the other categories,"Books, Book and Quill, etc."
+Magic Items,Enchanted items,Enchanted Books for example.
+Mass Junk,"After a while, many players accumulate several double chests each of other things","Dirt, Gravel, Sand, etc."
+Other Junk,Stuff you rarely need,"Damaged Armor, Tools, etc."
+Trophy Items,"Items that are hard to obtain, rare items","Dragon Egg, Nether Star, Heart of the Sea, etc."
+Shared Stash,"Useful on a multiplayer server where you are bunking with friends. This way, they know if they can borrow some dirt, or if all of your stuff has an invisible ""HANDS OFF!"" sign on it.",

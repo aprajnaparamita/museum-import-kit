@@ -2316,14 +2316,29 @@ function Job:step()
 					-- height targets and no vegetation regrow (see
 					-- wgen_blend3d.lua)
 					self.gap_plan = blend3d.build_plan(self, self.gap_real, self.gap_fill_chunks)
-					-- End holes (empty chunks inside an island) are merge
-					-- chunks that aren't in the ring: queue them
-					for _, key in ipairs(self.gap_plan.holes or {}) do
-						local cx, cz = key:match("^(.-)_(.-)$")
-						self.cursor_list[#self.cursor_list + 1] = {
-							is_gap = true, cx = tonumber(cx), cz = tonumber(cz),
-						}
-						self.cursor_total = self.cursor_total + 1
+					-- Merge chunks the ring list never contained are planned
+					-- but not queued, and NOTHING else writes them: End
+					-- holes (empty chunks inside an island) and the
+					-- capture-perimeter ring (owner 2026-10-02, Krobar --
+					-- gap_fill.ring_chunks only rings the FOOTPRINT's
+					-- terrain chunks, so a mostly-void download got no ring
+					-- around its own bbox and Mineclonia's islands stopped
+					-- dead-square against it). Queue every planned chunk
+					-- that isn't already in the cursor list -- same shape as
+					-- the overworld branch below.
+					local queued = {}
+					for _, e in ipairs(self.gap_fill_chunks) do
+						queued[e.cx .. "_" .. e.cz] = true
+					end
+					for _, key in ipairs(self.gap_plan.chunk_order) do
+						if not queued[key] then
+							queued[key] = true
+							local c = self.gap_plan.chunks[key]
+							self.cursor_list[#self.cursor_list + 1] = {
+								is_gap = true, cx = c.cx, cz = c.cz,
+							}
+							self.cursor_total = self.cursor_total + 1
+						end
 					end
 				else
 					-- empty captured chunks (place_one_chunk) are merge

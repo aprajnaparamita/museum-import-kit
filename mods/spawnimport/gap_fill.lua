@@ -147,6 +147,13 @@ local function is_terrain_name(name)
 	if TERRAIN_NAMES[name] then return true end
 	if name:match("^mcl_core:stone_with_") then return true end -- ores
 	if name:match("^mcl_deepslate:deepslate_with_") then return true end
+	-- natural hardened/stained clay (Issue 3, 2026-10-04: cutecurly's
+	-- desert mass is capped with it -- names verified from the scan's
+	-- own raw dump: mcl_colorblocks:hardened_clay, ..._orange). Without
+	-- this the scan saw through the crust to the floor under the void
+	-- and read the surface ~90 blocks low, which cut the right-angle
+	-- cliffs at -10136,8991 and friends).
+	if name:match("^mcl_colorblocks:hardened_clay") then return true end
 	return false
 end
 gap_fill.is_terrain_name = is_terrain_name
@@ -450,8 +457,21 @@ local function scan_chunk_columns(job, cx, cz)
 			local mat = S and data[area:index(x, S, z)] or nil
 			-- T is the top block's HEIGHT; Tc its content id (the seam
 			-- surface family needs the id: ice on a frozen sea)
+			-- Sbase/t1/mat_top/float: what the lateral guard in cols_for
+			-- needs, recorded before any guard runs and never mutated.
+			--   t1    = tops[1], the first terrain y (raw mass top)
+			--   float = the overworld float rule FIRED for this column
+			--           (S ~= t1: it read the floor under the gap, or
+			--           found no floor at all). Nether is excluded --
+			--           surface_from_runs has its own rule (FLOAT_BIG_
+			--           GAP) and is never second-guessed here.
+			local t1 = tops[1]
+			local mat_top = mat
+			if t1 and t1 ~= S then mat_top = data[area:index(x, t1, z)] end
 			cols[lx * C + lz + 1] = { S = S, mat = mat, T = top,
-				Tc = top and data[area:index(x, top, z)] or nil }
+				Tc = top and data[area:index(x, top, z)] or nil,
+				Sbase = S, t1 = t1, mat_top = mat_top,
+				float = (not ceil_y) and (t1 ~= nil) and (S ~= t1) or false }
 		end
 	end
 	return cols
@@ -484,6 +504,13 @@ end
 -- edge line when the column is on an edge (every seam column is), the raw
 -- per-column map otherwise.
 local function seam_target(r, lx, lz)
+	-- frozen-sea lid override (build_plan's lid pass): the capture's
+	-- own ice top, in source units like every other return here.
+	-- The float rule reads the FLOOR under the water, so without this
+	-- the ring is pinned one block below the ice lid the player walks
+	-- on (owner round-2, "ice/water level does not match by one block")
+	local lid = r.lid and r.lid[lx * C + lz + 1]
+	if lid then return lid end
 	if lx == 0 then return r.edge[1][lz + 1]
 	elseif lx == C - 1 then return r.edge[2][lz + 1]
 	elseif lz == 0 then return r.edge[3][lx + 1]
@@ -639,12 +666,95 @@ function gap_fill.build_plan(job, real, entries, opts)
 	smooth_edge_lines(real)
 
 	local scan_cache = {}
-	local function cols_for(cx, cz)
+	-- Scan only, no guard: the guard's neighbour fetch goes through
+	-- this, so a guard pass can never recurse into another guard pass.
+	local function raw_cols(cx, cz)
 		local key = cx .. "_" .. cz
 		local c = scan_cache[key]
 		if c == nil then
 			c = scan_chunk_columns(job, cx, cz)
 			scan_cache[key] = c
+		end
+		return c
+	end
+
+	-- Float-rule lateral guard (Issue 3, 2026-10-04, cutecurly's
+	-- right-angle cliffs at -10136,8991). The per-column float rule
+	-- (surface_from_tops: thin run over a gap) fires on real ground
+	-- too: a 1-2 block crust (desert clay, grass over a cave) sitting
+	-- on air, or a thin rim of a broad mass. It then reads the FLOOR
+	-- under the void and the plan digs the whole area down to it.
+	-- A fired column keeps its raw top only if its level is confirmed
+	-- laterally -- measured over the capture window, this separates
+	-- every false fire from every true one (0 wrong columns vs the
+	-- natural control, and the harness 4x4 island still falls through):
+	--   (1) corroboration: a 4-neighbour whose OWN base rule kept its
+	--       surface (thick run / sitting on terrain) within
+	--       GUARD_TOL blocks of my raw top -> part of a real surface
+	--       plane, keep it;
+	--   (2) extent: at least GUARD_NEED of the 16 distance-2 ring
+	--       cells share my raw top within GUARD_TOL -> part of a broad
+	--       mass, keep it. A lone thin cluster can never reach that
+	--       (a 4x4 has at most 7 in-block ring cells) and still falls
+	--       through to the floor -- that is the harness island test.
+	-- Neighbours outside the plan are scanned on demand via raw_cols
+	-- (scan_cache dedupes; ungenerated/empty scans simply do not
+	-- count). Deterministic: decisions read Sbase/t1 only, never a
+	-- guarded S, so chunk order does not matter. Nether columns are
+	-- excluded upstream (col.float is false there).
+	local GUARD_TOL = 5    -- blocks of surface agreement
+	local GUARD_NEED = 8   -- of the 16 distance-2 ring cells
+	local guarded_cache = {}
+	local function col_at(sx, sz)
+		local ncx, ncz = math.floor(sx / C), math.floor(sz / C)
+		local nc = raw_cols(ncx, ncz)
+		return nc[(sx - ncx * C) * C + (sz - ncz * C) + 1]
+	end
+	local function guard_chunk(cx, cz, cols)
+		for lz = 0, C - 1 do
+			for lx = 0, C - 1 do
+				local col = cols[lx * C + lz + 1]
+				if col.float and col.t1 then
+					local sx, sz = cx * C + lx, cz * C + lz
+					local t1 = col.t1
+					local keep = false
+					for _, d in ipairs(gap_field.DIRS) do
+						local nb = col_at(sx + d[1], sz + d[2])
+						if nb and nb.Sbase ~= nil
+							and math.abs(nb.Sbase - t1) <= GUARD_TOL then
+							keep = true
+							break
+						end
+					end
+					if not keep then
+						local c = 0
+						for dx = -2, 2 do
+							for dz = -2, 2 do
+								if math.max(math.abs(dx), math.abs(dz)) == 2 then
+									local nb = col_at(sx + dx, sz + dz)
+									if nb and nb.t1 ~= nil
+										and math.abs(nb.t1 - t1) <= GUARD_TOL then
+										c = c + 1
+									end
+								end
+							end
+						end
+						keep = c >= GUARD_NEED
+					end
+					if keep then
+						col.S = col.t1
+						col.mat = col.mat_top
+					end
+				end
+			end
+		end
+	end
+	local function cols_for(cx, cz)
+		local c = raw_cols(cx, cz)
+		local key = cx .. "_" .. cz
+		if not guarded_cache[key] then
+			guarded_cache[key] = true
+			guard_chunk(cx, cz, c)
 		end
 		return c
 	end
@@ -709,6 +819,34 @@ function gap_fill.build_plan(job, real, entries, opts)
 		-- pillars, 2026-09-24). The field also carries the seam level
 		-- and biome per column: "the edges should always match the
 		-- level/characteristics of the touching world download blocks".
+		-- Frozen-sea lid (round-2, 2026-10-06): the footprint's terrain
+		-- height is the pre-download SEA-FLOOR fit (the float rule reads
+		-- the floor under the ice), but the captured column's walkable
+		-- surface is its ice lid one block higher. Pinning the ring to
+		-- the floor left the owner's "ice/water level does not match by
+		-- one block" step at every frozen seam (measured: capture H=2
+		-- over ring H=1, z10767/10768) and let the capture's lid-edge
+		-- water sheet flow one block across the ring's ice (z10892,
+		-- z10911). Where the scan's first terrain top is the capture's
+		-- own ice, seam_target() takes that lid instead of the floor
+		-- fit -- land seams keep the footprint fit unchanged.
+		for rkey, r in pairs(real) do
+			local rcx, rcz = rkey:match("^(%-?%d+)_(%-?%d+)$")
+			local lcols = rcx and cols_for(tonumber(rcx), tonumber(rcz))
+			if lcols then
+				for i, c in pairs(lcols) do
+					local mtop = c.mat_top
+						and core.get_name_from_content_id(c.mat_top)
+					if c.t1 and mtop and is_terrain_name(mtop)
+							and (mtop == "mcl_core:ice"
+								or mtop == "mcl_core:packed_ice"
+								or mtop == "mcl_core:blue_ice") then
+						r.lid = r.lid or {}
+						r.lid[i] = c.t1 - dy
+					end
+				end
+			end
+		end
 		local fld = wgen_inputs.field(job, real, natural,
 			function(r, _cx, _cz, lx, lz, _sx, _sz)
 				return seam_target(r, lx, lz) + dy
@@ -728,14 +866,34 @@ function gap_fill.build_plan(job, real, entries, opts)
 				-- never seen as snow: straight ice/water chunk edges,
 				-- owner 2026-09-29, Hopes Retreat)
 				local tname = c.Tc and core.get_name_from_content_id(c.Tc) or nil
-				return wgen_inputs.surface_family(tname, gname), c.mat
+				-- the seam source's actual snow COVER: a snow layer on
+				-- top (true), bare ice (false), or an unknown top such
+				-- as a tree or a build (nil: the biome's own decision
+				-- stays). The write mirrors it so the ring's snow stops
+				-- where the capture's does -- bare frozen seams were
+				-- getting a snow layer on their ring ice (owner
+				-- round-2, 2026-10-06, "the snow and ice does not
+				-- blend", 6566,11183)
+				local cover
+				if tname == "mcl_core:snow" or tname == "mcl_core:snowblock" then
+					cover = true
+				elseif tname == "mcl_core:ice" or tname == "mcl_core:packed_ice"
+						or tname == "mcl_core:blue_ice" then
+					cover = false
+				end
+				return wgen_inputs.surface_family(tname, gname), c.mat, cover
 			end)
 		local slow = nil
 		if job.empty_captured then
 			slow = {}
 			for _, e in ipairs(job.empty_captured) do slow[e.cx .. "_" .. e.cz] = true end
 		end
-		free = wgen_inputs.height_targets(fld, natural, slow)
+		-- waterway cap (owner round-2): only the overworld sea may lift
+		-- submerged natural terrain -- End has no liquids and its probe
+		-- must not move; the nether keeps its own dy+36 lava band
+		local target_sea = nil
+		if not (is_nether or is_end) then target_sea = SEA end
+		free = wgen_inputs.height_targets(fld, natural, slow, target_sea)
 		last_field = fld
 		-- Domain-boundary columns bordering untouched terrain are pinned
 		-- to their own natural height (the merge must be invisible there),
@@ -790,7 +948,8 @@ function gap_fill.build_plan(job, real, entries, opts)
 		local aquatic = {}
 		for _ = 1, 3 do
 			h = gap_field.solve(free, fixed, { step = step, aquatic = aquatic,
-				jitter = tonumber(core.settings:get("spawnimport_gap_slope_jitter")) or 0.35 })
+				jitter = tonumber(core.settings:get("spawnimport_gap_slope_jitter")) or 0.35,
+				sea = SEA, natural = natural })
 			-- collapse the clamp-midpoint zigzags the relaxation leaves
 			-- on sloped bands (the "square jogs"); free-free only, real
 			-- cliffs and pins untouched
@@ -888,6 +1047,18 @@ function gap_fill.build_plan(job, real, entries, opts)
 						and last_field.gmat[skey] or nil,
 					sdist = last_field and last_field.dist
 						and last_field.dist[skey] or nil,
+					-- the seam surface height here: the write's
+					-- geology copy may only run within +-2 of it
+					-- (round-3: scree carried frozen-lid ice 23-39
+					-- blocks up the 6696,11008 cliff face)
+					slvl = last_field and last_field.level
+						and last_field.level[skey] or nil,
+					-- the seam source's own snow cover; the write's
+					-- snow fade mirrors it (round-2 bare-seam
+					-- suppression). NOTE: no `or nil` here -- a false
+					-- must survive the propagation.
+					scover = last_field and last_field.cover
+						and last_field.cover[skey],
 				}
 				if is_seam then
 					plan.hard[skey] = math.floor(hard_all[skey] + 0.5)

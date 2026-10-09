@@ -278,6 +278,54 @@ function blend3d.build_plan(job, real, ring)
 		end
 		for key in pairs(hole) do captured[key] = nil end
 	end
+
+	-- Capture-perimeter ring (owner 2026-10-02, Krobar's bridge: a
+	-- "strong square" reported at the bbox corner -5120,-512).
+	--
+	-- gap_fill.ring_chunks only rings the FOOTPRINT's terrain chunks, so a
+	-- download that is mostly void (Krobar: 90 footprint chunks inside a
+	-- 4096-chunk trim) got essentially no merge ring at all -- only the
+	-- one chunk column of ring that happened to sit next to those 90.
+	-- Everywhere else Mineclonia's End islands ran straight into the
+	-- capture's void with ZERO transition: a dead-straight cliff, corner
+	-- to corner, on all four sides of the bbox. Ring the capture BOX
+	-- instead: every non-captured chunk within RING of chunk_bounds joins
+	-- the merge. The seam column still is the capture (w = 1 at d = 1)
+	-- and the outer edge still is untouched Mineclonia terrain (w = 0 at
+	-- d = D), so nothing new is stepped -- in between the weight's
+	-- iso-distance lines are rounded arcs around the box's corners and
+	-- the value-noise jitter below shifts the cut, which is what rounds
+	-- the island edges off instead of slicing them square.
+	local cb = job.chunk_bounds
+	if cb then
+		local in_work = {}
+		for _, e in ipairs(work) do in_work[e.cx .. "_" .. e.cz] = true end
+		-- another base's capture is off limits (same test gap_fill's
+		-- widening uses -- job.gap_avoid is dest-block bboxes)
+		local function foreign(cx, cz)
+			local bx0, bx1, bz0, bz1 = chunk_box(cx, cz)
+			for _, bb in ipairs(job.gap_avoid or {}) do
+				if bx0 <= bb.x_max and bx1 >= bb.x_min
+					and bz0 <= bb.z_max and bz1 >= bb.z_min then
+					return true
+				end
+			end
+			return false
+		end
+		for cx = cb.x_min - blend3d.RING, cb.x_max + blend3d.RING do
+			for cz = cb.z_min - blend3d.RING, cb.z_max + blend3d.RING do
+				local inside = cx >= cb.x_min and cx <= cb.x_max
+					and cz >= cb.z_min and cz <= cb.z_max
+				local key = cx .. "_" .. cz
+				if not inside and not captured[key] and not in_work[key]
+					and not foreign(cx, cz) then
+					in_work[key] = true
+					work[#work + 1] = { cx = cx, cz = cz }
+				end
+			end
+		end
+	end
+
 	local function has_blocks(key)
 		return captured[key] and not (job.end_empty and job.end_empty[key])
 	end
@@ -342,9 +390,30 @@ function blend3d.build_plan(job, real, ring)
 					if mx and d < Dc then
 						local t = (Dc - d) / (Dc - 1)
 						if t > 1 then t = 1 end
-						-- organic edge: value noise shifts the fade mid-ring
-						-- only (t*(1-t) = 0 at both ends keeps them exact)
-						t = t + (wdl.noise2(x, z, 13) * 2 - 1) * 0.6 * t * (1 - t)
+						-- Organic coastline (owner 2026-10-02, Krobar's
+						-- bridge: "genuinely random blends", "no edges
+						-- should be square"). Two octaves of value noise
+						-- shift the fade IN COLUMNS -- broad bays (~23-block
+						-- blobs) plus fine wiggles (~7) -- so the cut where
+						-- Mineclonia's islands meet the download's void
+						-- wanders ±15 columns instead of lying flat against
+						-- the bbox. The taper 16*t^2*(1-t)^2 is 0 at t = 1
+						-- (the seam column, d = 1) and 0 at t = 0 (the
+						-- ring's outer edge) AND collapses much faster than
+						-- 4*t*(1-t) near both ends (0.015 vs 0.12 at the
+						-- outermost column), so the amplitude lands almost
+						-- entirely in the middle -- the seam stays exactly
+						-- the capture (audit passes) and the outer edge
+						-- stays exactly Mineclonia's terrain, while the
+						-- cut itself moves the full ±15. Round 1 of this
+						-- change (4*t*(1-t), +-10) measured only +-7 of
+						-- coastline wander on the staged rebuild
+						-- 2026-10-02, so the taper was reshaped rather
+						-- than the amplitude cranked at the ends.
+						local jn = (wdl.noise2(x, z, 23) - 0.5) * 20
+							+ (wdl.noise2(x, z, 7) - 0.5) * 10
+						local tt = t * (1 - t)
+						t = t + jn * (16 * tt * tt) / (Dc - 1)
 						if t < 0 then t = 0 elseif t > 1 then t = 1 end
 						w = t * t * (3 - 2 * t)
 					end

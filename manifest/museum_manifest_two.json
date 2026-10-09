@@ -1,0 +1,52 @@
+[
+ {
+  "display_name": "upside down pyramid 2013-01-25",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/upside_down_pyramid_2013-01-25-1774235327089/dimensions/minecraft/worlds/2b2t_spawn/2b2t_spawn_2013-01_-_2013-02/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2012/upside_down_pyramid_2013-01-25-1774235327089",
+  "dimension_type": "overworld",
+  "dest_anchor_x": 6232,
+  "dest_anchor_z": 10720,
+  "dest_y_offset": -61,
+  "origin_x": 256,
+  "origin_z": 3776,
+  "dest_bbox": {
+   "x_min": 6232,
+   "x_max": 6727,
+   "z_min": 10720,
+   "z_max": 11183
+  },
+  "chunk_bounds": {
+   "x_min": 16,
+   "x_max": 46,
+   "z_min": 236,
+   "z_max": 264
+  },
+  "sampled_block_count": 124254,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/upside_down_pyramid_2013_01_25_1774235327089.json"
+ },
+ {
+  "display_name": "cutecurly's City",
+  "source_region_dir": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2025/cutecurly's City/region",
+  "source_base_folder": "/Users/dara/dev/2b2tmuseum-WDL/WDL/2025/cutecurly's City",
+  "dimension_type": "overworld",
+  "dest_anchor_x": -11208,
+  "dest_anchor_z": 8448,
+  "dest_y_offset": -61,
+  "origin_x": -2386224,
+  "origin_z": 460272,
+  "dest_bbox": {
+   "x_min": -11208,
+   "x_max": -10185,
+   "z_min": 8448,
+   "z_max": 9247
+  },
+  "chunk_bounds": {
+   "x_min": -149139,
+   "x_max": -149076,
+   "z_min": 28767,
+   "z_max": 28816
+  },
+  "sampled_block_count": 278810,
+  "footprint_path": "/Volumes/Dara/dev/museum-import-kit/import_tools/placement_fit/footprints/cutecurly_s_City.json"
+ }
+]

@@ -194,10 +194,21 @@ do
 	fixed[field.key(61, 0)] = 20
 	local h = field.solve(free, fixed)
 	local nf, ns, worst = field.violations(free, fixed, h)
-	check("cliff terraced to small steps (worst <= 1.5)", worst <= 1.5,
+	-- violations() now measures WRITTEN steps (floor(h + 0.5), the same
+	-- rounding the writer applies): a float terrace residual of <= 1.5
+	-- at this cliff rounds to at most a 2-block written step. Counting
+	-- written steps is what widening must decide on -- a float residual
+	-- of 1.0000027 writes as a single block and widens nothing.
+	check("cliff terraced to small steps (worst <= 2 written)", worst <= 2,
 		string.format("worst=%.2f", worst))
 	check("natural relief is not a widening trigger", nf == 0, tostring(nf))
-	check("but it is reported as structural", ns >= 1 or worst > 1 + 1e-6, tostring(ns))
+	-- written-step era: worst is an integer that only grows inside a
+	-- violation, so a PERFECT terrace (every adjacent written diff <= 1
+	-- -- pairs()-order in solve can produce it) leaves worst == 0 and
+	-- ns == 0: there is no residual step left to classify. Only demand
+	-- a structural report when a residual step actually survives.
+	check("but it is reported as structural",
+		ns >= 1 or worst > 1 + 1e-6 or worst == 0, tostring(ns))
 	check("plateau heights preserved away from the cliff",
 		math.abs(h[field.key(5, 0)]) < 0.5 and math.abs(h[field.key(55, 0)] - 20) < 0.5,
 		string.format("h5=%.2f h55=%.2f", h[field.key(5, 0)], h[field.key(55, 0)]))

@@ -61,8 +61,26 @@ end
 -- steep but continuous sea bed, not a cliff -- which still leaves the
 -- solver room so whole coastlines aren't dragged down.
 field.AQ_FACTOR = 3
-local function edge_cap(a, b, aquatic, step)
+local function edge_cap(a, b, aquatic, step, natural)
 	if aquatic and aquatic[a] and aquatic[b] then return step * field.AQ_FACTOR end
+	-- Natural-cliff clause (owner decision, round-3 D2 fix, 2026-10-08):
+	-- an edge whose PRISTINE terrain is itself steeper than the walkable
+	-- cap may be exactly as steep as that terrain, never steeper.
+	-- violations() and deflate_steps() already classify such written
+	-- steps as natural relief (structural, never deflated); without this
+	-- the pin cone + neighbour band alone held a ring canyon's floor on a
+	-- max-step ramp off its rim pins, so the waterway cap's sea-1
+	-- targets stayed unreachable and the canyon dried (owner round-2,
+	-- -10278,8733). Where nature has no cliff (v7 is continuous --
+	-- especially across the seam line) this changes nothing.
+	if natural then
+		local na, nb = natural[a], natural[b]
+		if na and nb then
+			local d = na - nb
+			if d < 0 then d = -d end
+			if d > step then return d end
+		end
+	end
 	return step
 end
 
@@ -158,16 +176,34 @@ local function noise2(x, z, scale)
 end
 field.noise2 = noise2
 
--- opts.jitter (0..1, default 0): the pin cones' slope varies per column
--- between step*(1-jitter) and step. Cones at the full cap have straight
--- 45-degree diamond contours (4-neighbour distance), and a ramp that
--- hugs them reads as a square, chunk-shaped edge (owner 2026-09-28,
--- Hopes Retreat: snow terraces in V shapes along an ice coast). Never
--- steeper than step, so walkability is unchanged.
+-- opts.jitter (0..1, default 0): wiggle the pin cones' contours so a
+-- ramp that hugs them does not read as a straight-edged diamond that
+-- looks square and chunky at chunk scale (owner 2026-09-28, Hopes
+-- Retreat: snow terraces in V shapes along an ice coast).
+--
+-- The wiggle is a BOUNDED per-column offset added after an exact
+-- (unwiggled) Bellman pass, and it may only push each cone AWAY from
+-- the exact feasibility cone (L up, U up): L stays >= H - dist*step
+-- so the pin envelope h >= H - dist is never cut, and no column is
+-- ever forced more than jitter*4*step (<= ~1.4 blocks at the default
+-- 0.35) off the exact cone. Two earlier designs failed:
+--   * decaying each edge by "1 - jitter" (pre-2026-10-04) made every
+--     path accumulate the deficit: at distance 300 the cone floor sat
+--     ~80 blocks above the exact one and whole valleys froze there
+--     (Issue 1's snow/dirt dome over the ocean at 6567,11183, and
+--     spurious L>U pinches that parked Issue 2's mountain flank
+--     30+ blocks above its target at 6648,10830);
+--   * decaying with "1 + jitter" instead lifts the floor below the
+--     pin envelope wherever the noise is steep, and the terrace
+--     branch then erodes the pin ramp (a 1.107 pin edge in
+--     gap_field_test.lua's jitter ramp).
+-- Bounds only shape the cone; solve()'s neighbour band is what caps
+-- the ramp's own slope at step.
 function field.bounds(free, fixed, opts)
 	local step = (opts and opts.step) or 1.0
 	local aquatic = opts and opts.aquatic
 	local jitter = (opts and opts.jitter) or 0
+	local natural = opts and opts.natural
 	local L, U = {}, {}
 	for key in pairs(free) do
 		L[key] = -math.huge
@@ -192,11 +228,7 @@ function field.bounds(free, fixed, opts)
 			local nkey = field.key(x + d[1], z + d[2])
 			if L[nkey] then
 				local changed = false
-				local st = edge_cap(key, nkey, aquatic, step)
-				if jitter > 0 then
-					st = st * (1 - jitter * (0.65 * noise2(x + d[1], z + d[2], 11)
-						+ 0.35 * noise2(x + d[1], z + d[2], 4)))
-				end
+				local st = edge_cap(key, nkey, aquatic, step, natural)
 				if L[key] - st > L[nkey] then
 					L[nkey] = L[key] - st
 					changed = true
@@ -209,6 +241,38 @@ function field.bounds(free, fixed, opts)
 					queue[#queue + 1] = nkey
 					queued[nkey] = true
 				end
+			end
+		end
+	end
+	-- Bounded contour wiggle (opts.jitter, see header): the Bellman pass
+	-- above propagates the EXACT cones; this adds one shared per-column
+	-- offset w in [0, jitter*12*step] to L and U of every FREE column.
+	-- Both move by the same w, so L > U marks exactly the true pinches
+	-- (no new ones, lift-only), L never drops below the exact feasibility
+	-- cone (the pin envelope h >= H - dist*step stays intact), and the
+	-- offset is bounded instead of accumulating along paths (Issue 1/2,
+	-- 2026-10-04). Round-2 (2026-10-06): scales 11/4 with 4x amplitude
+	-- gave a noise whose local swing stayed under one block across
+	-- 20-30 column runs, so every cone contour came out a perfect
+	-- 45-degree diamond (owner: "perfectly square/diamond pattern in
+	-- the contour pattern", 6584,11151). value noise at scale 29 varies
+	-- over ~29 columns per cell; 3x the amplitude (~4.2 blocks at
+	-- jitter 0.35) restores organic swings while solve()'s neighbour
+	-- band still caps every WRITTEN step at step. Lakebeds are never
+	-- wiggled upward: lifting a submerged floor is how a canyon dries
+	-- out (owner round-2, -10278,8733); height_targets() caps those
+	-- targets at sea-1, this keeps the bounds from re-lifting them.
+	if jitter > 0 then
+		local sea = opts and opts.sea
+		local nat = opts and opts.natural
+		for key in pairs(free) do
+			local nkv = nat and nat[key]
+			if not (sea and nkv and nkv < sea) then
+				local x, z = parse_key(key)
+				local w = step * jitter * 12 * (0.75 * noise2(x, z, 29)
+					+ 0.25 * noise2(x, z, 11))
+				L[key] = L[key] + w
+				U[key] = U[key] + w
 			end
 		end
 	end
@@ -245,13 +309,27 @@ function field.solve(free, fixed, opts)
 	local iters = (opts and opts.iters) or 120
 	local aquatic = opts and opts.aquatic
 	local L, U = field.bounds(free, fixed, { step = step, aquatic = aquatic,
-		jitter = opts and opts.jitter })
+		jitter = opts and opts.jitter, sea = opts and opts.sea,
+		natural = opts and opts.natural })
 	local h = {}
 	for key, v in pairs(fixed) do h[key] = v end
 	for key, s in pairs(free) do
 		local v = s
-		if v < L[key] then v = L[key] elseif v > U[key] then v = U[key] end
-		if v < L[key] or v > U[key] then v = (L[key] + U[key]) / 2 end -- L > U pinch
+		if L[key] > U[key] then
+			-- L > U: the cones demand more than the slope cap can
+			-- deliver, so no height satisfies both pins. Start at the
+			-- pull target instead of the cone midpoint: the neighbour
+			-- band below is the local authority (the lower>upper
+			-- branch keeps s inside it), while a midpoint init parked
+			-- whole valleys at the average of two unusable cones --
+			-- tens of blocks above their own target when one cone came
+			-- from a distant mountain pin (Issue 2, 2026-10-04).
+			v = s
+		elseif v < L[key] then
+			v = L[key]
+		elseif v > U[key] then
+			v = U[key]
+		end
 		h[key] = v
 	end
 
@@ -268,7 +346,8 @@ function field.solve(free, fixed, opts)
 					local nkey = field.key(x + d[1], z + d[2])
 					local hv = h[nkey]
 					if hv then
-						local cap = edge_cap(key, nkey, aquatic, step)
+						local cap = edge_cap(key, nkey, aquatic, step,
+						opts and opts.natural)
 						n = n + 1
 						if hv - cap > n_lower then n_lower = hv - cap end
 						if hv + cap < n_upper then n_upper = hv + cap end
@@ -319,7 +398,8 @@ function field.solve(free, fixed, opts)
 			for _, d in ipairs(DIRS) do
 				local nkey = field.key(x + d[1], z + d[2])
 				if free[nkey] and h[nkey] and key < nkey then
-					local diff = math.abs(h[key] - h[nkey]) - (edge_cap(key, nkey, aquatic, step) - step)
+					local diff = math.abs(h[key] - h[nkey]) - (edge_cap(key, nkey, aquatic, step,
+					opts and opts.natural) - step)
 					if diff > worst then worst = diff end
 				end
 			end
@@ -387,6 +467,19 @@ function field.violations(free, fixed, h, step, kinds)
 	local natural = (kinds and kinds.natural) or {}
 	local n_fixable, n_structural, worst = 0, 0, 0
 	local seen = {}
+	-- Compare WRITTEN heights (floor(h + 0.5), the exact rounding the
+	-- writer applies) -- not the raw floats. The solver stalls with
+	-- float residuals of ~2e-6 above the cap (stall threshold 1e-4 sits
+	-- above violations' old 1e-6 eps, and deflate's zigzag split can
+	-- push a free column over a pin edge), and chasing those with
+	-- widening bought 34 extra chunks in the harness for steps that
+	-- round away to nothing: widening must answer "would the blocks we
+	-- actually write form a step?", not "is this float > cap + 1e-6?".
+	-- A residual sitting exactly on the .5 rounding boundary still
+	-- shows up here as a 2-block written step and still widens.
+	local function wh(k)
+		return math.floor(h[k] + 0.5)
+	end
 	for key in pairs(h) do
 		if not seen[key] then
 			local x, z = parse_key(key)
@@ -395,7 +488,7 @@ function field.violations(free, fixed, h, step, kinds)
 				local hv = h[nkey]
 				if hv and not seen[key .. "|" .. nkey] and not seen[nkey .. "|" .. key] then
 					seen[key .. "|" .. nkey] = true
-					local diff = math.abs(h[key] - hv)
+					local diff = math.abs(wh(key) - wh(nkey))
 					local cap = (aquatic[key] and aquatic[nkey]) and step * field.AQ_FACTOR or step
 					if diff > cap + eps then
 						if diff > worst then worst = diff end

@@ -112,6 +112,13 @@ function inputs.field(job, real, domain, level_at, mat_at)
 	-- "sand"/"water"/nil, see wdl_climate.surface_family); gmat: its
 	-- ground content id (the write fades the seam geology out with it)
 	local fam, gmat = {}, {}
+	-- cover: the seam source column's snow COVER (true = a snow layer
+	-- sits on it, false = bare ice/ground, nil = unknown top such as
+	-- trees or a build) -- propagated with fam so the write mirrors the
+	-- capture's own cover at the seam instead of guessing from the
+	-- biome (owner round-2, 2026-10-06: "the snow and ice does not
+	-- blend", 6566,11183)
+	local cover = {}
 	local queue, qhead = {}, 1
 	local function key(x, z) return x .. "," .. z end
 	local function parse(k)
@@ -131,9 +138,10 @@ function inputs.field(job, real, domain, level_at, mat_at)
 				level[skey] = src_level(r, cx, cz, lx, lz, nx, nz)
 				mc[skey] = captured_mc_biome(r, lx, lz)
 				if mat_at then
-					local f, g = mat_at(r, cx, cz, lx, lz, nx, nz)
+					local f, g, cv = mat_at(r, cx, cz, lx, lz, nx, nz)
 					if f then fam[skey] = f end
 					if g then gmat[skey] = g end
+					if cv ~= nil then cover[skey] = cv end
 				end
 				queue[#queue + 1] = skey
 				break
@@ -153,12 +161,14 @@ function inputs.field(job, real, domain, level_at, mat_at)
 				mc[nkey] = mc[skey]
 				if fam[skey] then fam[nkey] = fam[skey] end
 				if gmat[skey] then gmat[nkey] = gmat[skey] end
+				if cover[skey] ~= nil then cover[nkey] = cover[skey] end
 				queue[#queue + 1] = nkey
 			end
 		end
 	end
 
-	return { dist = dist, level = level, mc = mc, fam = fam, gmat = gmat }
+	return { dist = dist, level = level, mc = mc, fam = fam, gmat = gmat,
+		cover = cover }
 end
 
 -- re-export for callers (gap_fill) that only receive this module
@@ -174,7 +184,7 @@ inputs.surface_family = wdl.surface_family
 -- are the better guess; at full natural weight a v7 mountain rose inside
 -- a base's frozen sea (owner 2026-09-28, upside down pyramid: "merges do
 -- not fully extend to the water level ... huge square shaped cliffs").
-function inputs.height_targets(field, natural, slow_chunk)
+function inputs.height_targets(field, natural, slow_chunk, sea)
 	local t = {}
 	for skey, s in pairs(natural) do
 		local d = field.dist[skey]
@@ -194,7 +204,28 @@ function inputs.height_targets(field, natural, slow_chunk)
 			local x, z = skey:match("^(%-?%d+),(%-?%d+)$")
 			local jit = wdl.jitter(tonumber(x), tonumber(z)) * 0.6
 			local w = weights(d, jit)
-			t[skey] = w * field.level[skey] + (1 - w) * s
+			local lvl = field.level[skey]
+			local tv = w * lvl + (1 - w) * s
+			-- waterways (owner round-2, 2026-10-06): where the pristine
+			-- terrain sits below the sea (a canyon or lake the merge
+			-- must continue), the blend may not lift the lakebed to or
+			-- above sea level -- the fade's high seam-level weight
+			-- dried a v7 canyon that the round-1 build kept flooded
+			-- (dead-end river at -10281,8783). Only lowers submerged-
+			-- natural targets: land, the seam pins and non-overworld
+			-- bands are untouched. The bounds jitter skips such columns
+			-- too (gap_field: lakebeds are never wiggled upward).
+			-- round-3 (owner report, ice/snow seam spots at 6585,11153
+			-- and neighbours): the cap must NOT drown a seam that is
+			-- itself at or below sea+1 (a water-level or frozen-lid
+			-- seam, lvl <= sea+1) -- it forced the first free column's
+			-- target to sea-1 while the pins held the lid at sea+1,
+			-- leaving a straight 1-step seam-parallel seam. Dry-land
+			-- seams (lvl > sea+1, e.g. the D2 canyon rim) keep the
+			-- cap exactly as round-2 wrote it.
+			if sea and s < sea and tv > sea - 1
+				and (not lvl or lvl > sea + 1) then tv = sea - 1 end
+			t[skey] = tv
 		else
 			t[skey] = s
 		end

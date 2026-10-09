@@ -266,6 +266,15 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 				-- must continue outward like the land's does)
 				if not top and col.smat and col.sdist
 					and col.sdist > 1 and col.sdist <= SCREE_FADE
+					-- round-3: copy the seam geology only within
+					-- +-2 blocks of the seam's own surface height --
+					-- lateral distance alone let a frozen-lid ice
+					-- seam paint ice onto a 23-39 block cliff face
+					-- (6696,11008); columns far above the seam keep
+					-- the natural surface chain instead. Columns
+					-- without a seam height (nil) behave as before.
+					and (not col.slvl or col.B == nil
+						or col.B <= col.slvl + 2)
 					and is_natural_ground(cname(col.smat)) then
 					local p = 1 - (col.sdist - 1) / SCREE_FADE
 					if wdl.noise2(x, z, 6) < p * 0.9 then
@@ -351,6 +360,18 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 				if not snow and col.sfam == "snow" and col.sdist
 					and wdl.noise2(x + 5, z - 9, 6) < 1 - (col.sdist - 1) / TINT_FADE then
 					snow = true
+				end
+				-- bare-seam mirror (owner round-2, 2026-10-06): the
+				-- capture's own top carries NO snow layer (bare ice or
+				-- bare ground), so the biome's snow fades out over the
+				-- same noise band instead of stopping dead at the seam
+				-- line ("the snow and ice does not blend", 6566,11183;
+				-- measured: every M-ice seam pair had ring N=snow vs
+				-- capture N=ice). Same seed/threshold as the add-fade
+				-- above: at a bare snowy-fam seam the two cancel exactly.
+				if snow and col.scover == false and col.sdist
+					and wdl.noise2(x + 5, z - 9, 6) < 1 - (col.sdist - 1) / TINT_FADE then
+					snow = false
 				end
 				if snow and not is_water and B + 1 <= ymax then
 					local idx = area:index(x, B + 1, z)

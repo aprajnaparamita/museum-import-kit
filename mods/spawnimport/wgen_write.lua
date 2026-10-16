@@ -215,8 +215,17 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 	local emin, emax = vm:read_from_map({ x = xmin, y = ymin, z = zmin },
 		{ x = xmax, y = ymax, z = zmax })
 	local area = VoxelArea:new({ MinEdge = emin, MaxEdge = emax })
-	local data = vm:get_data()
-	local p2data = vm:get_param2_data()
+	-- Reuse job-scoped buffers: get_data()/get_param2_data() copy into
+	-- fresh Lua tables per chunk, and a big overworld base places 1280+
+	-- merge chunks. A reused buffer grows once and is refilled in place
+	-- (indices past the current volume are never read because the code
+	-- indexes through the current VoxelArea).
+	local dbuf = job._write_dbuf
+	if not dbuf then dbuf = {}; job._write_dbuf = dbuf end
+	local p2buf = job._write_p2buf
+	if not p2buf then p2buf = {}; job._write_p2buf = p2buf end
+	local data = vm:get_data(dbuf)
+	local p2data = vm:get_param2_data(p2buf)
 
 	for lz = 0, C - 1 do
 		local z = base_z + lz
@@ -405,6 +414,9 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 	vm:set_param2_data(p2data)
 	vm:write_to_map(true)
 	vm:close()
+	-- data/p2data are now reused job-scoped buffers; collect the small
+	-- per-chunk temporaries so 1280 chunks don't accumulate on the heap.
+	collectgarbage("collect")
 end
 
 -- ---------------------------------------------------------------------
@@ -439,7 +451,9 @@ function write.grow_chunk(job, plan, entry)
 	local emin, emax = vm:read_from_map({ x = xmin, y = ymin, z = zmin },
 		{ x = xmax, y = ymax, z = zmax })
 	local area = VoxelArea:new({ MinEdge = emin, MaxEdge = emax })
-	local snapshot = vm:get_data()
+	local snapbuf = job._grow_snapbuf
+	if not snapbuf then snapbuf = {}; job._grow_snapbuf = snapbuf end
+	local snapshot = vm:get_data(snapbuf)
 
 	-- per-column inputs for the engine decoration pass (anchor square =
 	-- this chunk's 16x16; mapindex order matches the engine's
@@ -473,7 +487,9 @@ function write.grow_chunk(job, plan, entry)
 	-- Restore every column that is NOT part of the merge domain: captured
 	-- chunks and untouched terrain must never change (canopies overhang
 	-- between merge columns only).
-	local data = vm:get_data()
+	local dbuf = job._grow_dbuf
+	if not dbuf then dbuf = {}; job._grow_dbuf = dbuf end
+	local data = vm:get_data(dbuf)
 	for z = emin.z, emax.z do
 		for x = emin.x, emax.x do
 			local sx = x - job.anchor_x + job.origin_x
@@ -491,6 +507,9 @@ function write.grow_chunk(job, plan, entry)
 	vm:set_data(data)
 	vm:write_to_map(true)
 	vm:close()
+	-- snapshot/data are now reused job-scoped buffers; collect the small
+	-- per-chunk temporaries (H, Bm) so 1280 chunks don't accumulate.
+	collectgarbage("collect")
 end
 
 return write

@@ -26,8 +26,17 @@ local museum_mcl_teleport_allowed
 if mcl_portals then
 	-- Mineclonia's own check, kept for the gateways it still runs (below)
 	museum_mcl_teleport_allowed = mcl_portals.object_teleport_allowed
-	mcl_portals.object_teleport_allowed = function() return false end
-	core.log("action", "[museumportals] portal teleportation disabled except End gateways (portals are displays; use /warp)")
+	mcl_portals.object_teleport_allowed = function(obj)
+		-- Nether portals teleport (owner 2026-10-15: "all portals should
+		-- go to the location in the nether"). Every other portal type stays
+		-- gated (End entry portals remain displays; use /warp).
+		local p = obj and obj:get_pos()
+		if p and core.find_node_near(p, 2, { "mcl_portals:portal" }, true) then
+			return museum_mcl_teleport_allowed(obj)
+		end
+		return false
+	end
+	core.log("action", "[museumportals] nether portals enabled; other portal teleportation disabled (use /warp)")
 else
 	core.log("warning", "[museumportals] mcl_portals not found -- portal teleportation still active")
 end
@@ -138,7 +147,13 @@ if core.registered_nodes["mcl_portals:portal_gateway"] and mcl_vars and mcl_vars
 	if museum_mcl_teleport_allowed then
 		mcl_portals.object_teleport_allowed = function(obj)
 			local p = obj and obj:get_pos()
-			if not p or p.y < END_BAND_BOTTOM or p.y > END_BAND_TOP then return false end
+			if not p then return false end
+			-- Nether portals work anywhere (see the gate above).
+			if core.find_node_near(p, 2, { "mcl_portals:portal" }, true) then
+				return museum_mcl_teleport_allowed(obj)
+			end
+			-- End gateways in the End band.
+			if p.y < END_BAND_BOTTOM or p.y > END_BAND_TOP then return false end
 			local g = core.find_node_near(p, 2, { "mcl_portals:portal_gateway" }, true)
 			if g and mcl_owns(g) then return museum_mcl_teleport_allowed(obj) end
 			return false

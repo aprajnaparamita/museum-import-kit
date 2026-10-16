@@ -1193,11 +1193,16 @@ local function discover_containers_for_base(base, done_cb)
 	-- that keeps each (x*z*y) under 140M.
 	local xspan = x_max - x_min + 1
 	local zspan = z_max - z_min + 1
-	local max_tile_nodes = 140000000
-	local y_tile = math.max(1, math.floor(max_tile_nodes / math.max(1, xspan * zspan)))
+	-- Tile in 3-D so every emerge finishes within the
+	-- server_unload_unused_data_timeout window (~5s). find_nodes_in_area
+	-- only sees mapblocks that are still ACTIVE in the map cache; a huge
+	-- tile emerged for minutes means the first-emerged blocks unload
+	-- before the scan runs and their containers are silently missed
+	-- (root cause of the 2026-10-15 "a lot of chests are empty" report).
+	local TILE = 160 -- 160^3 = 4.1M nodes: well under the per-call limit
 	core.log("action", string.format(
-		"[museumloot] %s: bbox %dx%dx%d, y-tile=%d",
-		base.name, xspan, (y_max - y_min + 1), zspan, y_tile))
+		"[museumloot] %s: bbox %dx%dx%d, tile=%d",
+		base.name, xspan, (y_max - y_min + 1), zspan, TILE))
 
 	-- core.find_nodes_in_area's `nodenames` argument must be a plain
 	-- array of strings ({"name1","name2"}), NOT a {name=value} lookup
@@ -1219,11 +1224,15 @@ local function discover_containers_for_base(base, done_cb)
 	-- scan it, move to the next.
 	local tiles = {}
 	do
-		local y = y_min
-		while y <= y_max do
-			local y1 = math.min(y_max, y + y_tile - 1)
-			tiles[#tiles + 1] = { y = y, y1 = y1 }
-			y = y1 + 1
+		for x0 = x_min, x_max, TILE do
+			local x1 = math.min(x_max, x0 + TILE - 1)
+			for z0 = z_min, z_max, TILE do
+				local z1 = math.min(z_max, z0 + TILE - 1)
+				for y0 = y_min, y_max, TILE do
+					local y1 = math.min(y_max, y0 + TILE - 1)
+					tiles[#tiles + 1] = { x0 = x0, x1 = x1, y0 = y0, y1 = y1, z0 = z0, z1 = z1 }
+				end
+			end
 		end
 	end
 
@@ -1426,8 +1435,8 @@ local function discover_containers_for_base(base, done_cb)
 		i = i + 1
 		local t = tiles[i]
 		if not t then finish(); return end
-		local emin = { x = x_min, y = t.y, z = z_min }
-		local emax = { x = x_max, y = t.y1, z = z_max }
+		local emin = { x = t.x0, y = t.y0, z = t.z0 }
+		local emax = { x = t.x1, y = t.y1, z = t.z1 }
 		core.emerge_area(emin, emax, function(_, _, calls_remaining)
 			if calls_remaining > 0 then return end
 			core.after(0, function()
@@ -2000,17 +2009,29 @@ local STABLE_FOR = tonumber(core.settings:get("museumloot_stable_seconds")) or 2
 -- restarted and the registry is loaded from disk.
 local looted = {}
 local function already_looted(name)
+	-- One-shot re-loot override: forces every registry base to be
+	-- re-scanned (used after the 2026-10-15 tile-size fix). Idempotent,
+	-- so already-filled containers are simply skipped.
+	if core.settings:get_bool("museumloot_force_reloot", false) then
+		return false
+	end
 	if looted[name] then return true end
 	for _, n in ipairs(looted._list or {}) do
 		if n == name then return true end
 	end
-	return false
+	-- Persistent across restarts: a base looted in an earlier server run
+	-- is flagged in the registry, so a reboot doesn't re-emerge + re-scan
+	-- already-looted bases (the huge End bases are expensive to re-scan).
+	local rec = registry.find_by_name(name)
+	return rec ~= nil and rec.looted == true
 end
 
 local function mark_looted(name)
 	looted[name] = true
 	looted._list = looted._list or {}
 	looted._list[#looted._list + 1] = name
+	-- Persist the flag so restarts skip this base.
+	registry.update_by_name(name, { looted = true })
 end
 
 local function looted_signature(name)
@@ -2162,14 +2183,17 @@ core.register_globalstep(function()
 		last_size = n
 		last_change_at = core.get_us_time()
 	end
-	-- Wait until imports have either been stable for STABLE_FOR seconds
-	-- OR we've placed all TARGET_BASES. Critical: don't kick off a
-	-- loot run while spawnimport is still placing blocks -- mid-place
-	-- reads see partial state and produce partial loot.
-	local stable_for_us = STABLE_FOR * 1e6
-	local stable_now = n > 0 and (core.get_us_time() - last_change_at) > stable_for_us
+	-- Loot only once the whole import is finished (all TARGET bases
+	-- placed), never while spawnimport is still placing the next base.
+	-- The old "stable for STABLE_FOR seconds" heuristic couldn't tell
+	-- "between bases" from "mid-placement" (the registry stays unchanged
+	-- for the whole placement phase), so a huge End base's bbox emerge
+	-- overlapped the next base's overworld merge plan + write and pushed
+	-- the 7.8 GB box into OOM kills. Serializing loot until the end
+	-- avoids that overlap entirely; loot is idempotent and runs fine
+	-- after placement.
 	local all_done = n >= TARGET_BASES
-	if not (stable_now or all_done) then
+	if not all_done then
 		return
 	end
 

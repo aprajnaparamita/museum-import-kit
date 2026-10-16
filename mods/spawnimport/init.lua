@@ -2361,6 +2361,11 @@ function Job:step()
 					-- worldgen-merge: per-column targets (WDL biome/temperature
 					-- map -> Mineclonia biome, surface material, tint, snow)
 					wgen_inputs.attach_targets(self, self.gap_real, self.gap_plan)
+					-- The merge-plan solve builds several large transient
+					-- maps (h/domain/cols/natural/aquatic). They are garbage
+					-- once the plan is built; free them before the write loop
+					-- so placement doesn't start on top of a full heap.
+					collectgarbage("collect")
 					local queued = {}
 					for _, e in ipairs(self.gap_fill_chunks) do queued[e.cx .. "_" .. e.cz] = true end
 					for _, key in ipairs(self.gap_plan.chunk_order) do

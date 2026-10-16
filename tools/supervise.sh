@@ -28,16 +28,31 @@ cd "${TMPDIR:-/tmp}" || exit 1
 
 placed () {
   python3 - "$WORLD/mod_storage.sqlite" <<'PY'
-import sqlite3, re, sys
-try:
-    con = sqlite3.connect('file:%s?mode=ro' % sys.argv[1], uri=True)
-    for _mn, k, v in con.execute('SELECT modname,key,value FROM entries'):
-        k = k.decode() if isinstance(k, bytes) else k
-        if k == 'placed_bases':
-            s = v.decode() if isinstance(v, bytes) else v
-            print(len(re.findall(r'name="', s))); break
-    else: print(0)
-except Exception: print(-1)
+import sqlite3, re, sys, os
+p = sys.argv[1]
+if not os.path.exists(p):
+    # Fresh world: the server hasn't created mod_storage.sqlite yet, so
+    # nothing is placed. Don't treat that as a volume problem (the old
+    # code returned -1 here and deadlocked before ever starting the
+    # server on a freshly prepared world).
+    print(0)
+else:
+    try:
+        con = sqlite3.connect('file:%s?mode=ro' % p, uri=True)
+        try:
+            rows = con.execute('SELECT modname,key,value FROM entries')
+        except sqlite3.OperationalError:
+            print(0)  # mod_storage exists but has no entries table yet
+        else:
+            found = 0
+            for _mn, k, v in rows:
+                k = k.decode() if isinstance(k, bytes) else k
+                if k == 'placed_bases':
+                    s = v.decode() if isinstance(v, bytes) else v
+                    found = len(re.findall(r'name="', s)); break
+            print(found)
+    except Exception:
+        print(-1)
 PY
 }
 

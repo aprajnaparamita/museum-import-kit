@@ -410,7 +410,12 @@ local function scan_chunk_columns(job, cx, cz)
 	local emin, emax = vm:read_from_map({ x = base_x, y = ymin, z = base_z },
 		{ x = base_x + C - 1, y = ymax, z = base_z + C - 1 })
 	local area = VoxelArea:new({ MinEdge = emin, MaxEdge = emax })
-	local data = vm:get_data()
+	-- Reuse a job-scoped buffer: each scanned chunk otherwise allocates a
+	-- fresh ~115k-entry Lua table from get_data(), and a big overworld
+	-- base scans thousands of chunks while building the merge plan.
+	local dbuf = job._scan_dbuf
+	if not dbuf then dbuf = {}; job._scan_dbuf = dbuf end
+	local data = vm:get_data(dbuf)
 	vm:close()
 
 	local cols = {}
@@ -666,6 +671,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 	smooth_edge_lines(real)
 
 	local scan_cache = {}
+	local scans_since_gc = 0
 	-- Scan only, no guard: the guard's neighbour fetch goes through
 	-- this, so a guard pass can never recurse into another guard pass.
 	local function raw_cols(cx, cz)
@@ -674,6 +680,11 @@ function gap_fill.build_plan(job, real, entries, opts)
 		if c == nil then
 			c = scan_chunk_columns(job, cx, cz)
 			scan_cache[key] = c
+			scans_since_gc = scans_since_gc + 1
+			if scans_since_gc >= 128 then
+				scans_since_gc = 0
+				collectgarbage("collect")
+			end
 		end
 		return c
 	end
@@ -782,7 +793,16 @@ function gap_fill.build_plan(job, real, entries, opts)
 	local rounds = 0
 	while true do
 		rounds = rounds + 1
+		local n_domain = 0
+		for _ in pairs(domain) do n_domain = n_domain + 1 end
+		core.log("action", string.format(
+			"[gap-fill] %s: widen round %d start, domain %d chunks, lua heap %.1f MB",
+			job.name, rounds, n_domain, collectgarbage("count") / 1024))
 		-- assemble the column maps for the current domain
+		-- Drop the previous round's field (kept as last_field at its end)
+		-- before allocating this round's maps -- it is only needed again
+		-- after the widen loop, not during the next round's solve.
+		last_field = nil
 		free = {}
 		for key in pairs(domain) do
 			local cx, cz = domain[key].cx, domain[key].cz
@@ -945,6 +965,10 @@ function gap_fill.build_plan(job, real, entries, opts)
 		-- one pass early and left land-land edges unconstrained wherever
 		-- the classification flickered -- the real-world audit caught it
 		-- as 60-90 block "steps" between two land columns.
+		-- Free the previous round's now-reassigned maps (free/natural/fld/
+		-- soft/guard/hard/fixed/h) BEFORE this round's solve, so the solve's
+		-- own allocations don't stack on top of a heap still holding them.
+		collectgarbage("collect")
 		local aquatic = {}
 		for _ = 1, 3 do
 			h = gap_field.solve(free, fixed, { step = step, aquatic = aquatic,
@@ -964,6 +988,9 @@ function gap_fill.build_plan(job, real, entries, opts)
 			aquatic = new_aquatic
 			if not changed then break end
 		end
+		core.log("action", string.format(
+			"[gap-fill] %s: widen round %d solved, lua heap %.1f MB",
+			job.name, rounds, collectgarbage("count") / 1024))
 		fixable, structural, worst = gap_field.violations(free, fixed, h, step,
 			{ soft = soft, guard = guard, aquatic = aquatic,
 			  natural = natural })
@@ -995,6 +1022,9 @@ function gap_fill.build_plan(job, real, entries, opts)
 		end
 		if not next(grow) then break end
 		for key, v in pairs(grow) do domain[key] = v end
+		-- Free the round's transient maps (free/natural/fld/h/soft/guard/
+		-- hard/fixed/aquatic) before the next, larger round re-solves.
+		collectgarbage("collect")
 	end
 
 	-- per-chunk apply data

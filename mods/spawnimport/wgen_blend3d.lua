@@ -470,15 +470,31 @@ function blend3d.place_chunk(job, plan, entry)
 	local re1, re2 = rvm:read_from_map({ x = rb[1], y = rlo, z = rb[3] },
 		{ x = rb[2], y = rhi, z = rb[4] })
 	local rarea = VoxelArea:new({ MinEdge = re1, MaxEdge = re2 })
-	local rdata = rvm:get_data()
-	local rp2 = rvm:get_param2_data()
+	-- Reuse job-scoped buffer tables instead of letting get_data()/
+	-- get_param2_data() allocate two fresh (up to ~4.7M-entry) Lua tables
+	-- per chunk. The read box for the End is up to ~128x288x128 nodes, so
+	-- per-chunk copies would be tens of MB each; 1365 of them pushed the
+	-- Lua heap's high-water to ~5.8 GB and the box OOM-killed the server
+	-- (rc=137) during the NEXT base's pregen. A reused buffer grows once
+	-- and is refilled in place (indices past the current volume are never
+	-- read because the code indexes through the current VoxelArea).
+	local rbuf = job._blend_rbuf
+	if not rbuf then rbuf = {}; job._blend_rbuf = rbuf end
+	local p2buf = job._blend_p2buf
+	if not p2buf then p2buf = {}; job._blend_p2buf = p2buf end
+	local rdata = rvm:get_data(rbuf)
+	local rp2 = rvm:get_param2_data(p2buf)
 
 	local vm = core.get_voxel_manip()
 	local e1, e2 = vm:read_from_map({ x = x0, y = ylo, z = z0 },
 		{ x = x0 + C - 1, y = yhi, z = z0 + C - 1 })
 	local area = VoxelArea:new({ MinEdge = e1, MaxEdge = e2 })
-	local data = vm:get_data()
-	local p2data = vm:get_param2_data()
+	local dbuf = job._blend_dbuf
+	if not dbuf then dbuf = {}; job._blend_dbuf = dbuf end
+	local p2dbuf = job._blend_p2dbuf
+	if not p2dbuf then p2dbuf = {}; job._blend_p2dbuf = p2dbuf end
+	local data = vm:get_data(dbuf)
+	local p2data = vm:get_param2_data(p2dbuf)
 
 	local c_air = core.CONTENT_AIR
 	local c_default = cid(B.default)
@@ -576,6 +592,19 @@ function blend3d.place_chunk(job, plan, entry)
 	-- are mapgen-VoxelManip only and just warn here)
 	vm:write_to_map(true)
 	vm:update_liquids()
+	-- Both VoxelManips must be closed explicitly. Without this the
+	-- per-chunk read VM (up to ~112x112x135 nodes for a nether chunk +
+	-- its mirror sources) stayed live until the Lua GC eventually ran;
+	-- 481 merge chunks worth of them peaked at ~2.4 GB and the 7.8 GB
+	-- import box OOM-killed the server (rc=137) right after
+	-- "done. Placed", before the registry save. The overworld path
+	-- (wgen_write.lua) already closes its VMs; this one didn't.
+	rvm:close()
+	vm:close()
+	-- rdata/rp2/data/p2data are now reused job-scoped buffers, so the only
+	-- per-chunk garbage left is the small profile arrays (nS/cS/nC/cC/...).
+	-- Collect them so 1365 chunks don't accumulate.
+	collectgarbage("collect")
 	plan.changed = (plan.changed or 0) + changed
 end
 
@@ -612,6 +641,11 @@ function blend3d.audit(job, plan)
 				end
 			end
 		end
+		vm:close()
+		-- Same get_data() copy-leak as place_chunk, smaller per chunk but
+		-- still ~1 MB x 1365 End merge chunks; collect as we go.
+		data = nil
+		collectgarbage("collect")
 	end
 	local ok = seam_bad == 0
 	core.log("action", string.format(

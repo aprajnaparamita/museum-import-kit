@@ -10,4 +10,5 @@ server_announce = false
 static_spawnpoint = (0, 150, 0)
 load_mod_spawnimport = true
 load_mod_museumwarp = true
-load_mod_fullimport = true
+load_mod_museumloot = true
+load_mod_museumportals = true

@@ -1,20 +1,25 @@
 # Add these to the world's map_meta.txt BEFORE [end_of_params].
 # Anything after that marker is ignored by the engine.
 #
-# mg_name = singlenode
-#   No native terrain generation. Bases are self-contained captures; native
-#   terrain would only be deleted again.
+# mg_name = v7
+#   Native v7 terrain, so bases merge into real ground instead of floating
+#   in void (singlenode generates no terrain at all).
 #
 # mcl_singlenode_mapgen = false
-#   Choosing singlenode ENABLES Mineclonia's own Lua levelgen by default
-#   (mcl_init/init.lua:71). Leaving it on generated terrain under every base
-#   and made pre-generation ~23x slower (178.7s vs 7.6s per base-sized
-#   volume, measured).
+#   Keeps Mineclonia's own Lua levelgen OFF under v7 (mcl_init/init.lua
+#   only enables it for mg_name == singlenode).
+#
+# seed / water_level / chunksize / mgv7_spflags match the verified museum
+#   worlds (fixed_map_seed in import.conf carries the same seed).
 #
 # mapgen_limit = 31007
 #   Leave at the default. Setting it to 0 stops mapgen overwriting imports
 #   but ALSO stops the server ever sending those blocks to a client
 #   (src/server/clientiface.cpp only sends blocks where isGenerated()).
-mg_name = singlenode
+mg_name = v7
 mcl_singlenode_mapgen = false
+seed = 16532709774040603227
+water_level = 1
+chunksize = 5
+mgv7_spflags = mountains, ridges, nofloatlands, caverns
 mapgen_limit = 31007

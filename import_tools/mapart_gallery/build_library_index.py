@@ -2,7 +2,7 @@ import json, re, os
 from collections import defaultdict
 from PIL import Image, ImageChops, ImageStat
 
-OUTPUT_DIR = os.path.expanduser('~/dev/museum-maparts/output')
+OUTPUT_DIR = os.environ.get('MAPART_OUTPUT_DIR') or os.path.expanduser('~/dev/museum-maparts/output')
 # Owner 2026-09-25: the gallery's map art comes from the dither-review
 # sample output ("the mapart is imported from /Volumes/Dara/dev/
 # dither-review/sample_output in place of the art from full/ in
@@ -117,6 +117,8 @@ def scan_dir(source):
 def load_final_manifest():
     path = os.path.join(OUTPUT_DIR, 'final', '..', '_manifest.json')
     path = os.path.join(OUTPUT_DIR, '_manifest.json')
+    if not os.path.isfile(path):
+        return {}
     with open(path) as f:
         m = json.load(f)
     by_base = {}

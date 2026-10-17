@@ -607,8 +607,10 @@ as long as the data volume survives.
 
 **E5 Package and ship straight to the play server**, which is the VPS that
 runs FriedcakeSMP (owner 2026-10-16).
-- Before the build: check `df -h /srv` on the VPS. It needs room for the new
-  world plus a backup of the current FriedcakeSMP world.
+- Before the build: check `df -h /srv` on the VPS. It needs room for the
+  staged archive plus the unpacked world. No backup is needed: nothing has
+  been played there, and the owner had both of its worlds deleted
+  (2026-10-18).
 - `tar | zstd -T0 -3`.
 - On the VPS, `rsync -P` from the build box into a staging directory there,
   using the build box's SSH config entry that `hetzner.sh create` wrote. The
@@ -616,16 +618,17 @@ runs FriedcakeSMP (owner 2026-10-16).
   keeps running during the copy.
 - Also put one copy in object storage (S3 or a Hetzner Storage Box) before
   the box goes away.
-- Cutover, a few minutes of downtime: stop FriedcakeSMP, back up its world,
-  move the new world into place, and carry over the player data Phase F
-  lists. Then start the server and check one warp per dimension.
+- Install: move the new world into place and start FriedcakeSMP on it. No
+  player data carries over. Check one warp per dimension.
 
 ### Phase F — the play server (with FriedcakeSMP from `../coconut`)
 
 The play server is the VPS: the box that ran the 32-base import and already
 runs FriedcakeSMP on UDP 30000, with 7.8 GB RAM plus 8 GB swap. It no longer
-builds. Its `2b2t-museum` world from that import is replaced by the new
-build.
+builds. Owner 2026-10-18: both of its worlds, `2b2t-museum` (the 32-base test
+import) and `FriedcakeSMP`, are test worlds and get deleted without a backup.
+FriedcakeSMP stays stopped until the new build arrives. Keep each world's
+`world.mt` and any non-map config for the Phase F setup.
 
 First, on the VPS:
 - **Stop the old import server** if it still runs. With the re-loot flag it
@@ -655,7 +658,7 @@ Same items as in my earlier review:
   - Set `creative_mode` and `enable_damage` for an SMP.
   - Keep mod security on, with `secure.trusted_mods = spawnimport,smp_store`.
   - Put `smp_store` data in its own database.
-  - Keep the existing `auth` and `players` data.
+  - Start with fresh `auth` and `players` data (nothing carries over).
 - **Content check:** run coconut's mapart scan on the build box before
   shipping.
 
@@ -755,9 +758,9 @@ Mineclonia mapgen settings stay the same.
 5. ~~The 32-base world: rerun loot?~~ Moot: the new build replaces that
    world. Only stop the old import server if it still runs (Phase F).
 6. **Play server:** decided 2026-10-16: the VPS, receiving the world built
-   elsewhere. Still open: when the few minutes of cutover downtime suit you,
-   and which player data carries over. coconut's season rules list money,
-   ranks, stats, friends, settings, shards and ender chests.
+   elsewhere. Decided 2026-10-18: no player data carries over and no
+   downtime window is needed. Both VPS worlds are test worlds and are
+   deleted.
 7. ~~Branch `vps-full-import-fixes`~~: done 2026-10-16 (`8a2db18` +
    `6ab8723` on `main`; not pushed yet).
 

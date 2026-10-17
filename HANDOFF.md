@@ -1,6 +1,19 @@
 # HANDOFF — single entry point for a fresh agent, 2026-09-17
 
-> **LATEST (2026-09-28): read `SESSION_2026-09-27_SUMMARY.md` first.** The
+> **LATEST (2026-10-16):**
+> - Terrain-blend defects from `BRIEF-2026-10-04-terrain-blend-defects.md`
+>   are fixed and committed (`bb140d7`, 2026-10-09); the full record is
+>   `FINDINGS-2026-10-06-terrain-blend-defects.md`. Still open: the dry river
+>   mouth at x -10278 z 8783 (owner decision pending).
+> - Loot reads item-frame signals, and witch spawning is disabled
+>   (`9d58d10`, 2026-10-09).
+> - **Biome-matched placement is still not done** (`HANDOFF-biome-placement.md`).
+>   The full layout is packed by size only.
+> - **Planned next: seasons** — a new seed per season, discovery, claims and
+>   saved bases. Design in `PLAN-seasons.md`; biome-matched placement is its
+>   first prerequisite.
+>
+> **Previous (2026-09-28): read `SESSION_2026-09-27_SUMMARY.md` first.** The
 > nether/End merge is a 3-D blend (`wgen_blend3d.lua`) on the v7 bands
 > (-29067 / -27073, End placed +14). Also: the mapart unmirror in the
 > gallery pass, OP loot everywhere in bases, End gateways linked to the main

@@ -1,5 +1,11 @@
 # 2b2t Museum — project handover
 
+> **Historical (2026-09-2x). Do not start here.** The current entry point is
+> `HANDOFF.md` (top section). Several statements below are out of date:
+> loot is implemented (`mods/museumloot`), the full manifest has 208 bases,
+> the world uses v7 terrain with a merge, and `fullimport` is no longer the
+> batch driver (`museumloot` is).
+
 Brief for an agent picking this up cold. Read this first, then the specs it
 points at.
 

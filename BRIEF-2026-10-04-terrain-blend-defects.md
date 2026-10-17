@@ -1,6 +1,6 @@
 # BRIEF — terrain blending defects: upside down pyramid & cutecurly's City
 
-**Date:** 2026-10-04 · **Repo:** `/Volumes/Dara/dev/museum-import-kit` · **Status:** diagnosis + fix requested, nothing committed
+**Date:** 2026-10-04 · **Repo:** `/Volumes/Dara/dev/museum-import-kit` · **Status (2026-10-16):** resolved — see `FINDINGS-2026-10-06-terrain-blend-defects.md`, committed in `bb140d7`
 
 You are taking over a Minecraft→Luanti (Mineclonia) museum import kit. Two overworld
 bases show square, unblended terrain edges in the deployed test world. Find the root

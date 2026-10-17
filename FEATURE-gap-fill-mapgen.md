@@ -15,6 +15,8 @@ rest of this file is the original design note kept for context.
 **(2026-09-24: Approach A evolved into the "merge chunk" — seam-exact
 height merge with a walkable slope cap and bounded widening; see
 `FEATURE-gap-fill-blend.md` and `SESSION_2026-09-24_SUMMARY.md`.)**
+**(2026-09-25: the merge chunk was itself superseded by the worldgen merge
+in `PLAN-worldgen-merge.md`, which is the current method.)**
 
 ## What Mineclonia's mapgen actually is (investigated)
 

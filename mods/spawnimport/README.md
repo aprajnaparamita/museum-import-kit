@@ -1,5 +1,15 @@
 # spawnimport
 
+> **Note (2026-10-16).** This README was written for the original standalone
+> mod in the `spawnmasons` project. In this kit, spawnimport also
+> pre-generates terrain, merges each base into v7 terrain
+> (`gap_fill.lua`, `wgen_*.lua`, see `PLAN-worldgen-merge.md`), and is driven
+> in batch by `museumloot` through `/museumimport` with a manifest, which can
+> set a `dest_y_offset` per base (the nether/End band key, or an overworld
+> height shift). `IMPORT_SPEC.md`, `palette_report.md` and `mc_to_mcl.json`
+> live in the original `spawnmasons` project, not in this kit; the compiled
+> mapping is `lua_import/data.lua`. Paths below are corrected for the kit.
+
 A server-side Mineclonia mod that bulk-imports a WorldTools Minecraft world
 capture into the running world with one chat command:
 
@@ -8,21 +18,19 @@ capture into the running world with one chat command:
 ```
 
 It reads the raw Anvil region files directly (via
-`spawnmasons/lua_import/{nbt,anvil,palette}.lua` -- steps 1-3 of this
-project's pipeline, see `../../IMPORT_SPEC.md`), maps every block to its
+the kit's `lua_import/{nbt,anvil,palette}.lua`), maps every block to its
 Mineclonia equivalent, and writes the result with `VoxelManip` in small
 batches spread across server steps so a multi-million-block import never
-freezes the server. See `../../IMPORT_SPEC.md` and
-`../../import_tools/palette_report.md` for how the block mapping was
-built and how well it covers the example capture (99.99% exact by block
-count).
+freezes the server. The original project's `IMPORT_SPEC.md` and
+`palette_report.md` describe how the block mapping was built and how well
+it covers the example capture (99.99% exact by block count).
 
 ## Install
 
-1. Copy or symlink this directory (`spawnmasons/server_mod/spawnimport/`)
+1. Copy or symlink this directory (`<kit>/mods/spawnimport/`)
    into your server's `mods/` folder, or a world's `worldmods/` folder:
    ```
-   ln -s /Volumes/Dara/dev/luanti/spawnmasons/server_mod/spawnimport /path/to/your/world/worldmods/spawnimport
+   ln -s /path/to/museum-import-kit/mods/spawnimport /path/to/your/world/worldmods/spawnimport
    ```
 2. **This mod needs unsandboxed filesystem access.** It reads the source
    WorldTools export by absolute path, which lives outside any world/mod
@@ -36,11 +44,11 @@ count).
 3. Give the operator the `worldplace` privilege (granted automatically in
    singleplayer; on a real server: `/grant <name> worldplace`, or add it to
    an admin's default privs).
-4. By default the mod loads `spawnmasons/lua_import/` from
-   `/Volumes/Dara/dev/luanti/spawnmasons/lua_import/` (this project's
-   current location). If you've moved the project, set:
+4. The default decoder path in the code is a legacy one,
+   `/Volumes/Dara/dev/luanti/spawnmasons/lua_import/` (the original project's
+   location). In this kit, always set:
    ```
-   spawnimport_lua_import_path = /new/path/to/spawnmasons/lua_import/
+   spawnimport_lua_import_path = /path/to/museum-import-kit/lua_import/
    ```
    in `minetest.conf`.
 5. Optional tuning, also in `minetest.conf`:

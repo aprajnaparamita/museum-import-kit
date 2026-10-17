@@ -14,7 +14,8 @@
 # base_patches.json likewise comes from $KIT/manifest/.
 #
 # Differences from full_rebuild.sh (deliberate, keep it that way):
-#   - NO mapart gallery-fill: not a display world, skip the extra pass.
+#   - (The gallery-fill pass was added here on 2026-09-26, commit db03348;
+#     it runs after pass 2, same as full_rebuild.sh.)
 #   - worlddata is wiped every run (loop = full deterministic rebuild).
 # The full 205-base import runs on the destination server, not here.
 #

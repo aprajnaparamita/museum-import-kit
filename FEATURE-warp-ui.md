@@ -1,5 +1,9 @@
 # Feature spec: warp browser UI + forgiving `/warp` matching
 
+> **Status (2026-10-16): not implemented.** `mods/museumwarp` has no
+> formspec yet. `PLAN-seasons.md` §4.1 changes the scope: in a season, a
+> player's warp list holds only the bases they have discovered.
+
 Implement in the **`museumwarp`** mod. Self-contained: no changes to the
 importer, no re-import needed, works against any already-populated world.
 

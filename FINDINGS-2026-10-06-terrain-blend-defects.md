@@ -1,6 +1,6 @@
 # FINDINGS — terrain blend defects (BRIEF-2026-10-04)
 
-**Date:** 2026-10-06 · **Repo:** `/Volumes/Dara/dev/museum-import-kit` · **Status: NOT committed — owner review**
+**Date:** 2026-10-06 · **Repo:** `/Volumes/Dara/dev/museum-import-kit` · **Status: committed in `bb140d7` (2026-10-09) after owner review**
 Covers Issues 1–3 of the brief, plus one secondary solver defect the fix surfaced
 (the harness widening regression).
 

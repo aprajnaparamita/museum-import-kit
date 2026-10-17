@@ -20,51 +20,43 @@ Luanti / Mineclonia world. Explore some of the greatest bases ever made.
 
 ## What you need
 
-1. **Luanti 5.17.x** (server build is enough — no GUI needed; the
-   client must run the SAME Mineclonia as the server).
-2. **Mineclonia** in `games/mineclonia`.
+1. **Luanti 5.17.0 with the museum engine patch**
+   (`import_tools/game_patches/luanti-5.17.0-museum-import.patch`). A
+   server-only build is enough. The client must run the SAME Mineclonia as
+   the server.
+2. **Mineclonia** in `games/mineclonia`, with
+   `import_tools/game_patches/mcl_maps-load_map-headless.patch` applied.
+   Without it a headless import spawns runaway item-frame entities.
 3. **The WDL archive**: clone
    [TwinkNet/2b2tmuseum-WDL](https://github.com/TwinkNet/2b2tmuseum-WDL)
    (~13 GB). It is not part of this kit.
-4. **This kit.**
-5. **Disk**: budget ~25 GB for the finished world.
+4. **This kit**, and the mapart library (`museum-maparts/output/`) if you
+   run the gallery pass.
+5. **Disk**: budget ~60 GB free (archive, world, build, maparts).
 
 ## Setup
 
-> **Before a full run, read `GUIDE-vps.md` → "Read this before a full run".**
-> The steps below are older than the nether/End merge, the End gateways and
-> the mapart unmirror. As written they build a terrain-less singlenode world,
-> copy every mod (including a second batch driver), skip the merge wherever
-> footprints are missing, and leave multi-map art reversed. The guide lists
-> the fixes, and ends with a ready-made agent prompt for the whole run.
-> The verified reference is `import_tools/micro_rebuild.sh`.
+There are two verified ways to build a world:
 
-```bash
-# 1. mods
-mkdir -p ~/.minetest/worlds/2b2t-museum/worldmods
-cp -R museum-import-kit/mods/* ~/.minetest/worlds/2b2t-museum/worldmods/
+- **Small test worlds on the Mac:** `import_tools/micro_rebuild.sh`. It
+  rebuilds the 4-base micro set by default; set
+  `MICRO_MANIFEST=manifest/museum_manifest_sample20.json` for the 20-base
+  diagnostic set. This is the run order the owner has walked in-game:
+  pass 1 (import, merge, loot), pass 2 (convergence), the mapart gallery
+  pass, then `museumloot` is stripped.
+- **The full import on a server:** follow `GUIDE-vps.md`, and read its
+  "Read this before a full run" section first. `tools/setup_remote.sh`
+  builds Luanti and applies both patches; the guide lists the five things
+  the older server scripts (`prepare_world.sh`, `supervise.sh`) still get
+  wrong, and ends with a ready-made agent prompt for the whole run.
 
-# 2. world config
-cp museum-import-kit/world_template/world.mt ~/.minetest/worlds/2b2t-museum/
+The world settings that matter (details in `GUIDE-vps.md`): `mg_name = v7`,
+`mcl_singlenode_mapgen = false`, the seed pinned through `fixed_map_seed`,
+`water_level = 1`, `chunksize = 5`, and exactly four worldmods during the
+build: `spawnimport`, `museumloot`, `museumwarp`, `museumportals`.
 
-# 3. point the manifest at wherever the WDL archive landed
-./museum-import-kit/tools/rewrite_manifest_paths.py \
-    museum-import-kit/manifest/museum_manifest.json \
-    /Users/dara/dev/2b2tmuseum-WDL /root/2b2tmuseum-WDL
-
-# 4. edit museum-import-kit/world_template/import.conf so the two absolute
-#    paths match this machine, then start the server once to create
-#    map_meta.txt, let it exit, and add the settings from
-#    world_template/map_meta_settings.txt BEFORE the [end_of_params] line.
-
-# 5. run it, supervised
-./museum-import-kit/tools/supervise.sh \
-    ~/.minetest/worlds/2b2t-museum \
-    /tmp/fullimport.log 205 300
-```
-
-`supervise.sh` expects `import.conf` next to itself — copy it into
-`tools/` or edit the `CONF=` line at the top.
+Planned next: running the world in **seasons** (a new seed per season,
+discovery, claims, saved bases). See `PLAN-seasons.md`.
 
 ## Why the odd settings
 
@@ -109,7 +101,7 @@ in ways that are not obvious for hours.
 
 ## Known engine fault
 
-Luanti 5.16.1 intermittently aborts under sustained heavy writes:
+Luanti 5.16.1 intermittently aborted under sustained heavy writes (not re-measured on 5.17.0):
 
 ```
 DatabaseException: Failed to commit SQLite3 transaction:
@@ -125,11 +117,16 @@ Lua levelgen was disabled — less write pressure, apparently.
 has it. It sidesteps this fault entirely, and the import is write-heavy
 enough that it may also be faster.
 
-## Rough timings (from the local run)
+## Rough timings
 
-Measured on USB 2.0 (~40 MB/s, ~800 IOPS) — NVMe should beat these
-comfortably, though chunk placement is CPU-bound on Lua decoding, so CPU
-matters as much as disk.
+**Current pipeline (2026-10):** the full import with the terrain merge,
+nether/End 3-D blend, loot and gallery passes is CPU-bound. Estimates are
+about **one week** on a very fast box and about **one month** on the
+deployment server; faster disks don't change that much.
+
+The table below is from the first local run (2026-09, USB 2.0 at ~40 MB/s
+and ~800 IOPS), before the merge and blend passes existed. Treat it as a
+lower bound, not an estimate.
 
 | | |
 |---|---|

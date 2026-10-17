@@ -75,8 +75,10 @@ A ready-made prompt for handing this run to an agent is in
 ## Sizing
 
 The job is **CPU-bound on single-core performance** (Lua chunk decoding);
-GPU is irrelevant. Expect **14–20 hours** for the full 208-base import and
-a world of ~13–15 GB. Disk: archive 13 GB + world ~15 GB + build ~3 GB +
+GPU is irrelevant. The 14–20 hour figure this guide used to give predates
+the terrain merge and the nether/End 3-D blend. Current estimates (2026-10)
+are about **one week** on a very fast box and about **one month** on the
+deployment server; plan for days, not hours. The world is ~13–15 GB. Disk: archive 13 GB + world ~15 GB + build ~3 GB +
 maparts ~0.5 GB → **60 GB free** is comfortable. NVMe strongly preferred.
 
 ## 0. Deploy key (only because the kit repo is private)
@@ -221,7 +223,7 @@ Both are required because `museumwarp` reads its warp data through
   private kit repo.
 - Recommended: `ufw allow OpenSSH && ufw enable`, key-only `sshd`
   (`PasswordAuthentication no`), `unattended-upgrades` for a box that
-  will sit unattended for a day-long import.
+  will sit unattended for a multi-day import.
 - **Back the finished world off the box** (step 5) rather than leaving it
   as the only copy.
 
@@ -275,7 +277,8 @@ Read first, in this order:
 Don't re-run package installs or rebuild Luanti if they already work; check
 first. Never guess Mineclonia node/item names; grep the game source.
 
-Run under screen/tmux (expect 14-20 h). Before starting, confirm that every
+Run under screen/tmux (expect several days: about a week on a very fast
+box). Before starting, confirm that every
 source_region_dir and footprint_path in the world's manifest exists, and
 that map_meta.txt says mg_name = v7.
 

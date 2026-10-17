@@ -1,6 +1,12 @@
 # Feature spec: believable loot for imported containers
 
-**Not implemented — for review.**
+**Status (2026-10-16): implemented in `mods/museumloot`, with changes.**
+Stage 2 below (LLM calls) was replaced by a deterministic local keyword
+classifier; no API is used (see the header of `mods/museumloot/init.lua`).
+Later changes: the OP loot policy (`8fbcdc0`, 2026-09-27) and item-frame
+signals (`9d58d10`, 2026-10-09). Rolls are seeded from world position, so
+they change when bases move; `PLAN-seasons.md` §8 replaces re-rolling with a
+loot ledger. The rest of this file is the original proposal.
 
 Fill the empty containers across the imported bases with loot that suits
 where each one sits, is generous enough to be worth hunting for, and is

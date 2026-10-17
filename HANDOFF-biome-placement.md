@@ -1,5 +1,10 @@
 # Handoff: biome-matched base placement (2026-09-28)
 
+> **Status (2026-10-16): not started.** No commit implements it, and
+> `manifest/museum_manifest_full.json` is still packed by size only. It is
+> now also the first prerequisite of `PLAN-seasons.md` (milestone M-1): every
+> season needs a fresh biome-matched layout for its seed.
+
 This is the task for the next agent. The owner will have the author of this
 document check the work afterwards, so keep notes of what you did and why.
 

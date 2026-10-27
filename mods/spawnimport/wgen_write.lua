@@ -30,7 +30,14 @@
 --   ever written to captured chunks or untouched terrain (canopies may
 --   overhang between merge columns only).
 
-local function factory(wdl)
+local function factory(wdl, prof)
+-- prof (PLAN-fast-build 0.3) is injected by init.lua; a direct load
+-- without it keeps the same GC behaviour with no-op counters.
+local P = prof or {
+	add = function() end, now = function() return 0 end,
+	since = function() return 0 end, get = function() return 0 end,
+	gc = function(...) return collectgarbage(...) end,
+}
 local write = {}
 
 local C = 16
@@ -211,6 +218,7 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 	local c_ice = cid("mcl_core:ice")
 	local c_stone = cid(default_stone(job))
 
+	local t_read = P.now()
 	local vm = core.get_voxel_manip()
 	local emin, emax = vm:read_from_map({ x = xmin, y = ymin, z = zmin },
 		{ x = xmax, y = ymax, z = zmax })
@@ -226,7 +234,9 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 	if not p2buf then p2buf = {}; job._write_p2buf = p2buf end
 	local data = vm:get_data(dbuf)
 	local p2data = vm:get_param2_data(p2buf)
+	P.add("w_read", P.since(t_read))
 
+	local t_cols = P.now()
 	for lz = 0, C - 1 do
 		local z = base_z + lz
 		for lx = 0, C - 1 do
@@ -410,13 +420,16 @@ function write.place_chunk(job, plan, entry, _content_id_for)
 		end
 	end
 
+	P.add("w_cols", P.since(t_cols))
+	local t_write = P.now()
 	vm:set_data(data)
 	vm:set_param2_data(p2data)
 	vm:write_to_map(true)
 	vm:close()
+	P.add("w_write", P.since(t_write))
 	-- data/p2data are now reused job-scoped buffers; collect the small
 	-- per-chunk temporaries so 1280 chunks don't accumulate on the heap.
-	collectgarbage("collect")
+	P.gc("collect")
 end
 
 -- ---------------------------------------------------------------------
@@ -447,6 +460,7 @@ function write.grow_chunk(job, plan, entry)
 	local xmin, xmax = base_x - MARGIN, base_x + C - 1 + MARGIN
 	local zmin, zmax = base_z - MARGIN, base_z + C - 1 + MARGIN
 
+	local t_read = P.now()
 	local vm = core.get_voxel_manip()
 	local emin, emax = vm:read_from_map({ x = xmin, y = ymin, z = zmin },
 		{ x = xmax, y = ymax, z = zmax })
@@ -475,7 +489,9 @@ function write.grow_chunk(job, plan, entry)
 
 	local p1 = { x = base_x, y = ymin, z = base_z }
 	local p2 = { x = base_x + C - 1, y = ymax, z = base_z + C - 1 }
+	P.add("g_read", P.since(t_read))
 
+	local t_deco = P.now()
 	if core.generate_decorations_with_inputs then
 		core.generate_decorations_with_inputs(vm, p1, p2, H, Bm)
 	elseif core.generate_decorations then
@@ -483,10 +499,12 @@ function write.grow_chunk(job, plan, entry)
 		-- filter -- degraded species mix but structurally correct.
 		core.generate_decorations(vm, p1, p2, false)
 	end
+	P.add("g_deco", P.since(t_deco))
 
 	-- Restore every column that is NOT part of the merge domain: captured
 	-- chunks and untouched terrain must never change (canopies overhang
 	-- between merge columns only).
+	local t_restore = P.now()
 	local dbuf = job._grow_dbuf
 	if not dbuf then dbuf = {}; job._grow_dbuf = dbuf end
 	local data = vm:get_data(dbuf)
@@ -504,12 +522,15 @@ function write.grow_chunk(job, plan, entry)
 			end
 		end
 	end
+	P.add("g_restore", P.since(t_restore))
+	local t_write = P.now()
 	vm:set_data(data)
 	vm:write_to_map(true)
 	vm:close()
+	P.add("g_write", P.since(t_write))
 	-- snapshot/data are now reused job-scoped buffers; collect the small
 	-- per-chunk temporaries (H, Bm) so 1280 chunks don't accumulate.
-	collectgarbage("collect")
+	P.gc("collect")
 end
 
 return write

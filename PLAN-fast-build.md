@@ -1,6 +1,9 @@
 # PLAN — fast build: measure, speed up and parallelise the full import
 
-**Date:** 2026-10-16 · **Status: PLANNED, waiting for owner review. Nothing here is built.**
+**Date:** 2026-10-16 · **Status: IN PROGRESS (owner go-ahead 2026-10-27, merges
+reviewed and approved). Branch `fastbuild` off `main`. Phase 0 underway:**
+0.1 committed, 0.2 done (Mineclonia pinned, one engine patch), 0.3 done
+(`mods/spawnimport/prof.lua` + hooks; G1 green), 0.4–0.8 next.
 Updated the same day after reviewing branch `vps-full-import-fixes` (§1.3).
 That branch is now on `main` (`8a2db18`, plus the conf fix `6ab8723`), and
 line numbers here are `main`'s. Owner decision 2026-10-16: the VPS that runs
@@ -369,6 +372,9 @@ uncommitted in the working tree, to commit before the `fastbuild` branch:
 The two copies of the engine patch differ only by a `.gitignore` hunk; keep
 one. `tools/setup_remote.sh` currently clones Mineclonia HEAD. Add
 `MINECLONIA_REF` and make the script fail when the checkout differs.
+**Done 2026-10-27:** the `game_patches/` copy is kept (with the extra
+`.gitignore` hunk folded in), `engine_patches/` is gone; `setup_remote.sh`
+has `MINECLONIA_REF` (default `5bdce566f`) and hard-fails on a mismatch.
 
 **0.3 Profiling counters in spawnimport.** New file
 `mods/spawnimport/prof.lua`, about 60 lines: `prof.add(phase, microseconds)`

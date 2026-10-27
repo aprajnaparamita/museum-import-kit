@@ -281,13 +281,14 @@ local ITEM_FRAME_FACING_TO_WALLMOUNTED = {
 }
 
 local registry = dofile(modpath .. "/registry.lua") -- inside the mod's own dir, sandboxed dofile is fine
+local prof = dofile(modpath .. "/prof.lua") -- phase timers, no-op unless spawnimport_profile=true (PLAN-fast-build 0.3)
 local gap_field = dofile(modpath .. "/gap_field.lua") -- pure merge height-field solver (gap_field_test.lua covers it)
 local wdl_climate = dofile(modpath .. "/wdl_climate.lua") -- WDL biome/temperature map (pure; PLAN-worldgen-merge.md)
 local wgen_inputs = dofile(modpath .. "/wgen_inputs.lua")(wdl_climate) -- per-column merge targets (biome/material/tint/snow)
-local wgen_write = dofile(modpath .. "/wgen_write.lua")(wdl_climate) -- column rebuild + natural vegetation regrow
-local gap_fill = dofile(modpath .. "/gap_fill.lua")(gap_field, wgen_inputs) -- merge plan + audit, see that file's own header
+local wgen_write = dofile(modpath .. "/wgen_write.lua")(wdl_climate, prof) -- column rebuild + natural vegetation regrow
+local gap_fill = dofile(modpath .. "/gap_fill.lua")(gap_field, wgen_inputs, prof) -- merge plan + audit, see that file's own header
 -- nether/End: 3-D blend instead of the overworld height-field merge
-local blend3d = dofile(modpath .. "/wgen_blend3d.lua")(wdl_climate, gap_fill.is_terrain_name)
+local blend3d = dofile(modpath .. "/wgen_blend3d.lua")(wdl_climate, gap_fill.is_terrain_name, prof)
 local gateway_link = dofile(modpath .. "/gateway_link.lua")
 
 -- core.get_mod_storage() is scoped per-calling-modname, so a different mod
@@ -611,6 +612,7 @@ local KELP_SURFACE = {
 
 local function new_job(p)
 	local self = setmetatable({}, Job)
+	prof.begin_job(p.name)
 	self.player_name = p.player_name
 	self.world_folder = p.world_folder
 	self.dimension_path = p.dimension_path
@@ -744,7 +746,9 @@ local function new_job(p)
 	self.gap_plan = nil
 	self.gap_avoid = {}
 	if p.footprint_path and self.chunk_bounds then
+		local t_scan = prof.now()
 		local real = gap_fill.load_real_heights(p.footprint_path)
+		prof.add("scan", prof.since(t_scan))
 		if real then
 			-- The footprint can list chunks outside chunk_bounds (the
 			-- manifest trims travel corridors); those are never placed, so
@@ -761,7 +765,9 @@ local function new_job(p)
 			end
 			local t0 = core.get_us_time()
 			self.gap_real = real
+			local t_ring = prof.now()
 			self.gap_fill_chunks = gap_fill.ring_chunks(self.chunk_bounds, real, self.gap_placed)
+			prof.add("scan", prof.since(t_ring))
 			local elapsed_s = (core.get_us_time() - t0) / 1e6
 			core.log("action", string.format(
 				"[spawnimport] gap-fill: %d merge (ring) chunks in %.2fs (%s)",
@@ -1100,6 +1106,8 @@ local function spawner_mob(raw)
 end
 
 function Job:place_one_chunk(entry)
+	local t0 = prof.now()
+	local r0 = prof.get("resolve")
 	local payload = anvil.read_chunk_payload(self.current_region_data, entry.offset)
 	local chunk = nbt.parse_buffer(payload)
 	-- legacy (1.12) chunks keep everything under `Level`; normalize_chunk
@@ -1147,6 +1155,7 @@ function Job:place_one_chunk(entry)
 		else
 			self.empty_captured = self.empty_captured or {}
 			self.empty_captured[#self.empty_captured + 1] = { cx = chunk.xPos, cz = chunk.zPos }
+			prof.add("decode_nbt", prof.since(t0))
 			return
 		end
 	end
@@ -1235,7 +1244,9 @@ function Job:place_one_chunk(entry)
 		bx[n] = self.anchor_x + (x - self.origin_x)
 		by[n] = y + self.dest_y_offset
 		bz[n] = self.anchor_z + (z - self.origin_z)
+		local t_res = prof.now()
 		local resolution = palette.resolve_detailed(name, props)
+		prof.add("resolve", prof.since(t_res))
 		bn[n] = resolution.node
 		bp2[n] = resolution.param2
 		if resolution.node == "mcl_portals:portal_gateway" then
@@ -1257,6 +1268,8 @@ function Job:place_one_chunk(entry)
 		if y < src_lowest then src_lowest = y end
 		if y == 0 and name == "minecraft:bedrock" then src_bedrock0 = true end
 	end)
+	prof.add("decode_nbt", prof.since(t0) - (prof.get("resolve") - r0))
+	local t1 = prof.now()
 
 	-- Pre-1.18 depth (owner 2026-09-28, upside down pyramid: "a huge
 	-- section of void under it"): an overworld capture whose blocks start
@@ -1458,6 +1471,8 @@ function Job:place_one_chunk(entry)
 		end
 	end
 
+	prof.add("post_blocks", prof.since(t1))
+	local t2 = prof.now()
 	local vm = core.get_voxel_manip()
 	local emin, emax = vm:read_from_map({ x = xmin, y = ymin, z = zmin }, { x = xmax, y = ymax, z = zmax })
 	local area = VoxelArea:new({ MinEdge = emin, MaxEdge = emax })
@@ -1481,6 +1496,8 @@ function Job:place_one_chunk(entry)
 	-- explicitly setting, including the all-air ones.
 	local data = vm:get_data()
 	local p2data = vm:get_param2_data()
+	prof.add("vm_read", prof.since(t2))
+	local t3 = prof.now()
 	for z = zmin, zmax do
 		for y = ymin, ymax do
 			local idx = area:index(xmin, y, z)
@@ -1567,11 +1584,17 @@ function Job:place_one_chunk(entry)
 		end
 	end
 
+	prof.add("vm_fill", prof.since(t3))
+	local t4 = prof.now()
 	vm:set_data(data)
 	vm:set_param2_data(p2data)
 	vm:write_to_map(true) -- recalculate lighting; see README.md if imports need to go faster
+	prof.add("vm_write", prof.since(t4))
+	local t5 = prof.now()
 	if has_liquid then vm:update_liquids() end
 	vm:close()
+	prof.add("liquids", prof.since(t5))
+	local t6 = prof.now()
 
 	-- Wall banners: Mineclonia draws a banner as an entity whose facing
 	-- and colour come from node meta (rotation_level, a banner item in
@@ -1738,6 +1761,8 @@ function Job:place_one_chunk(entry)
 	-- decode_chunk_item_frames header comment and Job:entities_chunk_for
 	-- above for the full story. nil if this base has no entities/
 	-- directory, or this specific chunk has no entities.
+	prof.add("meta", prof.since(t6))
+	local t7 = prof.now()
 	local entities_chunk = self:entities_chunk_for(chunk.xPos, chunk.zPos)
 
 	-- Item frames -- both post-1.14 block-entity form (checked against
@@ -2069,6 +2094,7 @@ function Job:place_one_chunk(entry)
 		end
 	end
 
+	prof.add("entities", prof.since(t7))
 	self.placed_blocks = self.placed_blocks + n
 
 	if n > 0 then
@@ -2189,11 +2215,13 @@ function Job:finish()
 	-- /worldplace gapaudit can re-run it on demand.
 	if self.gap_plan then
 		last_gap = { job = self, plan = self.gap_plan }
+		local t_audit = prof.now()
 		if self.gap_plan.blend3d then
 			blend3d.audit(self, self.gap_plan)
 		else
 			gap_fill.audit(self, self.gap_plan)
 		end
+		prof.add("audit", prof.since(t_audit))
 	end
 
 	if self.frames_placed and self.frames_placed > 0 then
@@ -2260,6 +2288,24 @@ function Job:finish()
 			z = self.anchor_z + (self.warp_source.z - self.origin_z),
 		} or self:best_interest_point(),
 	})
+
+	if prof.on() then
+		-- 0.3: heap census at the base boundary, after a full collection.
+		-- Roots in suspect order (the census credits shared tables to the
+		-- first root that reaches them): plan first -- PLAN-fast-build 2.5's
+		-- unexplained ~3 GB block.
+		prof.gc("collect")
+		core.log("action", "[prof-census] " .. tostring(self.name) .. ": " .. prof.census({
+			{ name = "plan", t = self.gap_plan },
+			{ name = "job", t = self },
+			{ name = "last_gap", t = last_gap },
+			{ name = "registry", t = registry },
+			{ name = "wgen_write", t = wgen_write },
+			{ name = "gap_fill", t = gap_fill },
+			{ name = "blend3d", t = blend3d },
+		}))
+		prof.dump(self.name)
+	end
 end
 
 -- Kicks off pre-generation and reports whether placing can proceed yet.
@@ -2315,7 +2361,9 @@ function Job:step()
 					-- nether/End: 3-D blend over the ring, no widening, no
 					-- height targets and no vegetation regrow (see
 					-- wgen_blend3d.lua)
+					local t_plan = prof.now()
 					self.gap_plan = blend3d.build_plan(self, self.gap_real, self.gap_fill_chunks)
+					prof.add("blend_plan", prof.since(t_plan))
 					-- Merge chunks the ring list never contained are planned
 					-- but not queued, and NOTHING else writes them: End
 					-- holes (empty chunks inside an island) and the
@@ -2356,8 +2404,12 @@ function Job:step()
 							"[spawnimport] %s: %d empty captured chunk(s) merged as natural terrain",
 							self.name, #self.empty_captured))
 					end
+					local t_plan = prof.now()
+					local s0 = prof.get("solve")
 					self.gap_plan = gap_fill.build_plan(self, self.gap_real, entries,
 						{ avoid = self.gap_avoid })
+					-- the plan's own reads/assembly minus the solver = "scan"
+					prof.add("scan", prof.since(t_plan) - (prof.get("solve") - s0))
 					-- worldgen-merge: per-column targets (WDL biome/temperature
 					-- map -> Mineclonia biome, surface material, tint, snow)
 					wgen_inputs.attach_targets(self, self.gap_real, self.gap_plan)
@@ -2365,7 +2417,7 @@ function Job:step()
 					-- maps (h/domain/cols/natural/aquatic). They are garbage
 					-- once the plan is built; free them before the write loop
 					-- so placement doesn't start on top of a full heap.
-					collectgarbage("collect")
+					prof.gc("collect")
 					local queued = {}
 					for _, e in ipairs(self.gap_fill_chunks) do queued[e.cx .. "_" .. e.cz] = true end
 					for _, key in ipairs(self.gap_plan.chunk_order) do
@@ -2392,7 +2444,9 @@ function Job:step()
 			end
 			local ok, err
 			if self.gap_plan.blend3d then
+				local t_blend = prof.now()
 				ok, err = pcall(blend3d.place_chunk, self, self.gap_plan, entry)
+				prof.add("blend_write", prof.since(t_blend))
 			elseif entry.is_grow then
 				ok, err = pcall(wgen_write.grow_chunk, self, self.gap_plan, entry)
 			else
@@ -2500,11 +2554,13 @@ local function handle_gapaudit()
 		return true, "[spawnimport] nothing to audit yet -- run an import with a footprint first"
 	end
 	local ok
+	local t_audit = prof.now()
 	if last_gap.plan.blend3d then
 		ok = blend3d.audit(last_gap.job, last_gap.plan)
 	else
 		ok = gap_fill.audit(last_gap.job, last_gap.plan)
 	end
+	prof.add("audit", prof.since(t_audit))
 	return true, "[spawnimport] gap-fill audit for '" .. tostring(last_gap.job.name) .. "': "
 		.. (ok and "PASS" or "FAIL") .. " (per-check numbers in the server log)"
 end

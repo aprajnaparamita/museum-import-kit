@@ -54,7 +54,14 @@
 -- source_footprint.lua output -- terrain_cols/cols/solid_cols/biome per
 -- captured chunk) and the generated map itself.
 
-local function factory(gap_field, wgen_inputs)
+local function factory(gap_field, wgen_inputs, prof)
+-- prof (PLAN-fast-build 0.3) is injected by init.lua; a direct load
+-- without it keeps the same GC behaviour with no-op counters.
+local P = prof or {
+	add = function() end, now = function() return 0 end,
+	since = function() return 0 end, get = function() return 0 end,
+	gc = function(...) return collectgarbage(...) end,
+}
 local gap_fill = {}
 
 local C = 16
@@ -683,7 +690,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 			scans_since_gc = scans_since_gc + 1
 			if scans_since_gc >= 128 then
 				scans_since_gc = 0
-				collectgarbage("collect")
+				P.gc("collect")
 			end
 		end
 		return c
@@ -968,9 +975,10 @@ function gap_fill.build_plan(job, real, entries, opts)
 		-- Free the previous round's now-reassigned maps (free/natural/fld/
 		-- soft/guard/hard/fixed/h) BEFORE this round's solve, so the solve's
 		-- own allocations don't stack on top of a heap still holding them.
-		collectgarbage("collect")
+		P.gc("collect")
 		local aquatic = {}
 		for _ = 1, 3 do
+			local t_solve = P.now()
 			h = gap_field.solve(free, fixed, { step = step, aquatic = aquatic,
 				jitter = tonumber(core.settings:get("spawnimport_gap_slope_jitter")) or 0.35,
 				sea = SEA, natural = natural })
@@ -979,6 +987,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 			-- cliffs and pins untouched
 			gap_field.deflate_steps(free, fixed, h,
 				{ step = step, aquatic = aquatic, natural = natural })
+			P.add("solve", P.since(t_solve))
 			local new_aquatic, changed = {}, false
 			for skey in pairs(h) do
 				local is_water = h[skey] < SEA
@@ -1024,7 +1033,7 @@ function gap_fill.build_plan(job, real, entries, opts)
 		for key, v in pairs(grow) do domain[key] = v end
 		-- Free the round's transient maps (free/natural/fld/h/soft/guard/
 		-- hard/fixed/aquatic) before the next, larger round re-solves.
-		collectgarbage("collect")
+		P.gc("collect")
 	end
 
 	-- per-chunk apply data

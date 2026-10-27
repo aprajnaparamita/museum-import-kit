@@ -45,7 +45,14 @@
 --   * natural decoration (fungi, roots, chorus...) survives wherever the
 --     geometry around it did not change.
 
-local function factory(wdl, is_terrain_name)
+local function factory(wdl, is_terrain_name, prof)
+-- prof (PLAN-fast-build 0.3) is injected by init.lua; a direct load
+-- without it keeps the same GC behaviour with no-op counters.
+local P = prof or {
+	add = function() end, now = function() return 0 end,
+	since = function() return 0 end, get = function() return 0 end,
+	gc = function(...) return collectgarbage(...) end,
+}
 local blend3d = {}
 
 local C = 16
@@ -604,7 +611,7 @@ function blend3d.place_chunk(job, plan, entry)
 	-- rdata/rp2/data/p2data are now reused job-scoped buffers, so the only
 	-- per-chunk garbage left is the small profile arrays (nS/cS/nC/cC/...).
 	-- Collect them so 1365 chunks don't accumulate.
-	collectgarbage("collect")
+	P.gc("collect")
 	plan.changed = (plan.changed or 0) + changed
 end
 
@@ -645,7 +652,7 @@ function blend3d.audit(job, plan)
 		-- Same get_data() copy-leak as place_chunk, smaller per chunk but
 		-- still ~1 MB x 1365 End merge chunks; collect as we go.
 		data = nil
-		collectgarbage("collect")
+		P.gc("collect")
 	end
 	local ok = seam_bad == 0
 	core.log("action", string.format(

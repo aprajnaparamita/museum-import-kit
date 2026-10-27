@@ -1,3 +1,14 @@
+diff --git a/.gitignore b/.gitignore
+index a4931b80c..14f7498ae 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,3 +1,6 @@
++## Secrets
++.env
++
+ ## Editors and development environments
+ *~
+ .cmake
 diff --git a/doc/client_lua_api.md b/doc/client_lua_api.md
 index 293ff8dc8..053341207 100644
 --- a/doc/client_lua_api.md

@@ -23,7 +23,13 @@
 #   sudo MUSEUM_ROOT=/srv/museum ./tools/setup_remote.sh
 #
 # Env overrides: MUSEUM_ROOT, OWNER, LUANTI_VERSION, KIT_GIT, WDL_GIT,
-# MINECLONIA_GIT, SKIP_MCL_MAPS_PATCH=1 (e.g. once upstream merges the fix).
+# MINECLONIA_GIT, MINECLONIA_REF, SKIP_MCL_MAPS_PATCH=1 (e.g. once upstream
+# merges the fix).
+#
+# Version pinning (PLAN-fast-build 0.2): Luanti is pinned by tag
+# (LUANTI_VERSION); Mineclonia is pinned by MINECLONIA_REF (commit 5bdce566f,
+# tag or full hash also work). The script FAILS when the checkout does not
+# resolve to the pin -- silently building Mineclonia HEAD breaks blocks.
 set -euo pipefail
 
 MUSEUM_ROOT="${MUSEUM_ROOT:-/srv/museum}"
@@ -32,6 +38,7 @@ LUANTI_VERSION="${LUANTI_VERSION:-5.17.0}"
 KIT_GIT="${KIT_GIT:-git@github.com:aprajnaparamita/museum-import-kit.git}"
 WDL_GIT="${WDL_GIT:-https://github.com/TwinkNet/2b2tmuseum-WDL.git}"
 MINECLONIA_GIT="${MINECLONIA_GIT:-https://codeberg.org/mineclonia/mineclonia.git}"
+MINECLONIA_REF="${MINECLONIA_REF:-5bdce566f}"
 LUANTI_GIT="${LUANTI_GIT:-https://github.com/luanti-org/luanti.git}"
 SKIP_MCL_MAPS_PATCH="${SKIP_MCL_MAPS_PATCH:-0}"
 
@@ -108,12 +115,25 @@ else
     echo "  applied museum engine patch (generate_decorations_with_inputs)"
 fi
 
-log "mineclonia -> $LUANTI/games/mineclonia"
+log "mineclonia -> $LUANTI/games/mineclonia (pin $MINECLONIA_REF)"
 if [ -d "$LUANTI/games/mineclonia/.git" ]; then
     echo "  already present"
 else
     as_owner git clone "$MINECLONIA_GIT" "$LUANTI/games/mineclonia"
 fi
+# Pin: the checkout must resolve to MINECLONIA_REF. Switch it if we can;
+# fail loudly if we cannot (e.g. the mcl_maps patch makes the tree dirty).
+WANT="$(git -C "$LUANTI/games/mineclonia" rev-parse -q --verify "$MINECLONIA_REF^{commit}")" || {
+    echo "ERROR: MINECLONIA_REF=$MINECLONIA_REF does not resolve to a commit"; exit 1; }
+GOT="$(git -C "$LUANTI/games/mineclonia" rev-parse HEAD)"
+if [ "$WANT" != "$GOT" ]; then
+    echo "  HEAD is $GOT, switching to pinned $WANT"
+    as_owner git -C "$LUANTI/games/mineclonia" checkout -q "$MINECLONIA_REF" || {
+        echo "ERROR: mineclonia checkout differs from MINECLONIA_REF=$MINECLONIA_REF"
+        echo "       ($GOT) and cannot be switched -- dirty tree? Reset it and re-run."
+        exit 1; }
+fi
+echo "  pinned ok: $(git -C "$LUANTI/games/mineclonia" rev-parse --short HEAD)"
 if [ "$SKIP_MCL_MAPS_PATCH" = 1 ]; then
     echo "  SKIP_MCL_MAPS_PATCH=1 -- mcl_maps headless fix NOT applied"
 elif grep -q "no player exists to send it to" "$LUANTI/games/mineclonia/mods/ITEMS/mcl_maps/init.lua"; then
